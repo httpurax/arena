@@ -1,0 +1,32 @@
+[
+  {
+    "course": "Comprehension and Oral Expression 1",
+    "resources": [
+      {
+        "id": 42,
+        "url": "https://moodle.example.com/mod/resource/view.php?id=42",
+        "title": "References"
+      },
+      {
+        "id": 43,
+        "url": "https://moodle.example.com/mod/resource/view.php?id=43",
+        "title": "Script I"
+      },
+      {
+        "id": 44,
+        "url": "https://moodle.example.com/mod/resource/view.php?id=44",
+        "title": "Grammar and Pronunciation"
+      }
+    ]
+  },
+  {
+    "course": "University Work Techniques 1",
+    "resources": [
+      {
+        "id": 91,
+        "url": "https://moodle.example.com/mod/resource/view.php?id=91",
+        "title": "1.1 Become an active learner"
+      }
+    ]
+  }
+]
