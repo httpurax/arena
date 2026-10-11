@@ -10,6 +10,11 @@ Commands
 
 Stdlib only, Python 3.8+. No network is touched except by resolve/discover/download.
 
+A run that starts hitting login redirects stops at the first one. A login redirect is not a
+per-file hiccup: it means the session is gone, so every remaining request would be another
+doomed round trip. `download` records what it could not fetch as `session_expired`, keeps the
+files it already has, writes the manifest, and tells the user to re-authenticate.
+
 Cookie sources, highest precedence first (an explicit flag always beats the ambient
 environment):
 
@@ -174,6 +179,31 @@ class _NoRedirect(HTTPRedirectHandler):
         return None  # observe the redirect instead of following it invisibly
 
 
+class SessionExpired(Exception):
+    """The server answered a request for a course file with the login page.
+
+    Raised the moment a run can prove the session is gone, so `download` can stop with one
+    useful message instead of emitting a FAIL line for every remaining resource. Deliberately
+    not a URLError/HTTPError subclass: those are per-resource problems, and this one is not.
+    """
+
+    def __init__(self, final_url):
+        super().__init__(final_url)
+        self.final_url = final_url
+
+
+# Moodle sends an expired session to /login/index.php, or to /auth/<plugin>/ for an SSO
+# setup. The path is the reliable tell, because the login page itself answers 200. A file that
+# happens to live under a `/login/` directory would trip this too, which has not happened in a
+# course tree - and if it ever does, the cost is a stopped run the user resumes with --update.
+LOGIN_RE = re.compile(r"/(?:login|auth)(?:/|$)", re.I)
+
+
+def is_login_url(url: str) -> bool:
+    """True when `url` is a login page rather than the file that was asked for."""
+    return bool(LOGIN_RE.search(urlparse(url).path))
+
+
 def encode_unsafe(url: str) -> str:
     """Percent-encode characters a server left raw in a Location header.
 
@@ -261,7 +291,7 @@ class Fetcher:
             "sniff": sniff(head, ext),
             "head_hex": head[:8].hex(),
             "redirects": chain[:-1],
-            "login_redirect": bool(re.search(r"/(login|auth)/", urlparse(final_url).path, re.I)),
+            "login_redirect": is_login_url(final_url),
         }
 
 
@@ -436,6 +466,41 @@ def human(n):
 
 
 # ---------------------------------------------------------------------------
+# dead session
+# ---------------------------------------------------------------------------
+
+#: Manifest status for a resource the run did not fetch because the session died.
+SESSION_EXPIRED = "session_expired"
+
+REAUTH_HINT = ('re-authenticate in the browser and read a fresh MoodleSession cookie '
+               '(see SKILL.md -> "Getting the session cookie")')
+
+
+def dead_session_report(final_url: str, remaining: int, had_cookie: bool,
+                        resume_hint: str = "") -> str:
+    """Everything the user has to read once, when the session dies mid-run.
+
+    Returned as one string so it prints as one block. The point is that the user sees
+    *re-authenticate*: an expired session is a five-second fix, and the failure mode this
+    replaces - one FAIL line per remaining resource - buries that fix under its symptoms.
+    """
+    lines = [
+        f"STOP  the server sent the login page for {final_url}",
+        "      the Moodle session is no longer valid, so the run stops here",
+    ]
+    if not had_cookie:
+        lines.append("      no cookie was supplied this run: pass one with --cookie, "
+                     "--cookie-file or --cookie-env")
+    if remaining:
+        lines.append(f"      {remaining} resource(s) in the plan were not attempted")
+        lines.append("      files already downloaded are kept and manifest.json is written")
+    lines.append(f"      {REAUTH_HINT}")
+    if resume_hint:
+        lines.append(f"      {resume_hint}")
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
 # discover
 # ---------------------------------------------------------------------------
 
@@ -508,6 +573,13 @@ def cmd_discover(args):
     if args.section is not None:
         url = f"{url}{'&' if '?' in url else '?'}section={args.section}"
     final_url, headers, stream, chain = f.open(url)
+    if is_login_url(final_url):
+        # An empty activity list from a login page reads as "this course has no files",
+        # which is worse than no answer at all. Say what happened instead.
+        print(dead_session_report(final_url, remaining=0, had_cookie=bool(f.cookie),
+                                  resume_hint="then re-run once the session is live"),
+              file=sys.stderr)
+        return 1
     html = stream.read().decode("utf-8", "replace")
     stream.close()
     modtypes = [m.strip() for m in args.modtypes.split(",") if m.strip()]
@@ -551,6 +623,38 @@ def _id_from_url(url):
     return m.group(1) if m else None
 
 
+def _session_expired_entry(item, final_url=None):
+    """Manifest entry for a resource the dead session kept us from fetching.
+
+    `final_url` is set for the resource whose request proved the session was gone, and
+    None for the ones the run did not bother to ask for.
+    """
+    if final_url is None:
+        error = "not attempted: the session expired earlier in this run"
+    else:
+        error = (f"redirected to the login page ({final_url}) - "
+                 "the Moodle session is not valid")
+    return {"id": item["id"], "course": item["course"], "title": item["title"],
+            "source_url": item["url"], "final_url": final_url,
+            "status": SESSION_EXPIRED, "error": error}
+
+
+def _remember(manifest, entry):
+    """Put one entry in the manifest, replacing any earlier attempt at the same id.
+
+    The manifest is keyed by resource id: re-running a plan must not leave the previous
+    attempt behind as a second row for the same file.
+    """
+    manifest["resources"] = [r for r in manifest["resources"] if r["id"] != entry["id"]]
+    manifest["resources"].append(entry)
+
+
+def _write_manifest(path: Path, manifest):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
+                    encoding="utf-8")
+
+
 def cmd_download(args):
     items = load_plan(args.plan)
     dest_root = Path(args.dest).expanduser()
@@ -567,7 +671,17 @@ def cmd_download(args):
     f = Fetcher(read_cookie(args), args.timeout, args.insecure)
 
     failures = 0
-    for item in items:
+    dead = False  # set once a login redirect proves the session is gone for good
+    for pos, item in enumerate(items):
+        if dead:
+            # One login redirect is proof for the whole run: do not fire another doomed
+            # request per remaining resource. That was the old behaviour - a wall of
+            # identical FAIL lines that hid the one thing to do about it.
+            failures += 1
+            print(f"skip  {item['course']}#{item['id']}: session expired, not attempted")
+            _remember(manifest, _session_expired_entry(item))
+            continue
+
         prev = by_id.get(item["id"])
         try:
             info = f.resolve(item["url"])
@@ -577,7 +691,7 @@ def cmd_download(args):
             target = course_dir / name
 
             if info["login_redirect"]:
-                raise RuntimeError(f"redirected to a login page ({info['final_url']}) - session expired?")
+                raise SessionExpired(info["final_url"])
 
             if args.update and prev and prev.get("status") in ("ok", "suspect") and target.exists():
                 if target.stat().st_size == prev.get("bytes"):
@@ -586,11 +700,17 @@ def cmd_download(args):
 
             if info["declared_bytes"] and args.max_bytes and info["declared_bytes"] > args.max_bytes:
                 print(f"SKIP  {item['course']}/{name}: {human(info['declared_bytes'])} exceeds --max-bytes")
-                manifest["resources"].append(_entry(item, info, None, None, 0, "too_large"))
+                _remember(manifest, _entry(item, info, None, None, 0, "too_large"))
                 failures += 1
                 continue
 
             final_url, headers, stream, chain = f.open(item["url"])
+            if is_login_url(final_url):
+                # The session died between the resolve and the fetch of the same file, so
+                # the body that just arrived is the login page under the file's name. Close
+                # it unread: an HTML login page must never be saved as a .pdf.
+                stream.close()
+                raise SessionExpired(final_url)
             tmp = course_dir / (name + ".part")
             h, n = hashlib.sha256(), 0
             with open(tmp, "wb") as fh:
@@ -637,25 +757,36 @@ def cmd_download(args):
                 entry["status"] = "truncated"
                 failures += 1
                 print(f"WARN  {item['course']}/{name}: got {n}B of {declared}B")
-            manifest["resources"] = [r for r in manifest["resources"] if r["id"] != item["id"]]
-            manifest["resources"].append(entry)
-            manifest_path.parent.mkdir(parents=True, exist_ok=True)
-            manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
-                                     encoding="utf-8")
+            _remember(manifest, entry)
+            _write_manifest(manifest_path, manifest)
+        except SessionExpired as e:
+            dead = True
+            failures += 1
+            manifest["stopped_reason"] = SESSION_EXPIRED
+            print(f"FAIL  {item['course']}#{item['id']}: the server sent the login page "
+                  f"({e.final_url}) - the session is no longer valid", file=sys.stderr)
+            print(dead_session_report(e.final_url, len(items) - pos - 1, had_cookie=bool(f.cookie),
+                                      resume_hint="then re-run the same command with --update to "
+                                                  "pick up where this run stopped"), file=sys.stderr)
+            _remember(manifest, _session_expired_entry(item, e.final_url))
+            _write_manifest(manifest_path, manifest)
         except (HTTPError, URLError, RuntimeError, OSError) as e:
             failures += 1
             print(f"FAIL  {item['course']}#{item['id']}: {e}", file=sys.stderr)
-            manifest["resources"] = [r for r in manifest["resources"] if r["id"] != item["id"]]
-            manifest["resources"].append({"id": item["id"], "course": item["course"],
-                                          "title": item["title"], "source_url": item["url"],
-                                          "status": "error", "error": str(e)[:300]})
-            manifest_path.parent.mkdir(parents=True, exist_ok=True)
-            manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
-                                     encoding="utf-8")
+            _remember(manifest, {"id": item["id"], "course": item["course"],
+                                 "title": item["title"], "source_url": item["url"],
+                                 "status": "error", "error": str(e)[:300]})
+            _write_manifest(manifest_path, manifest)
 
+    if dead:
+        # The skipped entries were added after the last per-item write.
+        _write_manifest(manifest_path, manifest)
     ok = [r for r in manifest["resources"] if r.get("status") == "ok"]
     print(f"\n{len(ok)} ok / {len(manifest['resources'])} resources -> {manifest_path}")
-    if failures:
+    if dead:
+        print("stopped: the session expired, so the remaining resources were not attempted. "
+              "Re-authenticate and re-run with --update to fetch the rest.")
+    elif failures:
         print(f"{failures} problem(s): run `verify` and read the manifest before reporting success.")
     return 1 if failures else 0
 

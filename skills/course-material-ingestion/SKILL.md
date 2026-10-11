@@ -1,7 +1,7 @@
 ---
 name: course-material-ingestion
 description: Download Moodle course files and keep notes in sync.
-version: 1.1.0
+version: 1.2.0
 author: Nader Amine (httpurax), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -213,6 +213,12 @@ name, then checks it before renaming it into place: extension-specific magic byt
 HTML sniff. A file that is really a login page or an error page is recorded as `html_error`
 in the manifest and moved aside with a `.bad` suffix — never silently kept.
 
+A session that dies mid-plan stops the run at the first login redirect instead of failing
+every remaining item: files already downloaded are kept, the resources it could not fetch are
+recorded as `session_expired`, `manifest.json` is still written, and the run says so on
+stderr. Re-authenticate and re-run the same command with `--update` — it resumes where it
+stopped.
+
 ⑤ **Organise one folder per course.** Folder names come from the course title on the course
 page; filenames are sanitised for Windows (`<>:"/\|?*` stripped, trailing dots/spaces
 trimmed, 150-char cap preserving the extension) but otherwise left exactly as Moodle serves
@@ -222,7 +228,8 @@ get ` (2)`, ` (3)` suffixes.
 ⑥ **Keep a manifest.** `manifest.json` at the destination root records, per resource:
 `course`, `id`, `source_url`, `final_url`, `title`, `filename`, `path`, `bytes`, `sha256`,
 `status`. It is the single source of truth for step ⑦ and makes re-runs idempotent — `--update`
-skips any id whose sha256 still matches.
+skips any id whose sha256 still matches. A run that stopped early also sets a top-level
+`stopped_reason`, so a manifest that is short of resources is never mistaken for a complete one.
 
 ⑦ **Reconcile the notes.** After renaming or downloading, note files still point at the old
 placeholders. `sync-links` rewrites `[[Resource_3]]`, `[[Resource_3|alias]]`, and
@@ -259,10 +266,16 @@ summary built on HTML saved as `.pdf`.
 - **A wrapped bash command on Windows is not the same command.** `\` at end-of-line is bash
   syntax; PowerShell needs a backtick. When a Windows user reports a strange argument or
   "unrecognized arguments", look for a stray `\` before rewriting anything else.
+- **An expired session stops the whole run — that is the point.** A request that comes back as
+  `/login/index.php` (or `/auth/...`) proves the session is gone, so `download` stops there
+  rather than firing a doomed request per remaining resource, and `discover` reports it
+  instead of returning an empty course. The manifest says `stopped_reason: session_expired`
+  and marks each un-fetched resource `session_expired`. Re-authenticate and re-run with
+  `--update`; everything already on disk is kept and skipped.
 - **An ambient cookie can surprise you.** If `MOODLE_SESSION_COOKIE` is set, the script uses
   it when no flag is given and says so on stderr. That is a convenience, not a substitute
-  for a fresh session: an expired ambient cookie produces the same login-redirect failures
-  as none at all, just less obviously.
+  for a fresh session: an expired ambient cookie produces the same login-redirect stop as
+  none at all, just less obviously.
 
 ## Verification
 
@@ -277,3 +290,6 @@ A run is done only when all of these hold, and `verify` proves it:
    `view.php`, or `File.docx` placeholder, and no `[[...]]` target in the notes is missing
    from disk.
 5. The report names every failure; a partial success is reported as partial.
+6. No manifest entry is left `session_expired` in a run you report as complete. That status
+   means the session died and the run stopped short — re-authenticate and re-run with
+   `--update` until it is gone, then report the real count.

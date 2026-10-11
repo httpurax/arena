@@ -1,0 +1,35 @@
+name: tests
+
+# Every PR, plus every push to main, on both platforms the skill claims to support.
+# Pushes to a PR branch do not need a second run - `pull_request` already covers them.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unittest:
+    name: ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false # a Windows-only failure must not hide the Linux result
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    defaults:
+      run:
+        working-directory: skills/course-material-ingestion
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      # No install step: the skill is stdlib-only by convention, and the suite runs a
+      # throwaway localhost Moodle instead of reaching the network.
+      - name: Run the test suite
+        run: python -m unittest discover -s tests

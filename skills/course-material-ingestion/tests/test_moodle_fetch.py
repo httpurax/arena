@@ -129,10 +129,64 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
 
+class ExpiredSessionHandler(Handler):
+    """A Moodle whose session dies in the middle of a run.
+
+    `Handler` answers every cookie-carrying request, which cannot model a session that times
+    out with half a plan still to fetch. This one revokes the session at a chosen point and
+    answers everything after that with the login redirect, which is what Moodle does when the
+    `MoodleSession` cookie it was given has expired.
+
+    Two ways to choose that point, whichever the test is about:
+
+    * `expire_on` - a substring of the request path; the session dies on that request.
+    * `expire_at` - the number of authenticated requests the session survives; the next one
+      is answered with the login page. Used to expire *between* two steps of one resource.
+
+    `requested` records every path the client asked for, so a test can prove a stopped run
+    did not go on to fire a doomed request per remaining resource.
+    """
+
+    expire_on = None
+    expire_at = None
+    expired = False
+    valid_requests = 0
+    requested = []
+
+    @classmethod
+    def reset(cls, expire_on=None, expire_at=None):
+        cls.expire_on = expire_on
+        cls.expire_at = expire_at
+        cls.expired = False
+        cls.valid_requests = 0
+        cls.requested = []
+
+    def _auth(self):
+        cls = type(self)
+        if cls.expired:
+            return False
+        if not super()._auth():
+            return False            # no cookie at all: a login redirect, as before
+        if cls.expire_at is not None and cls.valid_requests >= cls.expire_at:
+            cls.expired = True
+            return False
+        if cls.expire_on and cls.expire_on in self.path:
+            cls.expired = True
+            return False
+        cls.valid_requests += 1
+        return True
+
+    def do_GET(self):
+        type(self).requested.append(unquote(self.path))
+        return super().do_GET()
+
+
 class ServerMixin(unittest.TestCase):
+    handler = Handler  # a subclass with a less cooperative Moodle replaces this
+
     @classmethod
     def setUpClass(cls):
-        cls.httpd = HTTPServer(("127.0.0.1", 0), Handler)
+        cls.httpd = HTTPServer(("127.0.0.1", 0), cls.handler)
         cls.thread = threading.Thread(target=cls.httpd.serve_forever, daemon=True)
         cls.thread.start()
         cls.base = f"http://127.0.0.1:{cls.httpd.server_port}"
@@ -152,12 +206,48 @@ class ServerMixin(unittest.TestCase):
         if self._saved_cookie_env is not None:
             os.environ["MOODLE_SESSION_COOKIE"] = self._saved_cookie_env
 
+    # -- download helpers, shared by the integration and dead-session tests -------------
+
+    def _plan(self, ids, course="Comprehension and Oral Expression 1"):
+        return [{"course": course,
+                 "resources": [{"id": i, "url": f"{self.base}/mod/resource/view.php?id={i}",
+                                "title": f"Resource {i}"} for i in ids]}]
+
+    def _run_download(self, ids, cookie="MoodleSession=abc123"):
+        """`download` in-process: (returncode, dest, manifest, plan)."""
+        rc, dest, manifest, plan, _output = self._run_download_captured(ids, cookie)
+        return rc, dest, manifest, plan
+
+    def _run_download_captured(self, ids, cookie="MoodleSession=abc123"):
+        """The same run, plus everything it printed.
+
+        When a session dies the message *is* the fix, so the tests read what the run said
+        instead of trusting the exit code to carry it.
+        """
+        dest = Path(tempfile.mkdtemp())
+        plan = Path(tempfile.mkdtemp()) / "plan.json"  # kept out of dest on purpose
+        plan.write_text(json.dumps(self._plan(ids)), encoding="utf-8")
+        with capture_output() as buf:
+            rc = mf.cmd_download(fake_args(
+                plan=str(plan), dest=str(dest), manifest=None, update=False, max_bytes=None,
+                cookie=cookie, cookie_file=None, timeout=10, insecure=False))
+        manifest = json.loads((dest / "manifest.json").read_text(encoding="utf-8"))
+        return rc, dest, manifest, plan, buf.getvalue()
+
 
 def fake_args(**kw):
     """An argparse namespace look-alike; unknown flags stay absent, like real ones."""
     base = {"cookie": None, "cookie_file": None, "cookie_env": None}
     base.update(kw)
     return type("A", (), base)()
+
+
+@contextlib.contextmanager
+def capture_output():
+    """stdout and stderr in one string - that is how the user sees a run."""
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+        yield buf
 
 
 class FilenameTests(unittest.TestCase):
@@ -281,22 +371,6 @@ class LinkSyncTests(unittest.TestCase):
 
 
 class IntegrationTests(ServerMixin):
-    def _plan(self, ids, course="Comprehension and Oral Expression 1"):
-        return [{"course": course,
-                 "resources": [{"id": i, "url": f"{self.base}/mod/resource/view.php?id={i}",
-                                "title": f"Resource {i}"} for i in ids]}]
-
-    def _run_download(self, ids, cookie="MoodleSession=abc123"):
-        dest = Path(tempfile.mkdtemp())
-        plan = Path(tempfile.mkdtemp()) / "plan.json"  # kept out of dest on purpose
-        plan.write_text(json.dumps(self._plan(ids)), encoding="utf-8")
-        rc = mf.cmd_download(type("A", (), {
-            "plan": str(plan), "dest": str(dest), "manifest": None, "update": False,
-            "max_bytes": None, "cookie": cookie, "cookie_file": None,
-            "timeout": 10, "insecure": False})())
-        manifest = json.loads((dest / "manifest.json").read_text(encoding="utf-8"))
-        return rc, dest, manifest, plan
-
     def test_resolve_reads_the_real_filename_off_the_redirect(self):
         info = mf.Fetcher("MoodleSession=abc123", timeout=10).resolve(
             f"{self.base}/mod/resource/view.php?id=42")
@@ -337,9 +411,10 @@ class IntegrationTests(ServerMixin):
         self.assertFalse(list(course.glob("download.pdf")))
         self.assertNotEqual(rc, 0)
 
-    def test_expired_session_makes_download_fail_loudly(self):
+    def test_expired_session_stops_instead_of_downloading(self):
+        """A login redirect stops the run now - see DeadSessionTests for the whole contract."""
         rc, dest, manifest, plan = self._run_download([42], cookie="")
-        self.assertEqual([r["status"] for r in manifest["resources"]], ["error"])
+        self.assertEqual([r["status"] for r in manifest["resources"]], ["session_expired"])
         self.assertIn("login", manifest["resources"][0]["error"].lower())
         self.assertFalse(list((dest / "Comprehension and Oral Expression 1").glob("*.pdf")))
         self.assertNotEqual(rc, 0)
@@ -372,6 +447,150 @@ class IntegrationTests(ServerMixin):
             "manifest": str(dest / "manifest.json"), "root": str(dest),
             "notes": str(vault)})())
         self.assertNotEqual(rc3, 0)  # [[Resource_3]] does not exist on disk
+
+
+class DeadSessionMessageTests(unittest.TestCase):
+    """The stop message is the whole point of the feature, so it is asserted on directly."""
+
+    def test_names_the_login_page_the_count_and_the_way_back(self):
+        msg = mf.dead_session_report("https://moodle.example.com/login/index.php",
+                                     remaining=7, had_cookie=True)
+        self.assertIn("https://moodle.example.com/login/index.php", msg)
+        self.assertIn("7 resource(s)", msg)
+        self.assertIn("re-authenticate", msg.lower())
+
+    def test_carries_the_caller_s_resume_hint(self):
+        # Only `download` has a run to resume, so only it asks for the --update line.
+        msg = mf.dead_session_report("https://m/login/index.php", remaining=1, had_cookie=True,
+                                     resume_hint="re-run with --update")
+        self.assertIn("--update", msg)
+        self.assertNotIn("--update", mf.dead_session_report(
+            "https://m/login/index.php", remaining=1, had_cookie=True))
+
+    def test_says_nothing_about_cookies_when_one_was_supplied(self):
+        msg = mf.dead_session_report("https://m/login/index.php", remaining=1, had_cookie=True)
+        self.assertNotIn("no cookie was supplied", msg)
+
+    def test_names_the_cookie_flags_when_none_was_supplied(self):
+        # The commonest cause of a "dead" session is that no cookie was passed at all.
+        msg = mf.dead_session_report("https://m/login/index.php", remaining=1, had_cookie=False)
+        self.assertIn("no cookie was supplied", msg)
+        self.assertIn("--cookie-env", msg)
+
+    def test_a_discover_stop_does_not_pretend_a_manifest_was_written(self):
+        # discover writes no manifest, so the download-specific lines must stay out of it.
+        msg = mf.dead_session_report("https://m/login/index.php", remaining=0, had_cookie=True)
+        self.assertNotIn("manifest.json", msg)
+
+    def test_is_login_url_matches_moodle_login_and_sso_paths(self):
+        self.assertTrue(mf.is_login_url("https://moodle.example.com/login/index.php"))
+        self.assertTrue(mf.is_login_url("https://moodle.example.com/login"))
+        self.assertTrue(mf.is_login_url("https://moodle.example.com/auth/oidc/"))
+        self.assertFalse(mf.is_login_url("https://moodle.example.com/course/view.php?id=1"))
+        self.assertFalse(mf.is_login_url(
+            "https://moodle.example.com/pluginfile.php/1/mod_resource/content/0/References.pdf"))
+
+
+class DeadSessionTests(ServerMixin):
+    """A session that dies mid-plan stops the run once - it does not fail item by item.
+
+    Each test decides how the session dies; `ExpiredSessionHandler` does the rest.
+    """
+
+    handler = ExpiredSessionHandler
+
+    def setUp(self):
+        super().setUp()
+        ExpiredSessionHandler.reset()
+
+    def test_stopping_at_the_first_login_redirect_keeps_what_was_downloaded(self):
+        ExpiredSessionHandler.reset(expire_on="id=43")
+        rc, dest, manifest, plan, output = self._run_download_captured([42, 43, 44])
+
+        # 42 finished before the session died, so its bytes are still on disk...
+        course = dest / "Comprehension and Oral Expression 1"
+        self.assertEqual((course / "References.pdf").read_bytes(), PDF)
+        # ...and nothing was written for 43, whose request is the one that proved it dead.
+        self.assertEqual(sorted(p.name for p in course.iterdir()), ["References.pdf"])
+
+        statuses = {r["id"]: r["status"] for r in manifest["resources"]}
+        self.assertEqual(statuses, {"42": "ok", "43": "session_expired", "44": "session_expired"})
+        self.assertEqual(manifest["stopped_reason"], "session_expired")
+        self.assertNotEqual(rc, 0)
+
+    def test_the_rest_of_the_plan_is_never_requested(self):
+        ExpiredSessionHandler.reset(expire_on="id=43")
+        self._run_download_captured([42, 43, 44])
+        self.assertNotIn("/mod/resource/view.php?id=44", ExpiredSessionHandler.requested,
+                         "once the session is known to be dead, do not probe item by item")
+
+    def test_the_message_says_how_to_resume(self):
+        ExpiredSessionHandler.reset(expire_on="id=43")
+        rc, dest, manifest, plan, output = self._run_download_captured([42, 43, 44])
+        self.assertIn("login", output.lower())
+        self.assertIn("re-authenticate", output.lower())
+        self.assertIn("--update", output)
+        self.assertIn("1 resource(s) in the plan were not attempted", output)
+        self.assertIn("manifest.json", output)
+
+    def test_a_stopped_run_leaves_a_manifest_verify_can_read(self):
+        ExpiredSessionHandler.reset(expire_on="id=43")
+        rc, dest, manifest, plan, output = self._run_download_captured([42, 43, 44])
+        self.assertTrue((dest / "manifest.json").exists())
+        with capture_output() as buf:
+            rc2 = mf.cmd_verify(fake_args(manifest=str(dest / "manifest.json"),
+                                          root=str(dest), notes=None))
+        self.assertNotEqual(rc2, 0)
+        self.assertIn("session_expired", buf.getvalue())
+
+    def test_a_missing_cookie_is_called_out(self):
+        # No cookie at all is the commonest "dead session"; the message says so instead of
+        # leaving the user to wonder why every request bounced.
+        rc, dest, manifest, plan, output = self._run_download_captured([42], cookie="")
+        self.assertIn("no cookie was supplied", output)
+        self.assertIn("--cookie-env", output)
+
+    def test_an_expiry_between_resolve_and_fetch_never_saves_the_login_page(self):
+        # resolve costs two authenticated requests (view.php -> pluginfile.php), so allowing
+        # exactly two kills the session right before the body fetch of the same resource:
+        # what arrives is the login page under the file's own name.
+        ExpiredSessionHandler.reset(expire_at=2)
+        rc, dest, manifest, plan, output = self._run_download_captured([42])
+        course = dest / "Comprehension and Oral Expression 1"
+        self.assertEqual(list(course.glob("*")), [],
+                         "no .part file and no login page saved under a .pdf name")
+        entry = manifest["resources"][0]
+        self.assertEqual(entry["status"], "session_expired")
+        self.assertIn("login", entry["error"].lower())
+        self.assertNotEqual(rc, 0)
+
+    def test_only_a_login_page_stops_the_run(self):
+        # A resource that is simply broken must not be mistaken for an expired session.
+        rc, dest, manifest, plan, output = self._run_download_captured([44, 42])
+        statuses = [r["status"] for r in manifest["resources"]]
+        self.assertEqual(statuses, ["html_error", "ok"])
+        self.assertNotIn("session_expired", statuses)
+        self.assertNotIn("STOP", output)
+
+    def test_a_healthy_session_runs_to_the_end_untouched(self):
+        rc, dest, manifest, plan, output = self._run_download_captured([42, 46])
+        self.assertEqual(rc, 0, output)
+        self.assertEqual({r["status"] for r in manifest["resources"]}, {"ok"})
+        self.assertNotIn("STOP", output)
+        self.assertNotIn("stopped_reason", manifest)
+
+    def test_discover_reports_a_dead_session_instead_of_an_empty_course(self):
+        # A login page renders zero activities; reporting that as "this course has no files"
+        # is worse than no answer at all.
+        with capture_output() as buf:
+            rc = mf.cmd_discover(fake_args(
+                course_url=f"{self.base}/course/view.php?id=1", section=None,
+                modtypes="resource,folder,page,url,book,file", cookie="", cookie_file=None,
+                timeout=10, insecure=False))
+        output = buf.getvalue()
+        self.assertNotEqual(rc, 0)
+        self.assertIn("re-authenticate", output.lower())
+        self.assertNotIn('"activities"', output)
 
 
 # A value distinctive enough that "the secret is absent" means something: a short or
