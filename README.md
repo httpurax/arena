@@ -70,6 +70,10 @@ skills/<skill-name>/
 ├── references/           # longer docs the skill points at
 ├── examples/             # sample inputs
 └── tests/                # stdlib unittest suite, no network
+tools/
+├── lint_skills.py        # conformance gate: frontmatter, compile, secrets, tests
+├── test_lint_skills.py   # the linter's self-test (broken fixture rejected, repo accepted)
+└── fixtures/broken-skill # a deliberately non-conforming skill, committed for that test
 ```
 
 ## Running the tests
@@ -95,6 +99,31 @@ an HTML error page served with a `.pdf` name, and a session that expires halfway
 plan, so the failure paths are actually exercised rather than described. It also covers the
 session-cookie sources (precedence, Netscape parsing, stdin) and asserts the invariant that
 the cookie value never appears in `manifest.json`, on stdout, or in an error message.
+
+## Linting
+
+`tools/lint_skills.py` is the conformance gate for everything under `skills/`. For every
+directory directly under it, it checks that `SKILL.md` exists and its frontmatter is valid
+YAML with non-empty `name`, `description`, `version`, `license`, and `platforms` (where
+`name` matches the directory, `version` is `X.Y.Z`, and each platform is `linux`, `macos`,
+or `windows`); that every `.py` file compiles; that no text file carries an embedded
+credential; and that a skill shipping a `tests/` directory passes
+`python -m unittest discover -s tests`. It is stdlib-only, so it runs on a bare interpreter:
+
+```bash
+python3 tools/lint_skills.py          # exit 0 = every skill conforms, non-zero = file + rule
+```
+
+Failures name the exact file, line, and rule, and never echo the matched value of a
+suspected secret. The scan covers credential-named literals (`api_key = "…"`,
+`password = "…"`, PEM private-key blocks), vendor key formats, and basic-auth URLs; it
+deliberately does not flag the bare name `secret`, because the test suite here uses a
+constant named `SECRET` as a fake canary, and an allowlist would only weaken the signal.
+
+`tools/test_lint_skills.py` is the linter's own self-test: the broken fixture under
+`tools/fixtures/broken-skill/` (missing `description`, `version: 1.0`, two fake secrets)
+must be rejected with those rules named, and this repo must pass. CI runs the linter and
+its self-test on the same matrix as the skill suite.
 
 ## Conventions
 

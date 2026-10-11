@@ -33,3 +33,27 @@ jobs:
       # throwaway localhost Moodle instead of reaching the network.
       - name: Run the test suite
         run: python -m unittest discover -s tests
+
+  lint:
+    name: lint / ${{ matrix.os }} / Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false # a Windows-only failure must not hide the Linux result
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      # Conformance gate for skills/: frontmatter (required keys, name == directory,
+      # X.Y.Z version, allowed platforms), .py compilation, embedded-secret scan, and each
+      # skill's own tests/ suite. Stdlib-only, so there is nothing to install first.
+      - name: Lint skills
+        run: python tools/lint_skills.py
+      # The linter's self-test: tools/fixtures/broken-skill/ must be rejected with the right
+      # rules named, and this repo's own skills must pass.
+      - name: Self-test the linter
+        run: python tools/test_lint_skills.py
