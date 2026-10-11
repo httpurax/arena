@@ -729,10 +729,23 @@ def cmd_download(args):
             if info["login_redirect"]:
                 raise SessionExpired(info["final_url"])
 
-            if args.update and prev and prev.get("status") in ("ok", "suspect") and target.exists():
-                if target.stat().st_size == prev.get("bytes"):
-                    print(f"skip  {item['course']}/{name} (unchanged)")
-                    continue
+            if args.update and prev and prev.get("status") in ("ok", "suspect"):
+                # The resolved name can belong to another resource after a collision;
+                # the manifest path is the identity of the file this id downloaded.
+                recorded_path = prev.get("path")
+                if recorded_path:
+                    previous_file = Path(recorded_path).expanduser()
+                    try:
+                        unchanged = (
+                            previous_file.is_file()
+                            and previous_file.stat().st_size == prev.get("bytes")
+                            and sha256_file(previous_file) == prev.get("sha256")
+                        )
+                    except OSError:
+                        unchanged = False
+                    if unchanged:
+                        print(f"skip  {item['course']}/{name} (unchanged)")
+                        continue
 
             if info["declared_bytes"] and args.max_bytes and info["declared_bytes"] > args.max_bytes:
                 print(f"SKIP  {item['course']}/{name}: {human(info['declared_bytes'])} exceeds --max-bytes")
