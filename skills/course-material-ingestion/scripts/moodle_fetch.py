@@ -655,6 +655,42 @@ def _write_manifest(path: Path, manifest):
                     encoding="utf-8")
 
 
+def sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(CHUNK), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def pick_destination(target: Path, size: int, sha: str):
+    """Choose where a download of `size` bytes with digest `sha` is written.
+
+    `target` is the name the resource asks for. The candidates are `name.ext`, then
+    `name (2).ext`, `name (3).ext`, and so on:
+
+    * a free name takes the file;
+    * a name held by a file of another size is a different file - skipped without reading it;
+    * a name held by a file of the same size is hashed. Identical bytes mean the file is
+      already there (the fast path); different bytes mean another resource owns the name.
+
+    Returns (dest, clash). `clash` is the first same-size file with different bytes, which is
+    why the download is not written under `target`; it is None otherwise. When `dest` already
+    exists it holds identical bytes, so overwriting it is harmless.
+    """
+    clash = None
+    candidate, k = target, 2
+    while candidate.exists():
+        if candidate.stat().st_size == size:
+            if sha256_file(candidate) == sha:
+                return candidate, clash
+            if clash is None:
+                clash = candidate
+        candidate = target.with_name(f"{target.stem} ({k}){target.suffix}")
+        k += 1
+    return candidate, clash
+
+
 def cmd_download(args):
     items = load_plan(args.plan)
     dest_root = Path(args.dest).expanduser()
@@ -735,28 +771,31 @@ def cmd_download(args):
                 failures += 1
                 print(f"FAIL  {item['course']}/{name}: server returned an HTML page, kept as {bad.name}")
             else:
-                if target.exists() and target.stat().st_size != n:
-                    k = 2
-                    while True:
-                        alt = target.with_name(f"{Path(name).stem} ({k}){Path(name).suffix}")
-                        if not alt.exists():
-                            target = alt
-                            break
-                        k += 1
+                target, clash = pick_destination(target, n, sha)
+                reused = target.exists()  # identical bytes already on disk: overwrite is a no-op
                 tmp.replace(target)
                 status = "ok" if kind in ("ok", "unknown") else "suspect"
+                if clash is not None:
+                    # Two different resources want the same name and size. Neither file is
+                    # overwritten; the user needs to know they collide.
+                    what = (f"this download is identical to {target.name}, which is reused"
+                            if reused else f"this download is saved as {target.name}")
+                    print(f"WARN  {item['course']}/{name}: another resource with the same name "
+                          f"and size is already on disk as {clash.name} with different content; "
+                          f"{what}. Both files are kept - check that the two resources are meant "
+                          f"to share a name.")
                 if status == "suspect":
                     failures += 1
-                    print(f"WARN  {item['course']}/{name}: bytes do not match the {Path(name).suffix} "
-                          f"signature (saved as {status})")
+                    print(f"WARN  {item['course']}/{target.name}: bytes do not match the "
+                          f"{Path(name).suffix} signature (saved as {status})")
                 else:
-                    print(f"ok    {item['course']}/{name}  {human(n)}")
+                    print(f"ok    {item['course']}/{target.name}  {human(n)}")
 
             entry = _entry(item, info, target if status != "html_error" else None, sha, n, status)
             if declared and n and declared != n and status == "ok":
                 entry["status"] = "truncated"
                 failures += 1
-                print(f"WARN  {item['course']}/{name}: got {n}B of {declared}B")
+                print(f"WARN  {item['course']}/{target.name}: got {n}B of {declared}B")
             _remember(manifest, entry)
             _write_manifest(manifest_path, manifest)
         except SessionExpired as e:

@@ -1,7 +1,7 @@
 ---
 name: course-material-ingestion
 description: Download Moodle course files and keep notes in sync.
-version: 1.2.0
+version: 1.2.1
 author: Nader Amine (httpurax), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -222,8 +222,13 @@ stopped.
 ⑤ **Organise one folder per course.** Folder names come from the course title on the course
 page; filenames are sanitised for Windows (`<>:"/\|?*` stripped, trailing dots/spaces
 trimmed, 150-char cap preserving the extension) but otherwise left exactly as Moodle serves
-them, including accents, parentheses, and Arabic/French characters. Collisions inside a course
-get ` (2)`, ` (3)` suffixes.
+them, including accents, parentheses, and Arabic/French characters. Two resources in one course
+that resolve to the same filename never overwrite each other. The bytes decide:
+the same size and the same SHA-256 is one file, reused without a warning; the same size with
+different bytes keeps both, the file downloaded second becomes ` (2)`, and `download` prints a
+`WARN` line naming both files; a different size takes the next free ` (2)` / ` (3)` suffix
+without reading either file. The full rule is in `references/plan-format.md`, under
+"Name collisions inside a course".
 
 ⑥ **Keep a manifest.** `manifest.json` at the destination root records, per resource:
 `course`, `id`, `source_url`, `final_url`, `title`, `filename`, `path`, `bytes`, `sha256`,

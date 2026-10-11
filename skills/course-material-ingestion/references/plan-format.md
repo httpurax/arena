@@ -120,6 +120,24 @@ A run that stops because the session died also sets a top-level
 mistaken for a complete one. The `error` field says which resource proved the session was gone
 (`redirected to the login page (...)`) and which were simply not attempted.
 
+## Name collisions inside a course
+
+Two resources can resolve to the same filename, for example two activities that both serve
+`Notes.pdf`. `download` never overwrites one with the other. It decides by size first and
+reads a file's bytes only when the sizes match:
+
+| File already on disk under the name | What `download` does | Output |
+|---|---|---|
+| nothing | writes the file under its own name | none |
+| same size, same SHA-256 | it is the same file: written over with identical bytes, one file on disk | none |
+| same size, different bytes | keeps both: the download is saved as `Notes (2).pdf` (or the next free suffix) | a `WARN` line naming both files |
+| different size | a different file: takes the next free suffix, no hashing | none |
+
+Each resource keeps its own manifest entry, with its own `path` and `sha256`. A re-run does not pile
+up copies: if the identical copy already sits under a suffix, it is reused. A collision warning does
+not fail the run, but it means two activities in the plan share a name, so check that they really are
+different files before relying on the names.
+
 ## Rename map for `sync-links`
 
 When files were renamed outside `download`, hand `sync-links` a plain map. Keys are the
