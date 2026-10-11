@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# course-material-ingestion scratch: never commit a session cookie or downloaded course
+cookies.txt
+manifest.json
+*.part
+*.bad
