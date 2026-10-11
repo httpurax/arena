@@ -593,6 +593,167 @@ class DeadSessionTests(ServerMixin):
         self.assertNotIn('"activities"', output)
 
 
+# Two different resources, one filename. The A/B pair has the same size and different bytes:
+# the case that used to be overwritten silently. Same-size identical bytes and a size mismatch
+# cover the other two branches of the collision rule.
+SAME_SIZE_A = b"%PDF-1.4\n" + b"A" * 300 + b"\n%%EOF\n"
+SAME_SIZE_B = b"%PDF-1.4\n" + b"B" * 300 + b"\n%%EOF\n"
+SHORTER = b"%PDF-1.4\n" + b"C" * 10 + b"\n%%EOF\n"
+assert len(SAME_SIZE_A) == len(SAME_SIZE_B) and len(SHORTER) != len(SAME_SIZE_A)
+
+
+class CollisionHandler(Handler):
+    """A Moodle where several resources are all served as `Notes.pdf`."""
+
+    files = {
+        **Handler.files,
+        "/pluginfile.php/7/mod_resource/content/0/Notes.pdf": SAME_SIZE_A,
+        "/pluginfile.php/8/mod_resource/content/0/Notes.pdf": SAME_SIZE_B,
+        "/pluginfile.php/9/mod_resource/content/0/Notes.pdf": SAME_SIZE_A,
+        "/pluginfile.php/10/mod_resource/content/0/Notes.pdf": SAME_SIZE_A,
+        "/pluginfile.php/11/mod_resource/content/0/Notes.pdf": SAME_SIZE_A,
+        "/pluginfile.php/12/mod_resource/content/0/Notes.pdf": SHORTER,
+    }
+    redirects = {
+        **Handler.redirects,
+        "/mod/resource/view.php?id=70": "/pluginfile.php/7/mod_resource/content/0/Notes.pdf",
+        "/mod/resource/view.php?id=71": "/pluginfile.php/8/mod_resource/content/0/Notes.pdf",
+        "/mod/resource/view.php?id=72": "/pluginfile.php/9/mod_resource/content/0/Notes.pdf",
+        "/mod/resource/view.php?id=73": "/pluginfile.php/10/mod_resource/content/0/Notes.pdf",
+        "/mod/resource/view.php?id=74": "/pluginfile.php/11/mod_resource/content/0/Notes.pdf",
+        "/mod/resource/view.php?id=75": "/pluginfile.php/12/mod_resource/content/0/Notes.pdf",
+    }
+
+
+def _warnings(output):
+    return [line for line in output.splitlines() if line.startswith("WARN")]
+
+
+class CollisionTests(ServerMixin):
+    """Same filename inside one course: size decides whether a hash is needed at all."""
+
+    handler = CollisionHandler
+    COURSE = "Comprehension and Oral Expression 1"
+
+    def _download_into(self, dest, ids):
+        """A second run into an existing folder - the re-run case."""
+        plan = Path(tempfile.mkdtemp()) / "plan.json"
+        plan.write_text(json.dumps(self._plan(ids)), encoding="utf-8")
+        with capture_output() as buf:
+            rc = mf.cmd_download(fake_args(
+                plan=str(plan), dest=str(dest), manifest=None, update=False, max_bytes=None,
+                cookie="MoodleSession=abc123", cookie_file=None, timeout=10, insecure=False))
+        return rc, buf.getvalue()
+
+    def test_same_name_same_size_different_bytes_keeps_both_files(self):
+        rc, dest, manifest, plan, output = self._run_download_captured([70, 71])
+        course = dest / self.COURSE
+        self.assertEqual(sorted(p.name for p in course.iterdir()), ["Notes (2).pdf", "Notes.pdf"])
+        self.assertEqual((course / "Notes.pdf").read_bytes(), SAME_SIZE_A)
+        self.assertEqual((course / "Notes (2).pdf").read_bytes(), SAME_SIZE_B)
+
+        by_id = {r["id"]: r for r in manifest["resources"]}
+        self.assertEqual(sorted(by_id), ["70", "71"])
+        self.assertEqual({r["status"] for r in by_id.values()}, {"ok"})
+        self.assertEqual(Path(by_id["70"]["path"]).name, "Notes.pdf")
+        self.assertEqual(Path(by_id["71"]["path"]).name, "Notes (2).pdf")
+        self.assertEqual(by_id["70"]["sha256"], hashlib.sha256(SAME_SIZE_A).hexdigest())
+        self.assertEqual(by_id["71"]["sha256"], hashlib.sha256(SAME_SIZE_B).hexdigest())
+
+        warnings = _warnings(output)
+        self.assertEqual(len(warnings), 1, output)
+        self.assertIn("Notes.pdf", warnings[0])
+        self.assertIn("Notes (2).pdf", warnings[0])
+        self.assertEqual(rc, 0, output)
+
+    def test_same_name_same_size_identical_bytes_is_one_file_without_warning(self):
+        rc, dest, manifest, plan, output = self._run_download_captured([72, 73])
+        course = dest / self.COURSE
+        self.assertEqual([p.name for p in course.iterdir()], ["Notes.pdf"])
+        self.assertEqual((course / "Notes.pdf").read_bytes(), SAME_SIZE_A)
+        self.assertEqual(_warnings(output), [])
+        # Both resources resolve to the one file on disk; no suffixed copy is recorded.
+        self.assertEqual({Path(r["path"]).name for r in manifest["resources"]}, {"Notes.pdf"})
+        self.assertEqual(rc, 0, output)
+
+    def test_identical_rerun_takes_the_fast_path_silently(self):
+        dest = Path(tempfile.mkdtemp())
+        self._download_into(dest, [70])
+        rc, output = self._download_into(dest, [70])
+        self.assertEqual(rc, 0, output)
+        self.assertEqual([p.name for p in (dest / self.COURSE).iterdir()], ["Notes.pdf"])
+        self.assertEqual(_warnings(output), [])
+
+    def test_size_mismatch_keeps_the_suffix_and_never_hashes(self):
+        # Sizes differ, so the bytes differ: the suffix rule applies without a hash compare.
+        with mock.patch.object(mf, "sha256_file", wraps=mf.sha256_file) as hashed:
+            rc, dest, manifest, plan, output = self._run_download_captured([74, 75])
+        self.assertEqual(hashed.call_count, 0)
+        course = dest / self.COURSE
+        self.assertEqual((course / "Notes.pdf").read_bytes(), SAME_SIZE_A)
+        self.assertEqual((course / "Notes (2).pdf").read_bytes(), SHORTER)
+        self.assertEqual(_warnings(output), [])
+        self.assertEqual(rc, 0, output)
+
+    def test_same_size_collision_does_not_pile_up_copies_on_rerun(self):
+        dest = Path(tempfile.mkdtemp())
+        self._download_into(dest, [70, 71])
+        rc, output = self._download_into(dest, [70, 71])
+        course = dest / self.COURSE
+        self.assertEqual(sorted(p.name for p in course.iterdir()), ["Notes (2).pdf", "Notes.pdf"],
+                         "the second run must reuse the copy it already has")
+        self.assertEqual((course / "Notes (2).pdf").read_bytes(), SAME_SIZE_B)
+        self.assertEqual(rc, 0, output)
+
+
+class PickDestinationTests(unittest.TestCase):
+    """The naming rule on its own, against real files in a scratch folder."""
+
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp())
+        self.target = self.dir / "Notes.pdf"
+
+    def _digest(self, data):
+        return hashlib.sha256(data).hexdigest()
+
+    def test_free_name_is_used_as_is(self):
+        self.assertEqual(mf.pick_destination(self.target, 10, self._digest(b"x" * 10)),
+                         (self.target, None))
+
+    def test_identical_file_under_the_name_is_the_fast_path(self):
+        self.target.write_bytes(SAME_SIZE_A)
+        self.assertEqual(mf.pick_destination(self.target, len(SAME_SIZE_A),
+                                             self._digest(SAME_SIZE_A)),
+                         (self.target, None))
+
+    def test_different_size_takes_the_next_free_suffix_without_hashing(self):
+        self.target.write_bytes(SAME_SIZE_A)
+        with mock.patch.object(mf, "sha256_file", wraps=mf.sha256_file) as hashed:
+            dest, clash = mf.pick_destination(self.target, len(SHORTER), self._digest(SHORTER))
+        self.assertEqual(hashed.call_count, 0)
+        self.assertEqual((dest.name, clash), ("Notes (2).pdf", None))
+
+    def test_same_size_different_bytes_is_a_clash_and_gets_a_suffix(self):
+        self.target.write_bytes(SAME_SIZE_A)
+        dest, clash = mf.pick_destination(self.target, len(SAME_SIZE_B), self._digest(SAME_SIZE_B))
+        self.assertEqual((dest.name, clash), ("Notes (2).pdf", self.target))
+
+    def test_walks_past_other_files_to_an_identical_copy_or_a_free_name(self):
+        # Notes.pdf and Notes (3).pdf are same-size clashes with the download; the copy at
+        # Notes (2).pdf has another size and is skipped without being read.
+        other = b"%PDF-1.4\n" + b"D" * 300 + b"\n%%EOF\n"
+        self.assertEqual(len(other), len(SAME_SIZE_A))
+        self.target.write_bytes(SAME_SIZE_B)
+        self.dir.joinpath("Notes (2).pdf").write_bytes(SHORTER)
+        self.dir.joinpath("Notes (3).pdf").write_bytes(SAME_SIZE_A)
+
+        dest, clash = mf.pick_destination(self.target, len(SAME_SIZE_A), self._digest(SAME_SIZE_A))
+        self.assertEqual((dest.name, clash.name), ("Notes (3).pdf", "Notes.pdf"))
+
+        dest, clash = mf.pick_destination(self.target, len(other), self._digest(other))
+        self.assertEqual((dest.name, clash.name), ("Notes (4).pdf", "Notes.pdf"))
+
+
 # A value distinctive enough that "the secret is absent" means something: a short or
 # common string could pass a substring check by coincidence.
 SECRET = "zQ7-s3cr3t-moodle-session-value-a1b2c3"
