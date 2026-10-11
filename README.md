@@ -74,6 +74,11 @@ skills/<skill-name>/
 
 ## Running the tests
 
+[![tests](https://github.com/httpurax/arena/actions/workflows/test.yml/badge.svg)](https://github.com/httpurax/arena/actions/workflows/test.yml)
+
+CI runs this suite on `ubuntu-latest` and `windows-latest` across Python 3.11 and 3.12, with no
+install step — the skill is stdlib-only, so there is nothing to resolve before the tests:
+
 ```bash
 cd skills/course-material-ingestion
 python3 -m unittest discover -s tests -v
@@ -86,10 +91,10 @@ python -m unittest discover -s tests -v
 
 The suite spins up a throwaway localhost HTTP server that imitates Moodle's
 `view.php` → `pluginfile.php` redirects, `Content-Disposition` filenames, a login redirect,
-and an HTML error page served with a `.pdf` name, so the failure paths are actually
-exercised rather than described. It also covers the session-cookie sources (precedence,
-Netscape parsing, stdin) and asserts the invariant that the cookie value never appears in
-`manifest.json`, on stdout, or in an error message.
+an HTML error page served with a `.pdf` name, and a session that expires halfway through a
+plan, so the failure paths are actually exercised rather than described. It also covers the
+session-cookie sources (precedence, Netscape parsing, stdin) and asserts the invariant that
+the cookie value never appears in `manifest.json`, on stdout, or in an error message.
 
 ## Conventions
 

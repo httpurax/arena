@@ -112,7 +112,13 @@ One flat list of resources; `verify` and `sync-links --manifest` read it.
 | `truncated` | Fewer bytes arrived than `Content-Length` promised | fail |
 | `html_error` | The server returned an HTML page; body moved aside as `<name>.bad` | fail |
 | `too_large` | Skipped because of `--max-bytes` | fail |
-| `error` | HTTP error, login redirect, or connection failure (`error` field has the reason) | fail |
+| `error` | HTTP error or connection failure (`error` field has the reason) | fail |
+| `session_expired` | The session died: a request came back as the login page, the run stopped, and this resource was not fetched | fail |
+
+A run that stops because the session died also sets a top-level
+`"stopped_reason": "session_expired"`, so a manifest that is short of resources is never
+mistaken for a complete one. The `error` field says which resource proved the session was gone
+(`redirected to the login page (...)`) and which were simply not attempted.
 
 ## Rename map for `sync-links`
 
@@ -160,3 +166,9 @@ up only what the lecturer added:
 ```bash
 python3 scripts/moodle_fetch.py download plan.json --dest "~/Courses" --update --cookie-env MOODLE_SESSION_COOKIE
 ```
+
+This is also how a run that hit an expired session is finished. When `download` stops on a
+login redirect it keeps every file it already has, writes the manifest with the rest marked
+`session_expired`, and tells you to re-authenticate. Take a fresh cookie, run the same command
+again with `--update` — the finished files are skipped and it picks up where it stopped. Expect
+`verify` to keep failing until no `session_expired` entry is left.
