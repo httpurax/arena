@@ -154,6 +154,10 @@ class RuleTest(unittest.TestCase):
         self.assertNotEqual(returncode, 0, output)
         self.assertIn("skill_md.missing", output)
         self.assertIn("no-manifest-skill/SKILL.md", output)
+        # The skill lives outside the repo, so the report falls back to an absolute path.
+        # It must use forward slashes there too - a Windows backslash would not match the
+        # path a reader (or CI annotation) is expected to open.
+        self.assertNotIn("\\", output, "the report used a backslash path")
 
     def test_frontmatter_key_rules_are_enforced(self):
         write_skill(self.root, "mismatched-skill", textwrap.dedent("""\

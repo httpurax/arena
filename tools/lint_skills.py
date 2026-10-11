@@ -699,11 +699,16 @@ def check_skill(skill_dir: Path) -> SkillResult:
 
 
 def _display(path: Path) -> str:
-    """Repo-relative when the path is inside the working directory, absolute otherwise."""
+    """Render a path for the report, with forward slashes on every platform.
+
+    Repo-relative when the path is inside the working directory (the common case in CI),
+    absolute otherwise. Forward slashes everywhere because the report is read by humans and
+    CI on Windows too, and a stray `\\` would not match the paths quoted out of it.
+    """
     try:
         return path.resolve().relative_to(Path.cwd().resolve()).as_posix()
     except ValueError:
-        return str(path)
+        return path.as_posix()
 
 
 def _skill_dirs(root: Path) -> "list[Path]":
