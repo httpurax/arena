@@ -60,6 +60,7 @@ TILE_PAGE = """
 
 
 class Handler(BaseHTTPRequestHandler):
+    file_requests = []
     files = {
         "/pluginfile.php/1/mod_resource/content/0/References.pdf": PDF,
         "/pluginfile.php/1/mod_resource/content/0/U01 (2).pdf": b"%PDF-1.7\nunit one\n%%EOF\n",
@@ -108,6 +109,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             return
         if self.path in self.files:
+            type(self).file_requests.append(self.path)
             body = self.files[self.path]
             self.send_response(200)
             self.send_header("Content-Type", "application/pdf")
@@ -200,6 +202,7 @@ class ServerMixin(unittest.TestCase):
         # An ambient cookie must never change what another test asked for, so every
         # networked test starts from a clean environment and puts it back afterwards.
         self._saved_cookie_env = os.environ.pop("MOODLE_SESSION_COOKIE", None)
+        self.handler.file_requests = []
 
     def tearDown(self):
         os.environ.pop("MOODLE_SESSION_COOKIE", None)
@@ -233,6 +236,14 @@ class ServerMixin(unittest.TestCase):
                 cookie=cookie, cookie_file=None, timeout=10, insecure=False))
         manifest = json.loads((dest / "manifest.json").read_text(encoding="utf-8"))
         return rc, dest, manifest, plan, buf.getvalue()
+
+    def _run_update(self, dest, plan, cookie="MoodleSession=abc123"):
+        with capture_output() as buf:
+            rc = mf.cmd_download(fake_args(
+                plan=str(plan), dest=str(dest), manifest=None, update=True, max_bytes=None,
+                cookie=cookie, cookie_file=None, timeout=10, insecure=False))
+        manifest = json.loads((dest / "manifest.json").read_text(encoding="utf-8"))
+        return rc, manifest, buf.getvalue()
 
 
 def fake_args(**kw):
@@ -418,6 +429,57 @@ class IntegrationTests(ServerMixin):
         self.assertIn("login", manifest["resources"][0]["error"].lower())
         self.assertFalse(list((dest / "Comprehension and Oral Expression 1").glob("*.pdf")))
         self.assertNotEqual(rc, 0)
+
+    def test_update_skips_identical_recorded_file_without_redownload_or_warning(self):
+        rc, dest, manifest, plan = self._run_download([42])
+        self.assertEqual(rc, 0)
+        before = len(self.handler.file_requests)
+
+        rc2, m2, output = self._run_update(dest, plan)
+
+        self.assertEqual(rc2, 0, output)
+        # The update still resolves the URL once, but does not open the file for the
+        # second, streaming download.
+        self.assertEqual(len(self.handler.file_requests) - before, 1)
+        self.assertIn("(unchanged)", output)
+        self.assertNotIn("WARN", output)
+        self.assertEqual(len(m2["resources"]), 1)
+
+    def test_update_redownloads_same_size_file_with_different_bytes(self):
+        rc, dest, manifest, plan = self._run_download([42])
+        self.assertEqual(rc, 0)
+        entry = manifest["resources"][0]
+        recorded = Path(entry["path"])
+        tampered = bytearray(PDF)
+        tampered[10] = ord("Y")
+        recorded.write_bytes(tampered)
+        before = len(self.handler.file_requests)
+
+        rc2, m2, output = self._run_update(dest, plan)
+
+        self.assertEqual(rc2, 0, output)
+        self.assertEqual(len(self.handler.file_requests) - before, 2,
+                         "a changed file must be resolved and downloaded again")
+        self.assertNotIn("(unchanged)", output)
+        refreshed = m2["resources"][0]
+        refreshed_path = Path(refreshed["path"])
+        self.assertEqual(refreshed_path.read_bytes(), PDF)
+        self.assertEqual(refreshed["sha256"], hashlib.sha256(PDF).hexdigest())
+        self.assertNotEqual(refreshed_path, recorded)
+
+    def test_update_uses_the_manifest_path_when_the_recorded_file_is_deleted(self):
+        rc, dest, manifest, plan = self._run_download([42])
+        self.assertEqual(rc, 0)
+        recorded = Path(manifest["resources"][0]["path"])
+        recorded.unlink()
+        before = len(self.handler.file_requests)
+
+        rc2, m2, output = self._run_update(dest, plan)
+
+        self.assertEqual(rc2, 0, output)
+        self.assertEqual(len(self.handler.file_requests) - before, 2)
+        self.assertNotIn("(unchanged)", output)
+        self.assertEqual(Path(m2["resources"][0]["path"]).read_bytes(), PDF)
 
     def test_update_skips_unchanged_and_verify_passes(self):
         rc, dest, manifest, plan = self._run_download([42, 46])
@@ -675,6 +737,29 @@ class CollisionTests(ServerMixin):
         # Both resources resolve to the one file on disk; no suffixed copy is recorded.
         self.assertEqual({Path(r["path"]).name for r in manifest["resources"]}, {"Notes.pdf"})
         self.assertEqual(rc, 0, output)
+
+    def test_update_uses_b_recorded_suffix_not_a_requested_name(self):
+        rc, dest, manifest, plan, output = self._run_download_captured([70, 71])
+        self.assertEqual(rc, 0, output)
+        by_id = {r["id"]: r for r in manifest["resources"]}
+        b_path = Path(by_id["71"]["path"])
+        self.assertEqual(b_path.name, "Notes (2).pdf")
+        # A owns the requested name Notes.pdf. Corrupt only B's recorded copy with
+        # same-sized bytes: checking Notes.pdf would falsely call B unchanged.
+        b_path.write_bytes(SAME_SIZE_A)
+        before = len(self.handler.file_requests)
+
+        rc2, m2, output2 = self._run_update(dest, plan)
+
+        self.assertEqual(rc2, 0, output2)
+        self.assertEqual(len(self.handler.file_requests) - before, 3,
+                         "A resolves only; B resolves and is downloaded again")
+        updated_b = next(r for r in m2["resources"] if r["id"] == "71")
+        updated_b_path = Path(updated_b["path"])
+        self.assertEqual(updated_b_path.read_bytes(), SAME_SIZE_B)
+        self.assertEqual(updated_b_path.name, "Notes (3).pdf")
+        self.assertEqual((dest / self.COURSE / "Notes.pdf").read_bytes(), SAME_SIZE_A)
+        self.assertEqual((dest / self.COURSE / "Notes (2).pdf").read_bytes(), SAME_SIZE_A)
 
     def test_identical_rerun_takes_the_fast_path_silently(self):
         dest = Path(tempfile.mkdtemp())

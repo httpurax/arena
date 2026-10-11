@@ -177,9 +177,10 @@ cookie file is reported by line number and field count, never by quoting the row
 
 ## Re-running
 
-`download --update` reuses the existing `manifest.json` and skips any id whose file is
-already on disk with the same size. Add newly discovered ids to the plan and re-run to pick
-up only what the lecturer added:
+`download --update` reuses the existing `manifest.json` and checks each id's recorded
+`path`. It skips only when that file is still on disk with the recorded byte count and the
+recorded SHA-256; a missing file or changed bytes is downloaded again. Add newly discovered
+ids to the plan and re-run to pick up only what the lecturer added:
 
 ```bash
 python3 scripts/moodle_fetch.py download plan.json --dest "~/Courses" --update --cookie-env MOODLE_SESSION_COOKIE

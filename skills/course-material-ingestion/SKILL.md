@@ -1,7 +1,7 @@
 ---
 name: course-material-ingestion
 description: Download Moodle course files and keep notes in sync.
-version: 1.2.1
+version: 1.2.2
 author: Nader Amine (httpurax), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
