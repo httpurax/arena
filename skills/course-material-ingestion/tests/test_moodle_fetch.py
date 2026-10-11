@@ -8,9 +8,13 @@ filenames, a login redirect for missing cookies, and a 200-with-HTML error page.
     python -m unittest discover -s tests -v
 """
 
+import contextlib
 import hashlib
 import importlib.util
+import io
 import json
+import os
+import subprocess
 import sys
 import tempfile
 import threading
@@ -18,6 +22,7 @@ import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from urllib.parse import unquote
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 SCRIPT = HERE.parent / "scripts" / "moodle_fetch.py"
@@ -136,6 +141,23 @@ class ServerMixin(unittest.TestCase):
     def tearDownClass(cls):
         cls.httpd.shutdown()
         cls.httpd.server_close()
+
+    def setUp(self):
+        # An ambient cookie must never change what another test asked for, so every
+        # networked test starts from a clean environment and puts it back afterwards.
+        self._saved_cookie_env = os.environ.pop("MOODLE_SESSION_COOKIE", None)
+
+    def tearDown(self):
+        os.environ.pop("MOODLE_SESSION_COOKIE", None)
+        if self._saved_cookie_env is not None:
+            os.environ["MOODLE_SESSION_COOKIE"] = self._saved_cookie_env
+
+
+def fake_args(**kw):
+    """An argparse namespace look-alike; unknown flags stay absent, like real ones."""
+    base = {"cookie": None, "cookie_file": None, "cookie_env": None}
+    base.update(kw)
+    return type("A", (), base)()
 
 
 class FilenameTests(unittest.TestCase):
@@ -350,6 +372,245 @@ class IntegrationTests(ServerMixin):
             "manifest": str(dest / "manifest.json"), "root": str(dest),
             "notes": str(vault)})())
         self.assertNotEqual(rc3, 0)  # [[Resource_3]] does not exist on disk
+
+
+# A value distinctive enough that "the secret is absent" means something: a short or
+# common string could pass a substring check by coincidence.
+SECRET = "zQ7-s3cr3t-moodle-session-value-a1b2c3"
+COOKIE = f"MoodleSession={SECRET}"
+
+NETSCAPE_FILE = (
+    "# Netscape HTTP Cookie File\n"
+    "# https://curl.se/docs/http-cookies.html\n"
+    "moodle.example.com\tFALSE\t/\tTRUE\t0\tMoodleSession\t" + SECRET + "\n"
+    "moodle.example.com\tFALSE\t/\tFALSE\t0\tMoodleSessionTest\tnotasecret\n"
+)
+
+# What curl actually writes: HttpOnly cookies are commented out behind #HttpOnly_.
+NETSCAPE_HTTPONLY_FILE = (
+    "# Netscape HTTP Cookie File\n"
+    "#HttpOnly_moodle.example.com\tFALSE\t/\tTRUE\t0\tMoodleSession\t" + SECRET + "\n"
+)
+
+
+class CookieSourceTests(unittest.TestCase):
+    """Cookie source precedence: an explicit flag always beats the ambient environment."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        saved = {k: os.environ.get(k) for k in
+                 ("MOODLE_SESSION_COOKIE", "MF_TEST_COOKIE")}
+        for k in saved:
+            os.environ.pop(k, None)
+        self.addCleanup(self._restore, saved)
+
+    @staticmethod
+    def _restore(saved):
+        for k, v in saved.items():
+            os.environ.pop(k, None)
+            if v is not None:
+                os.environ[k] = v
+
+    def _file(self, text, name="cookies.txt"):
+        p = self.tmp / name
+        p.write_text(text, encoding="utf-8")
+        return p
+
+    # -- precedence ----------------------------------------------------------
+
+    def test_cookie_flag_beats_every_other_source(self):
+        os.environ["MOODLE_SESSION_COOKIE"] = "MoodleSession=ambient"
+        os.environ["MF_TEST_COOKIE"] = "MoodleSession=from-env"
+        args = fake_args(cookie="MoodleSession=explicit",
+                         cookie_file=str(self._file("MoodleSession=from-file")),
+                         cookie_env="MF_TEST_COOKIE")
+        self.assertEqual(mf.resolve_cookie(args), ("MoodleSession=explicit", "--cookie"))
+
+    def test_cookie_file_beats_cookie_env_and_ambient(self):
+        os.environ["MOODLE_SESSION_COOKIE"] = "MoodleSession=ambient"
+        os.environ["MF_TEST_COOKIE"] = "MoodleSession=from-env"
+        args = fake_args(cookie_file=str(self._file("MoodleSession=from-file")),
+                         cookie_env="MF_TEST_COOKIE")
+        value, source = mf.resolve_cookie(args)
+        self.assertEqual(value, "MoodleSession=from-file")
+        self.assertTrue(source.startswith("--cookie-file"))
+
+    def test_cookie_env_beats_ambient(self):
+        os.environ["MOODLE_SESSION_COOKIE"] = "MoodleSession=ambient"
+        os.environ["MF_TEST_COOKIE"] = "MoodleSession=from-env"
+        args = fake_args(cookie_env="MF_TEST_COOKIE")
+        self.assertEqual(mf.resolve_cookie(args),
+                         ("MoodleSession=from-env", "--cookie-env MF_TEST_COOKIE"))
+
+    def test_ambient_env_is_picked_up_when_no_flag_is_given(self):
+        os.environ["MOODLE_SESSION_COOKIE"] = "MoodleSession=ambient"
+        value, source = mf.resolve_cookie(fake_args())
+        self.assertEqual(value, "MoodleSession=ambient")
+        self.assertEqual(source, "$MOODLE_SESSION_COOKIE (ambient)")
+
+    def test_blank_ambient_env_is_not_a_cookie(self):
+        os.environ["MOODLE_SESSION_COOKIE"] = "   "
+        self.assertEqual(mf.resolve_cookie(fake_args()), ("", "none"))
+
+    def test_no_source_at_all_is_reported_as_none(self):
+        self.assertEqual(mf.resolve_cookie(fake_args()), ("", "none"))
+
+    def test_cookie_env_pointing_at_an_unset_variable_is_an_error(self):
+        with self.assertRaises(SystemExit) as cm:
+            mf.resolve_cookie(fake_args(cookie_env="MF_TEST_COOKIE"))
+        self.assertIn("MF_TEST_COOKIE", str(cm.exception))
+
+    def test_read_cookie_returns_just_the_value(self):
+        self.assertEqual(mf.read_cookie(fake_args(cookie="a=b")), "a=b")
+
+    # -- Netscape parsing ----------------------------------------------------
+
+    def test_netscape_file_parses_name_value_pairs_in_order(self):
+        value = mf.cookie_from_text(NETSCAPE_FILE, "test")
+        self.assertEqual(value, f"MoodleSession={SECRET}; MoodleSessionTest=notasecret")
+
+    def test_netscape_httponly_row_is_not_skipped(self):
+        # The row everybody needs is HttpOnly, and curl comments those rows out.
+        self.assertEqual(mf.cookie_from_text(NETSCAPE_HTTPONLY_FILE, "test"), COOKIE)
+
+    def test_netscape_detection(self):
+        self.assertTrue(mf.is_netscape(NETSCAPE_FILE))
+        self.assertTrue(mf.is_netscape(NETSCAPE_HTTPONLY_FILE))
+        self.assertFalse(mf.is_netscape(COOKIE))
+        self.assertFalse(mf.is_netscape("MoodleSession=x; Other=y"))
+
+    def test_raw_cookie_header_is_left_alone(self):
+        self.assertEqual(mf.cookie_from_text("MoodleSession=abc; Other=1", "test"),
+                         "MoodleSession=abc; Other=1")
+
+    def test_wrapped_cookie_header_is_joined(self):
+        self.assertEqual(mf.cookie_from_text("MoodleSession=abc;\nOther=1\n", "test"),
+                         "MoodleSession=abc; Other=1")
+
+    def test_banner_with_no_rows_is_empty_not_silently_ok(self):
+        with self.assertRaises(SystemExit):
+            mf.cookie_from_text("# Netscape HTTP Cookie File\n", "test")
+
+    def test_malformed_netscape_row_does_not_echo_the_row(self):
+        # The row holds a credential, so the error must describe it, not quote it.
+        with self.assertRaises(SystemExit) as cm:
+            mf.parse_netscape("example.com\tFALSE\t/\tMoodleSession\t" + SECRET + "\n")
+        message = str(cm.exception)
+        self.assertNotIn(SECRET, message)
+        self.assertIn("7 tab-separated fields", message)
+
+    def test_netscape_file_through_the_flag_path(self):
+        p = self._file(NETSCAPE_FILE)
+        value, source = mf.resolve_cookie(fake_args(cookie_file=str(p)))
+        self.assertEqual(value, f"MoodleSession={SECRET}; MoodleSessionTest=notasecret")
+        self.assertEqual(source, f"--cookie-file {p}")
+
+    # -- stdin ---------------------------------------------------------------
+
+    def test_cookie_file_dash_reads_stdin(self):
+        with mock.patch.object(sys, "stdin", io.StringIO(COOKIE + "\n")):
+            self.assertEqual(mf.resolve_cookie(fake_args(cookie_file="-")),
+                             (COOKIE, "--cookie-file - (stdin)"))
+
+    def test_cookie_file_dash_reads_a_netscape_file_from_stdin(self):
+        with mock.patch.object(sys, "stdin", io.StringIO(NETSCAPE_FILE)):
+            value, _ = mf.resolve_cookie(fake_args(cookie_file="-"))
+            self.assertEqual(value, f"MoodleSession={SECRET}; MoodleSessionTest=notasecret")
+
+    def test_cookie_file_dash_refuses_to_read_a_terminal(self):
+        terminal = type("T", (), {"isatty": staticmethod(lambda: True),
+                                  "read": staticmethod(lambda: ""),
+                                  "buffer": None})()
+        with mock.patch.object(sys, "stdin", terminal):
+            with self.assertRaises(SystemExit) as cm:
+                mf.resolve_cookie(fake_args(cookie_file="-"))
+        self.assertIn("terminal", str(cm.exception))
+
+    def test_cookie_file_dash_decodes_non_utf8_bytes(self):
+        class Pipe(io.BytesIO):
+            buffer = property(lambda self: self)
+        with mock.patch.object(sys, "stdin", Pipe(COOKIE.encode("cp1252", "replace"))):
+            self.assertEqual(mf.resolve_cookie(fake_args(cookie_file="-"))[0], COOKIE)
+
+
+class CookieLeakTests(ServerMixin):
+    """The invariant: a cookie goes on the wire and nowhere else."""
+
+    def _plan_file(self):
+        plan = Path(tempfile.mkdtemp()) / "plan.json"
+        plan.write_text(json.dumps([{
+            "course": "Comprehension and Oral Expression 1",
+            "resources": [{"id": 42,
+                           "url": f"{self.base}/mod/resource/view.php?id=42"}]}]),
+            encoding="utf-8")
+        return plan
+
+    def _download(self, extra_env=None, extra_args=None, stdin=None):
+        """Run `download` in-process, returning (rc, all output, manifest text, dest)."""
+        dest = Path(tempfile.mkdtemp())
+        plan = self._plan_file()
+        args = {"plan": str(plan), "dest": str(dest), "manifest": None, "update": False,
+                "max_bytes": None, "cookie": None, "cookie_file": None, "cookie_env": None,
+                "timeout": 10, "insecure": False}
+        args.update(extra_args or {})
+        buf, saved_env = io.StringIO(), dict(os.environ)
+        try:
+            if extra_env:
+                os.environ.update(extra_env)
+            ctx = (mock.patch.object(sys, "stdin", io.StringIO(stdin))
+                   if stdin is not None else contextlib.nullcontext())
+            with ctx, contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+                rc = mf.cmd_download(fake_args(**args))
+        finally:
+            os.environ.clear()
+            os.environ.update(saved_env)
+        return rc, buf.getvalue(), (dest / "manifest.json").read_text(encoding="utf-8"), dest
+
+    def _assert_clean(self, rc, output, manifest_text, label):
+        self.assertEqual(rc, 0, f"{label}: download failed ->\n{output}")
+        self.assertNotIn(SECRET, output, f"{label}: cookie value appeared on stdout/stderr")
+        self.assertNotIn(SECRET, manifest_text, f"{label}: cookie value in manifest.json")
+        self.assertNotIn("Cookie", manifest_text, f"{label}: cookie header in manifest.json")
+
+    def test_cookie_never_reaches_manifest_or_output_for_any_source(self):
+        netscape = Path(tempfile.mkdtemp()) / "cookies.txt"
+        netscape.write_text(NETSCAPE_FILE, encoding="utf-8")
+        cases = [
+            ("--cookie", {"cookie": COOKIE}, None, None),
+            ("--cookie-env", {"cookie_env": "MF_TEST_COOKIE"},
+             {"MF_TEST_COOKIE": COOKIE}, None),
+            ("--cookie-file -", {"cookie_file": "-"}, None, COOKIE + "\n"),
+            ("--cookie-file <netscape>", {"cookie_file": str(netscape)}, None, None),
+            ("$MOODLE_SESSION_COOKIE", {}, {"MOODLE_SESSION_COOKIE": COOKIE}, None),
+        ]
+        for label, extra_args, extra_env, stdin in cases:
+            with self.subTest(source=label):
+                self._assert_clean(*self._download(extra_env, extra_args, stdin)[:3], label)
+
+    def test_ambient_pickup_is_announced_without_the_value(self):
+        rc, output, manifest_text, _ = self._download({"MOODLE_SESSION_COOKIE": COOKIE})
+        self.assertEqual(rc, 0, output)
+        self.assertIn("MOODLE_SESSION_COOKIE", output)   # the source is safe to print
+        self.assertNotIn(SECRET, output)                 # the value is not
+
+    def test_no_cookie_file_is_written_when_the_cookie_came_from_a_pipe(self):
+        _, _, _, dest = self._download(extra_args={"cookie_file": "-"}, stdin=COOKIE + "\n")
+        self.assertEqual(list(dest.glob("**/*cookies*")), [],
+                         "a piped cookie must not be persisted into the destination")
+
+    def test_cli_download_does_not_leak_the_cookie_either(self):
+        """Same invariant, through the real command line instead of in-process calls."""
+        dest = Path(tempfile.mkdtemp())
+        plan = self._plan_file()
+        env = dict(os.environ, MOODLE_SESSION_COOKIE=COOKIE)
+        proc = subprocess.run(
+            [sys.executable, str(SCRIPT), "download", str(plan), "--dest", str(dest)],
+            env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=90)
+        blob = proc.stdout.decode("utf-8", "replace") + proc.stderr.decode("utf-8", "replace")
+        self.assertEqual(proc.returncode, 0, blob)
+        self.assertNotIn(SECRET, blob, "cookie value appeared in CLI output")
+        self.assertNotIn(SECRET, (dest / "manifest.json").read_text(encoding="utf-8"),
+                         "cookie value appeared in manifest.json")
 
 
 if __name__ == "__main__":

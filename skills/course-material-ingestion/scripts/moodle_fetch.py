@@ -10,8 +10,18 @@ Commands
 
 Stdlib only, Python 3.8+. No network is touched except by resolve/discover/download.
 
-The session cookie is a credential: it is read from --cookie/--cookie-file and put on the
-wire, never printed back out, never written into the manifest.
+Cookie sources, highest precedence first (an explicit flag always beats the ambient
+environment):
+
+    --cookie VALUE       raw Cookie header on the command line
+    --cookie-file PATH   file with a Cookie header or Netscape cookies.txt;
+                         `-` reads the cookie from stdin and keeps it off disk
+    --cookie-env VAR     read the value out of $VAR
+    (no flag given)      $MOODLE_SESSION_COOKIE, if it happens to be set
+
+The session cookie is a credential. It goes on the wire and nowhere else: it is never
+printed, never logged, never written into manifest.json, and error messages about a
+malformed cookie file describe the line count rather than quoting the line.
 """
 
 from __future__ import annotations
@@ -29,7 +39,7 @@ from email.message import Message
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, unquote, urljoin, urlparse, urlsplit, urlunsplit
-from urllib.request import Request, build_opener, HTTPRedirectHandler
+from urllib.request import Request, build_opener, HTTPRedirectHandler, HTTPSHandler
 
 DEFAULT_UA = "moodle-fetch/1.0 (+hermes course-material-ingestion)"
 MAX_REDIRECTS = 12
@@ -262,29 +272,158 @@ def _int_or_none(v):
         return None
 
 
-def read_cookie(args) -> str:
-    if getattr(args, "cookie", None):
-        return args.cookie.strip()
-    path = getattr(args, "cookie_file", None)
-    if not path:
-        return ""
-    text = Path(path).expanduser().read_text(encoding="utf-8", errors="replace")
-    if "\t" in text and len([ln for ln in text.splitlines() if ln and not ln.startswith("#")]) <= 1:
-        return text.strip()
+# ---------------------------------------------------------------------------
+# session cookie
+# ---------------------------------------------------------------------------
+
+#: Read automatically when no cookie flag is given. The value is the full
+#: `MoodleSession=...` pair, i.e. exactly what a `Cookie:` header expects.
+DEFAULT_COOKIE_ENV = ("MOODLE_SESSION_COOKIE",)
+
+NETSCAPE_HEADER_RE = re.compile(r"^#\s*Netscape HTTP Cookie File", re.I | re.M)
+HTTPONLY_PREFIX = "#HttpOnly_"
+
+
+def _stdin_is_a_terminal() -> bool:
+    try:
+        return bool(sys.stdin is not None and sys.stdin.isatty())
+    except (AttributeError, ValueError):
+        return False
+
+
+def _read_stdin() -> str:
+    """Read stdin as text, tolerating a pipe that delivers non-UTF-8 bytes."""
+    stream = getattr(sys.stdin, "buffer", sys.stdin)
+    data = stream.read()
+    if isinstance(data, bytes):
+        data = data.decode("utf-8", "replace")
+    return data
+
+
+def parse_netscape(text: str):
+    """Parse a Netscape cookies.txt into a list of `name=value` strings.
+
+    `#HttpOnly_` rows count as data. Tools that write cookies.txt comment those rows
+    out - the prefix is how curl marks an HttpOnly cookie - and `MoodleSession` is
+    HttpOnly, so the one row everybody needs is exactly the row a naive reader skips.
+
+    Errors name the line number and the field count; they never quote the row, because
+    the row holds a credential.
+    """
     pairs = []
-    for line in text.splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
+    for lineno, raw in enumerate(text.splitlines(), 1):
+        line = raw.strip()
+        if not line:
             continue
-        if "\t" in line:
-            f = line.split("\t")
-            if len(f) >= 7:
-                pairs.append(f"{f[5]}={f[6]}")
-        else:
-            pairs.append(line)
+        if line.startswith(HTTPONLY_PREFIX):
+            line = line[len(HTTPONLY_PREFIX):]
+        elif line.startswith("#"):
+            continue
+        fields = line.split("\t")
+        if len(fields) < 7:
+            raise SystemExit(
+                f"cookie file line {lineno}: expected 7 tab-separated fields "
+                f"(Netscape cookies.txt), found {len(fields)}")
+        if fields[5]:
+            pairs.append(f"{fields[5]}={fields[6]}")
     if not pairs:
-        raise SystemExit(f"{path}: no cookies parsed (expected a Cookie header or Netscape cookies.txt)")
-    return "; ".join(pairs)
+        raise SystemExit("cookie file: no cookies parsed "
+                         "(expected a Cookie header or Netscape cookies.txt)")
+    return pairs
+
+
+def is_netscape(text: str) -> bool:
+    """True when `text` is a cookies.txt rather than a raw `Cookie:` header.
+
+    A raw Cookie header is one line of `a=b; c=d` and carries no tab, so a
+    tab-separated 7-field row - or the canonical banner - settles it.
+    """
+    if NETSCAPE_HEADER_RE.search(text):
+        return True
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if line.startswith(HTTPONLY_PREFIX):
+            line = line[len(HTTPONLY_PREFIX):]
+        elif line.startswith("#"):
+            continue
+        if len(line.split("\t")) >= 7:
+            return True
+    return False
+
+
+def cookie_from_text(text: str, source: str = "cookie source") -> str:
+    """Turn the contents of a cookie file (or of stdin) into a Cookie header value."""
+    if not text.strip():
+        raise SystemExit(f"{source}: empty - no session cookie found")
+    if is_netscape(text):
+        return "; ".join(parse_netscape(text))
+    lines = [ln.strip().rstrip(";").strip() for ln in text.splitlines()]
+    lines = [ln for ln in lines if ln and not ln.startswith("#")]
+    if not lines:
+        raise SystemExit(f"{source}: no cookies parsed "
+                         "(expected a Cookie header or Netscape cookies.txt)")
+    return "; ".join(lines)
+
+
+def resolve_cookie(args):
+    """Return `(cookie_header_value, source_label)`.
+
+    The value is a credential and is never printed. The label is safe to print and
+    tells the operator where the cookie came from - which matters most in the ambient
+    case, where the cookie arrived without being asked for.
+
+    Precedence, highest first - an explicit flag always beats the ambient environment:
+
+        --cookie VALUE        raw Cookie header on the command line
+        --cookie-file PATH    a file, or `-` to read stdin
+        --cookie-env VAR      read $VAR
+        no flag at all        $MOODLE_SESSION_COOKIE, if it is set
+    """
+    explicit = getattr(args, "cookie", None)
+    if explicit and explicit.strip():
+        return explicit.strip(), "--cookie"
+
+    path = getattr(args, "cookie_file", None)
+    if path:
+        if path == "-":
+            if _stdin_is_a_terminal():
+                raise SystemExit("--cookie-file -: stdin is a terminal, so there is nothing "
+                                 "to read; pipe the cookie in, or use --cookie-env")
+            return (cookie_from_text(_read_stdin(), "--cookie-file - (stdin)"),
+                    "--cookie-file - (stdin)")
+        p = Path(path).expanduser()
+        text = p.read_text(encoding="utf-8", errors="replace")
+        return cookie_from_text(text, str(p)), f"--cookie-file {p}"
+
+    var = getattr(args, "cookie_env", None)
+    if var:
+        value = os.environ.get(var)
+        if not value or not value.strip():
+            raise SystemExit(f"--cookie-env {var}: ${var} is unset or empty")
+        return value.strip(), f"--cookie-env {var}"
+
+    for name in DEFAULT_COOKIE_ENV:
+        value = os.environ.get(name)
+        if value and value.strip():
+            return value.strip(), f"${name} (ambient)"
+    return "", "none"
+
+
+def read_cookie(args) -> str:
+    """The session cookie for this run, or "" when none was supplied.
+
+    Announces *where* the cookie came from - never its value. The ambient case is the
+    one that needs saying out loud, because the operator never asked for it.
+    """
+    value, source = resolve_cookie(args)
+    if source.endswith("(ambient)"):
+        print(f"cookie   : picked up from {source} (value not printed)", file=sys.stderr)
+    elif source == "none":
+        print("cookie   : none supplied - requests will hit the login redirect",
+              file=sys.stderr)
+    return value
 
 
 def human(n):
@@ -702,12 +841,24 @@ def cmd_sync_links(args):
 # ---------------------------------------------------------------------------
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="Cookie sources, highest precedence first: --cookie, --cookie-file, "
+               "--cookie-env, then $MOODLE_SESSION_COOKIE when no flag is given. The cookie "
+               "goes on the wire and nowhere else: it is never printed, never logged, and "
+               "never written into manifest.json.")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     def add_common(p):
-        p.add_argument("--cookie", help="raw Cookie header value (credential - never echo it)")
-        p.add_argument("--cookie-file", help="file with a Cookie header or Netscape cookies.txt")
+        p.add_argument("--cookie", metavar="VALUE",
+                       help="raw Cookie header value, e.g. 'MoodleSession=...' "
+                            "(credential - never echoed)")
+        p.add_argument("--cookie-file", metavar="PATH",
+                       help="file with a Cookie header or a Netscape cookies.txt; "
+                            "'-' reads the cookie from stdin and keeps it off disk")
+        p.add_argument("--cookie-env", metavar="VAR",
+                       help="read the cookie from $VAR (the variable name is echoed, "
+                            "its value never is)")
         p.add_argument("--timeout", type=int, default=30)
         p.add_argument("--insecure", action="store_true", help="skip TLS verification (campus certs)")
 
@@ -744,6 +895,8 @@ def main(argv=None):
     add_common(p)
 
     args = ap.parse_args(argv)
+    # `read_cookie` announces the cookie's source (never its value) on every network
+    # command, so the CLI and a direct call to `cmd_download` behave the same way.
     if args.cmd == "resolve":
         info = Fetcher(read_cookie(args), args.timeout, args.insecure).resolve(args.url)
         if args.json:

@@ -12,13 +12,32 @@ Agent-Mode sessions.
 
 ## Install a skill into Hermes
 
-Hermes loads user skills from `~/.hermes/skills/<category>/<skill-name>/`. Copy the folder
-into place (this keeps the layout the `SKILL.md` frontmatter expects):
+Hermes loads user skills from a skills root, resolved in this order:
+
+| # | Location | Platform |
+|---|---|---|
+| 1 | `$HERMES_HOME/skills/<category>/<skill-name>/` | any, when `HERMES_HOME` is set |
+| 2 | `~/.hermes/skills/...` | Linux, macOS |
+| 3 | `%LOCALAPPDATA%\hermes\skills\...` | Windows |
+
+Copy the folder into place (this keeps the layout the `SKILL.md` frontmatter expects):
 
 ```bash
-mkdir -p ~/.hermes/skills/research
-cp -r skills/course-material-ingestion ~/.hermes/skills/research/
+mkdir -p "${HERMES_HOME:-$HOME/.hermes}/skills/research"
+cp -r skills/course-material-ingestion "${HERMES_HOME:-$HOME/.hermes}/skills/research/"
 ```
+
+**PowerShell (Windows):**
+
+```powershell
+$hermes = if ($env:HERMES_HOME) { $env:HERMES_HOME } elseif ($env:LOCALAPPDATA) { Join-Path $env:LOCALAPPDATA 'hermes' } else { Join-Path $HOME '.hermes' }
+New-Item -ItemType Directory -Force -Path (Join-Path $hermes 'skills/research')
+Copy-Item -Recurse -Force skills/course-material-ingestion (Join-Path $hermes 'skills/research/')
+```
+
+> **PowerShell gotcha:** a trailing `\` does *not* continue a line the way it does in bash —
+> it is passed through as a literal backslash. Use the backtick (`` ` ``), or write the
+> command on one line as above.
 
 Then, in a Hermes session:
 
@@ -29,8 +48,18 @@ hermes skills list
 If the skill has a helper script, run it once by hand to confirm the path:
 
 ```bash
-python3 ~/.hermes/skills/research/course-material-ingestion/scripts/moodle_fetch.py --help
+python3 "${HERMES_HOME:-$HOME/.hermes}/skills/research/course-material-ingestion/scripts/moodle_fetch.py" --help
 ```
+
+```powershell
+python (Join-Path $hermes 'skills/research/course-material-ingestion/scripts/moodle_fetch.py') --help
+```
+
+On Windows the interpreter is `python` (or `py -3`); `python3` only exists if the Microsoft
+Store alias is installed. Paths the script is given — `--dest "~/Courses"`, `--manifest
+"~/Courses/manifest.json"` — are expanded by the script itself with `Path.expanduser()`
+(`%USERPROFILE%` on Windows, `$HOME` elsewhere), so `~` needs no help from the shell on
+either platform.
 
 ## Repo layout
 
@@ -50,10 +79,17 @@ cd skills/course-material-ingestion
 python3 -m unittest discover -s tests -v
 ```
 
+```powershell
+cd skills/course-material-ingestion
+python -m unittest discover -s tests -v
+```
+
 The suite spins up a throwaway localhost HTTP server that imitates Moodle's
 `view.php` → `pluginfile.php` redirects, `Content-Disposition` filenames, a login redirect,
 and an HTML error page served with a `.pdf` name, so the failure paths are actually
-exercised rather than described.
+exercised rather than described. It also covers the session-cookie sources (precedence,
+Netscape parsing, stdin) and asserts the invariant that the cookie value never appears in
+`manifest.json`, on stdout, or in an error message.
 
 ## Conventions
 
@@ -61,3 +97,6 @@ exercised rather than described.
   listings.
 - Scripts are stdlib-only so a skill never adds a dependency to the host environment.
 - Anything the skill can get wrong is covered by a test.
+- Commands in `SKILL.md` are shown for bash *and* PowerShell when a skill supports Windows;
+  a session cookie is taken transiently (`--cookie-env`, `--cookie-file -`) rather than from
+  a file, and its value is never echoed, logged, or written to an artifact.
