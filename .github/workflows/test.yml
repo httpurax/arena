@@ -21,18 +21,20 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         python-version: ["3.11", "3.12"]
-    defaults:
-      run:
-        working-directory: skills/course-material-ingestion
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
-      # No install step: the skill is stdlib-only by convention, and the suite runs a
-      # throwaway localhost Moodle instead of reaching the network.
-      - name: Run the test suite
-        run: python -m unittest discover -s tests
+      # No install step: the skill suites are stdlib-only by convention, and they
+      # run throwaway localhost servers instead of reaching the network.
+      # Discovers every skills/*/tests/ directory and runs each suite; skills
+      # without tests/ are skipped, not failed.
+      - name: Run skill test suites
+        run: python tools/run_skill_tests.py
+      # Self-test for the discovery logic above (fake skills tree in tmp).
+      - name: Self-test the test runner
+        run: python tools/test_run_skill_tests.py
 
   lint:
     name: lint / ${{ matrix.os }} / Python ${{ matrix.python-version }}
