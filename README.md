@@ -11,34 +11,46 @@ Agent-Mode sessions.
 | [`course-material-ingestion`](skills/course-material-ingestion/) | Downloads Moodle course files under their real names (one folder per course), validates that each file is really what it claims to be, and rewrites Obsidian `[[wikilinks]]` to match what is on disk. |
 | [`moodle-course-management`](skills/moodle-course-management/) | Audits Moodle materials, validates downloads, organizes local course files, and keeps manifests and wikilinks in sync. |
 
-## Install a skill into Hermes
+## Install the skills into Hermes
 
-Hermes loads user skills from a skills root, resolved in this order:
+From the repo root, one command installs every skill under `skills/`:
+
+```bash
+python3 tools/install_skills.py
+```
+
+```powershell
+python tools/install_skills.py
+```
+
+Each skill is **copied** (the repo copy is left alone) into the Hermes skills root, under the
+category its `SKILL.md` declares, which is the layout Hermes loads:
+
+```
+<skills root>/research/course-material-ingestion/
+<skills root>/productivity/moodle-course-management/
+```
+
+The category is the `category` key under `metadata.hermes` in each skill's frontmatter. A skill
+without one stops the run before anything is written. Re-running the installer replaces an
+existing install of the same skill, so files removed from the repo do not linger behind.
+
+| Command | Effect |
+|---|---|
+| `python tools/install_skills.py --dry-run` | Print what would be installed, and where. Change nothing. |
+| `python tools/install_skills.py --skills-root PATH` | Install under `PATH` instead of the Hermes skills root below. |
+
+The Hermes skills root is the first applicable entry in this table:
 
 | # | Location | Platform |
 |---|---|---|
-| 1 | `$HERMES_HOME/skills/<category>/<skill-name>/` | any, when `HERMES_HOME` is set |
-| 2 | `~/.hermes/skills/...` | Linux, macOS |
-| 3 | `%LOCALAPPDATA%\hermes\skills\...` | Windows |
+| 1 | `--skills-root PATH` | when given |
+| 2 | `$HERMES_HOME/skills` | any, when `HERMES_HOME` is set |
+| 3 | `~/.hermes/skills` | Linux, macOS |
+| 4 | `%LOCALAPPDATA%\hermes\skills` | Windows |
 
-Copy the folder into place (this keeps the layout the `SKILL.md` frontmatter expects):
-
-```bash
-mkdir -p "${HERMES_HOME:-$HOME/.hermes}/skills/research"
-cp -r skills/course-material-ingestion "${HERMES_HOME:-$HOME/.hermes}/skills/research/"
-```
-
-**PowerShell (Windows):**
-
-```powershell
-$hermes = if ($env:HERMES_HOME) { $env:HERMES_HOME } elseif ($env:LOCALAPPDATA) { Join-Path $env:LOCALAPPDATA 'hermes' } else { Join-Path $HOME '.hermes' }
-New-Item -ItemType Directory -Force -Path (Join-Path $hermes 'skills/research')
-Copy-Item -Recurse -Force skills/course-material-ingestion (Join-Path $hermes 'skills/research/')
-```
-
-> **PowerShell gotcha:** a trailing `\` does *not* continue a line the way it does in bash —
-> it is passed through as a literal backslash. Use the backtick (`` ` ``), or write the
-> command on one line as above.
+If none applies (for example, Windows with `LOCALAPPDATA` unset), the installer exits non-zero
+and says what to set.
 
 Then, in a Hermes session:
 
@@ -46,13 +58,14 @@ Then, in a Hermes session:
 hermes skills list
 ```
 
-If the skill has a helper script, run it once by hand to confirm the path:
+To confirm the installed paths, run a helper script once by hand:
 
 ```bash
 python3 "${HERMES_HOME:-$HOME/.hermes}/skills/research/course-material-ingestion/scripts/moodle_fetch.py" --help
 ```
 
 ```powershell
+$hermes = if ($env:HERMES_HOME) { $env:HERMES_HOME } elseif ($env:LOCALAPPDATA) { Join-Path $env:LOCALAPPDATA 'hermes' } else { Join-Path $HOME '.hermes' }
 python (Join-Path $hermes 'skills/research/course-material-ingestion/scripts/moodle_fetch.py') --help
 ```
 
@@ -72,6 +85,8 @@ skills/<skill-name>/
 ├── examples/             # sample inputs
 └── tests/                # stdlib unittest suite, no network
 tools/
+├── install_skills.py     # copies every skill into the Hermes skills root, under its category
+├── test_install_skills.py# the installer's self-test (temp dirs only, no real install touched)
 ├── lint_skills.py        # conformance gate: frontmatter, compile, secrets, tests
 ├── test_lint_skills.py   # the linter's self-test (broken fixture rejected, repo accepted)
 └── fixtures/broken-skill # a deliberately non-conforming skill, committed for that test
