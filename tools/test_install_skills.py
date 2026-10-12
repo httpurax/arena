@@ -196,8 +196,12 @@ class CategoryMappingTest(TempTree):
         plans = build_plan(discover_skills(REPO_SKILLS), self.root)
         destinations = {p.name: p.destination.relative_to(self.root).as_posix() for p in plans}
         self.assertEqual(destinations, {
+            "application-security-engineering": "software-development/application-security-engineering",
             "course-material-ingestion": "research/course-material-ingestion",
+            "job-application-tracker": "productivity/job-application-tracker",
             "moodle-course-management": "productivity/moodle-course-management",
+            "study-flashcards": "productivity/study-flashcards",
+            "test-engineering": "development/test-engineering",
         })
 
     def test_category_is_read_from_metadata_hermes(self):

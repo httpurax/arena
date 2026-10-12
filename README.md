@@ -10,6 +10,7 @@ Agent-Mode sessions.
 |---|---|
 | [`application-security-engineering`](skills/application-security-engineering/) | Review code like a senior application security engineer — scope, threat modeling, manual review, safe validation, impact-based reporting, and root-cause remediation. Uses OWASP ASVS 5.0.0, WSTG, API Top 10:2023, and CWE. **License: UNLICENSED** (vendored; author: Zelyq; no upstream license declared). |
 | [`course-material-ingestion`](skills/course-material-ingestion/) | Downloads Moodle course files under their real names (one folder per course), validates that each file is really what it claims to be, and rewrites Obsidian `[[wikilinks]]` to match what is on disk. |
+| [`job-application-tracker`](skills/job-application-tracker/) | Keeps one structured job-hunt pipeline — every application, its status, the next step, and its deadline — and nudges when a next step is overdue or due within 3 days. Real data stays in an ignored `data/` file; the repo ships fictional examples only. |
 | [`moodle-course-management`](skills/moodle-course-management/) | Audits Moodle materials, validates downloads, organizes local course files, and keeps manifests and wikilinks in sync. |
 | [`study-flashcards`](skills/study-flashcards/) | Creates source-grounded flashcards and quizzes, with an interactive offline HTML study guide. |
 | [`test-engineering`](skills/test-engineering/) | Designs reliable test strategies, local fixtures, boundary mocks, and flaky-test fixes. |
@@ -31,6 +32,7 @@ category its `SKILL.md` declares, which is the layout Hermes loads:
 
 ```
 <skills root>/research/course-material-ingestion/
+<skills root>/productivity/job-application-tracker/
 <skills root>/productivity/moodle-course-management/
 <skills root>/productivity/study-flashcards/
 <skills root>/software-development/application-security-engineering/
