@@ -8,6 +8,7 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [moodle, courses, obsidian, files, scraping]
+    category: productivity
     related_skills: [obsidian]
 ---
 

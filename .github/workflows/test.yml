@@ -35,6 +35,15 @@ jobs:
       # Self-test for the discovery logic above (fake skills tree in tmp).
       - name: Self-test the test runner
         run: python tools/test_run_skill_tests.py
+      # Proves the skill installer resolves the Hermes root and plans every copy on this OS,
+      # without touching a real install: --dry-run changes nothing, and it does not create
+      # ~/.hermes or %LOCALAPPDATA%\hermes. Fails if any skill lacks a category.
+      - name: Dry-run the skill installer
+        run: python tools/install_skills.py --dry-run
+      # Self-test for the installer: root resolution order, category mapping, dry-run, overwrite,
+      # missing-category failure. Every case runs in a temp dir, never a real Hermes install.
+      - name: Self-test the skill installer
+        run: python tools/test_install_skills.py
 
   lint:
     name: lint / ${{ matrix.os }} / Python ${{ matrix.python-version }}
