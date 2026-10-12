@@ -198,6 +198,7 @@ class CategoryMappingTest(TempTree):
         self.assertEqual(destinations, {
             "application-security-engineering": "software-development/application-security-engineering",
             "course-material-ingestion": "research/course-material-ingestion",
+            "job-application-kit": "productivity/job-application-kit",
             "job-application-tracker": "productivity/job-application-tracker",
             "moodle-course-management": "productivity/moodle-course-management",
             "study-flashcards": "productivity/study-flashcards",
