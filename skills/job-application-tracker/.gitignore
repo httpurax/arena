@@ -1,0 +1,4 @@
+# Real application data is private. The tracked pipeline lives in data/applications.json,
+# which is never committed: this repository is public and a job hunt is nobody's business.
+# The example under examples/ is fictional and is the only data file in the tree.
+data/

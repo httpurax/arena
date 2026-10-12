@@ -1,0 +1,64 @@
+{
+  "applications": [
+    {
+      "id": "nimbus-support-agent",
+      "company": "Nimbus Cloudworks",
+      "role": "Customer Support Agent (Remote)",
+      "pay": "$22/hr",
+      "source": "WeWorkRemotely listing",
+      "date_applied": "2026-10-05",
+      "status": "interview",
+      "next_step": "30-minute video interview with the support lead",
+      "next_step_deadline": "2026-10-14",
+      "notes": "Recruiter said no take-home task; the panel asks about timezone overlap."
+    },
+    {
+      "id": "lumen-data-annotator",
+      "company": "Lumen Data Co",
+      "role": "Data Annotator - Arabic (Contract)",
+      "pay": "$18/hr",
+      "source": "company careers page",
+      "date_applied": "2026-10-02",
+      "status": "assessment",
+      "next_step": "Finish the language screening assessment",
+      "next_step_deadline": "2026-10-11",
+      "notes": "Assessment invite expires after seven days."
+    },
+    {
+      "id": "harbourview-inbox-lead",
+      "company": "Harbourview Logistics",
+      "role": "Inbox Support Team Lead (Remote)",
+      "pay": "$31/hr",
+      "source": "referral from a former colleague",
+      "date_applied": "2026-09-28",
+      "status": "applied",
+      "next_step": "Follow up if there is no reply by Friday",
+      "next_step_deadline": "2026-10-16",
+      "notes": "Referral was submitted through the internal form."
+    },
+    {
+      "id": "brightpath-qa-analyst",
+      "company": "Brightpath Software",
+      "role": "Quality Analyst (Contract)",
+      "pay": "$27/hr",
+      "source": "job board aggregator",
+      "date_applied": "2026-09-20",
+      "status": "rejected",
+      "next_step": "",
+      "next_step_deadline": null,
+      "notes": "Closed after the second stage; the recruiter keeps profiles on file."
+    },
+    {
+      "id": "kestrel-localization-trainer",
+      "company": "Kestrel Localization",
+      "role": "AI Trainer - Arabic Language",
+      "pay": "$25/hr",
+      "source": "vendor onboarding portal",
+      "date_applied": null,
+      "status": "watching",
+      "next_step": "Check whether the portal reopens the specialist track",
+      "next_step_deadline": "2026-10-19",
+      "notes": "Application paused while the vendor re-scopes the project."
+    }
+  ]
+}
