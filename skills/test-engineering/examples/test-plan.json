@@ -1,0 +1,77 @@
+{
+  "goal": "Import local order files without changing valid totals or accepting negative totals.",
+  "risks": [
+    {
+      "id": "total-preservation",
+      "behavior": "A valid total is preserved exactly after parsing.",
+      "impact": "high",
+      "likelihood": "medium"
+    },
+    {
+      "id": "negative-total",
+      "behavior": "A negative total is rejected with a domain error.",
+      "impact": "high",
+      "likelihood": "low"
+    },
+    {
+      "id": "file-encoding",
+      "behavior": "A UTF-8 order file reaches the parser without byte or path corruption.",
+      "impact": "medium",
+      "likelihood": "low"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "order-factory",
+      "kind": "factory",
+      "isolation": "per_test"
+    },
+    {
+      "id": "order-workspace",
+      "kind": "tempdir",
+      "isolation": "cleanup"
+    }
+  ],
+  "tests": [
+    {
+      "id": "unit-valid-total",
+      "layer": "unit",
+      "behavior": "The import domain rule preserves a valid integer total.",
+      "risks": ["total-preservation"],
+      "fixtures": ["order-factory"]
+    },
+    {
+      "id": "unit-negative-total",
+      "layer": "unit",
+      "behavior": "The import domain rule rejects a negative total.",
+      "risks": ["negative-total"],
+      "fixtures": ["order-factory"]
+    },
+    {
+      "id": "integration-local-file",
+      "layer": "integration",
+      "behavior": "A local UTF-8 order file is read and passed to the import rule.",
+      "risks": ["file-encoding", "total-preservation"],
+      "fixtures": ["order-factory", "order-workspace"]
+    }
+  ],
+  "mock_boundaries": [
+    {
+      "dependency": "local filesystem",
+      "decision": "real",
+      "reason": "The integration test exists to verify local file encoding and path behavior."
+    }
+  ],
+  "flaky_policy": {
+    "diagnose": [
+      "Record the test id, platform, attempt count, elapsed time, and non-secret failure output.",
+      "Re-run the isolated test and then vary ordering or timing one factor at a time.",
+      "Replace the root cause rather than hiding the failure with an unlimited retry."
+    ],
+    "quarantine": {
+      "owner": "test-maintainers",
+      "tracking": "TEST-123",
+      "expires": "2028-06-30"
+    }
+  }
+}
