@@ -10,6 +10,7 @@ Agent-Mode sessions.
 |---|---|
 | [`course-material-ingestion`](skills/course-material-ingestion/) | Downloads Moodle course files under their real names (one folder per course), validates that each file is really what it claims to be, and rewrites Obsidian `[[wikilinks]]` to match what is on disk. |
 | [`moodle-course-management`](skills/moodle-course-management/) | Audits Moodle materials, validates downloads, organizes local course files, and keeps manifests and wikilinks in sync. |
+| [`study-flashcards`](skills/study-flashcards/) | Creates source-grounded flashcards and quizzes, with an interactive offline HTML study guide. |
 
 ## Install the skills into Hermes
 
@@ -29,6 +30,7 @@ category its `SKILL.md` declares, which is the layout Hermes loads:
 ```
 <skills root>/research/course-material-ingestion/
 <skills root>/productivity/moodle-course-management/
+<skills root>/productivity/study-flashcards/
 ```
 
 The category is the `category` key under `metadata.hermes` in each skill's frontmatter. A skill
