@@ -124,14 +124,26 @@ class BrokenFixtureTest(unittest.TestCase):
 class RealRepositoryTest(unittest.TestCase):
     """The other half of the self-test: the repo as it stands must pass."""
 
+    @staticmethod
+    def skill_names() -> list[str]:
+        """Return the repository skills the linter will consider, in its stable order."""
+        return sorted(
+            entry.name
+            for entry in SKILLS_ROOT.iterdir()
+            if entry.is_dir() and not entry.name.startswith(".") and entry.name != "__pycache__"
+        )
+
     def test_this_repo_is_accepted(self):
         returncode, output = run_linter(SKILLS_ROOT)
         self.assertEqual(returncode, 0, f"the repo failed its own linter:\n{output}")
-        self.assertIn("1 skill checked: 1 ok, 0 failed", output)
+        count = len(self.skill_names())
+        noun = "skill" if count == 1 else "skills"
+        self.assertIn(f"{count} {noun} checked: {count} ok, 0 failed", output)
 
     def test_per_skill_summary_says_what_was_checked(self):
         _, output = run_linter(SKILLS_ROOT)
-        self.assertRegex(output, r"OK\s+course-material-ingestion\s+frontmatter ok")
+        for name in self.skill_names():
+            self.assertRegex(output, rf"OK\s+{re.escape(name)}\s+frontmatter ok")
         self.assertIn("compile", output)
         self.assertIn("secret scan clean", output)
         # The skill's own suite must have run and passed - the count may grow over time.

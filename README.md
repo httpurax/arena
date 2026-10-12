@@ -9,6 +9,7 @@ Agent-Mode sessions.
 | Skill | What it does |
 |---|---|
 | [`course-material-ingestion`](skills/course-material-ingestion/) | Downloads Moodle course files under their real names (one folder per course), validates that each file is really what it claims to be, and rewrites Obsidian `[[wikilinks]]` to match what is on disk. |
+| [`moodle-course-management`](skills/moodle-course-management/) | Audits Moodle materials, validates downloads, organizes local course files, and keeps manifests and wikilinks in sync. |
 
 ## Install a skill into Hermes
 
