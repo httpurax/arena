@@ -9,6 +9,7 @@ Agent-Mode sessions.
 | Skill | What it does |
 |---|---|
 | [`application-security-engineering`](skills/application-security-engineering/) | Review code like a senior application security engineer — scope, threat modeling, manual review, safe validation, impact-based reporting, and root-cause remediation. Uses OWASP ASVS 5.0.0, WSTG, API Top 10:2023, and CWE. **License: UNLICENSED** (vendored; author: Zelyq; no upstream license declared). |
+| [`atm10-quest-companion`](skills/atm10-quest-companion/) | Progression companion for All the Mods 10: maps where the player is to the pack's researched FTB Quests structure (66 chapters, early game → tech → magic → ATM Star endgame), recommends the next steps in quest-book order, and tracks chapter completion in an ignored `data/` file. Defers all specifics to the in-game quest book and JEI — never invents requirements or recipes. |
 | [`course-material-ingestion`](skills/course-material-ingestion/) | Downloads Moodle course files under their real names (one folder per course), validates that each file is really what it claims to be, and rewrites Obsidian `[[wikilinks]]` to match what is on disk. |
 | [`job-application-kit`](skills/job-application-kit/) | Tailors a CV and cover letter to each posting using only real base-CV experience, with offline keyword suggestions and mandatory user review. Private inputs and drafts stay gitignored. |
 | [`job-application-tracker`](skills/job-application-tracker/) | Keeps one structured job-hunt pipeline — every application, its status, the next step, and its deadline — and nudges when a next step is overdue or due within 3 days. Real data stays in an ignored `data/` file; the repo ships fictional examples only. |
@@ -32,6 +33,7 @@ Each skill is **copied** (the repo copy is left alone) into the Hermes skills ro
 category its `SKILL.md` declares, which is the layout Hermes loads:
 
 ```
+<skills root>/gaming/atm10-quest-companion/
 <skills root>/research/course-material-ingestion/
 <skills root>/productivity/job-application-kit/
 <skills root>/productivity/job-application-tracker/

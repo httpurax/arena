@@ -1,0 +1,4 @@
+# Real playthrough progress is private. It lives in data/progress.json, which is never
+# committed: this repository is public and only the generic chapter list under examples/
+# belongs in the tree.
+data/
