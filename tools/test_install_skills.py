@@ -197,6 +197,7 @@ class CategoryMappingTest(TempTree):
         destinations = {p.name: p.destination.relative_to(self.root).as_posix() for p in plans}
         self.assertEqual(destinations, {
             "application-security-engineering": "software-development/application-security-engineering",
+            "arena-pr-watcher": "productivity/arena-pr-watcher",
             "atm10-quest-companion": "gaming/atm10-quest-companion",
             "course-material-ingestion": "research/course-material-ingestion",
             "job-application-kit": "productivity/job-application-kit",

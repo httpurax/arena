@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "repo": "httpurax/arena",
+  "updated_at": "2026-10-13T12:00:00+00:00",
+  "prs": {
+    "41": {
+      "title": "Fix the flaky test in the installer self-test",
+      "branch": "fix/installer-flaky-test",
+      "sha": "0123456789abcdef0123456789abcdef01234567",
+      "url": "https://github.com/httpurax/arena/pull/41",
+      "checks": "green"
+    },
+    "42": {
+      "title": "Add Windows CI matrix entries",
+      "branch": "ci/windows-matrix",
+      "sha": "fedcba9876543210fedcba9876543210fedcba98",
+      "url": "https://github.com/httpurax/arena/pull/42",
+      "checks": "failing"
+    }
+  }
+}
