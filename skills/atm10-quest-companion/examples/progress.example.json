@@ -1,0 +1,466 @@
+{
+  "chapters": [
+    {
+      "id": "welcome",
+      "title": "Welcome",
+      "group": "",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "bounty_board",
+      "title": "Bounty Board",
+      "group": "",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "building_tips",
+      "title": "Building Tips",
+      "group": "",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "tips_and_tricks",
+      "title": "Tips and Tricks",
+      "group": "",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "mainquestline_part_1",
+      "title": "Chapter 1: The Beginning",
+      "group": "Main Questline",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "allthemodium",
+      "title": "Chapter 2: Allthemodium",
+      "group": "Main Questline",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "chapter_2_the_star",
+      "title": "Chapter 3: The ATM Star",
+      "group": "Main Questline",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "achapter_2r_6the_atm_star",
+      "title": "Chapter 4: Creative",
+      "group": "Main Questline",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "apotheosis_gear",
+      "title": "Apotheosis Gear",
+      "group": "Tools and Gear",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "artifacts",
+      "title": "Artifacts",
+      "group": "Tools and Gear",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "basic_armor",
+      "title": "Basic Armor",
+      "group": "Tools and Gear",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "basic_tools",
+      "title": "Basic Tools",
+      "group": "Tools and Gear",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "mahou_tsukai",
+      "title": "Mahou Tsukai",
+      "group": "Tools and Gear",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "relics",
+      "title": "Relics",
+      "group": "Tools and Gear",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "silent_gear",
+      "title": "Silent Gear",
+      "group": "Tools and Gear",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "storage",
+      "title": "Basic Storage",
+      "group": "Storage",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "applied_energistics_2",
+      "title": "Applied Energistics 2",
+      "group": "Storage",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "extended__advanced_ae",
+      "title": "Extended \\& Advanced AE",
+      "group": "Storage",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "refined_storage",
+      "title": "Refined Storage",
+      "group": "Storage",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "basic_logistics",
+      "title": "Basic Logistics",
+      "group": "Logistics",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "integrated_dynamics",
+      "title": "Integrated Dynamics",
+      "group": "Logistics",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "modular_router",
+      "title": "Modular Routers",
+      "group": "Logistics",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "pylons",
+      "title": "Pylons",
+      "group": "Logistics",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "apotheosis_2",
+      "title": "Apothic Spawners",
+      "group": "Resources",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "food_and_farming",
+      "title": "Food and Farming",
+      "group": "Resources",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "hostile_neural_networks",
+      "title": "Hostile Neural Networks",
+      "group": "Resources",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "elmystical_agriculturerr",
+      "title": "Mystical Agriculture",
+      "group": "Resources",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "productive_bees",
+      "title": "Productive Bees",
+      "group": "Resources",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "productive_trees",
+      "title": "Productive Trees",
+      "group": "Resources",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "create",
+      "title": "Create",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "draconic_evolution",
+      "title": "Draconic Evolution",
+      "group": "Tech",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "immersive_engineering",
+      "title": "Immersive Engineering",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "industrial_foregoing",
+      "title": "Industrial Foregoing",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "justdirethings",
+      "title": "Just Dire Things",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "mekanism",
+      "title": "Mekanism",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "mekanism_reactors",
+      "title": "Mekanism: Reactors",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "oritech",
+      "title": "Oritech",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "xycraft",
+      "title": "XyCraft",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "pneumaticcraft",
+      "title": "PneumaticCraft",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "railcraft",
+      "title": "RailCraft",
+      "group": "Tech",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "mi_steam",
+      "title": "Steam Age: New Beginnings",
+      "group": "Modern Industrialization",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "mi_electric",
+      "title": "Electric Age: No more rookie",
+      "group": "Modern Industrialization",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "mi_digital",
+      "title": "Digital Age",
+      "group": "Modern Industrialization",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "mi_endgame",
+      "title": "End Game",
+      "group": "Modern Industrialization",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "basic_power",
+      "title": "Basic Power",
+      "group": "Power",
+      "stage": "early-game",
+      "status": "pending"
+    },
+    {
+      "id": "extreme_reactors",
+      "title": "Extreme Reactors",
+      "group": "Power",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "generators",
+      "title": "Generators N Furnaces",
+      "group": "Power",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "powah",
+      "title": "Powah",
+      "group": "Power",
+      "stage": "tech",
+      "status": "pending"
+    },
+    {
+      "id": "apothic_enchanting",
+      "title": "Apothic Enchanting",
+      "group": "Magic",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "ars_nouveau",
+      "title": "Ars Nouveau",
+      "group": "Magic",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "evilcraft",
+      "title": "EvilCraft",
+      "group": "Magic",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "forbidden__arcanus",
+      "title": "Forbidden \\& Arcanus",
+      "group": "Magic",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "iron_spells_and_spellbooks",
+      "title": "Iron's Spells 'n Spellbooks",
+      "group": "Magic",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "natures_aura",
+      "title": "Nature's Aura",
+      "group": "Magic",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "neo_vitae",
+      "title": "Neo Vitae",
+      "group": "Magic",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "occultism",
+      "title": "Occultism",
+      "group": "Magic",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "theurgy",
+      "title": "Theurgy",
+      "group": "Magic",
+      "stage": "magic",
+      "status": "pending"
+    },
+    {
+      "id": "aether",
+      "title": "The Aether",
+      "group": "Exploration",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "bumblezone",
+      "title": "The Bumblezone",
+      "group": "Exploration",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "auroral",
+      "title": "Auroral",
+      "group": "Exploration",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "cataclysm",
+      "title": "Cataclysm",
+      "group": "Exploration",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "deeper_and_darker",
+      "title": "Deeper and Darker",
+      "group": "Exploration",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "eternal_starlight",
+      "title": "Eternal Starlight",
+      "group": "Exploration",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "ice__fire",
+      "title": "Ice and Fire",
+      "group": "Exploration",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "twilight_forest",
+      "title": "The Twilight Forest",
+      "group": "Exploration",
+      "stage": "endgame",
+      "status": "pending"
+    },
+    {
+      "id": "undergarden",
+      "title": "The Undergarden",
+      "group": "Exploration",
+      "stage": "endgame",
+      "status": "pending"
+    }
+  ]
+}
