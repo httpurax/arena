@@ -56,6 +56,13 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   hedge: "guides say roughly X — verify in-game".
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch.
+- **The two endgame docs date themselves.** `references/atm-star-checklist.md` and
+  `references/boss-checklist.md` were read from the pack repository's
+  `config/ftbquests/quests/chapters/*.snbt` and `lang/en_us/chapters/*.snbt` (mod names and
+  versions from `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp
+  in `examples/progress.example.json`. The item ids, quest titles, and quoted counts there
+  are that snapshot's; the pack changes them between versions. Quote them as *what the book
+  asked for in 8.2*, and still defer to the in-game quest book and JEI.
 
 ## Setup — first run only
 
@@ -78,8 +85,9 @@ the interpreter is `python3` on Linux and macOS, `python` (or `py -3`) on Window
 
 ## Progress file
 
-One JSON document, `{"chapters": [...]}`, one object per quest-book chapter, stored in
-quest-book order (standalone chapters first, then the book's groups in order):
+One JSON document — `{"chapters": [...]}` plus the two optional stamp fields below — with
+one object per quest-book chapter, stored in quest-book order (standalone chapters first,
+then the book's groups in order):
 
 | Field | Required | Notes |
 |---|---|---|
@@ -92,6 +100,16 @@ quest-book order (standalone chapters first, then the book's groups in order):
 Chapters come from `examples/progress.example.json`; do not add, drop, or rename chapters
 in the real file unless the user's in-game book genuinely differs (pack update), and say
 so when editing.
+
+Next to `chapters` the document may carry two optional stamp fields:
+
+| Field | Required | Notes |
+|---|---|---|
+| `pack_version` | no | The ATM10 version the chapter list was researched from, e.g. `"8.x"`. |
+| `pack_version_source` | no | Where that list was read from, and when. |
+
+Both must be non-empty strings when present; any other top-level key is rejected. The
+example file ships both, and `progress.py` uses them for the drift check below.
 
 ## Behaviors
 
@@ -121,6 +139,13 @@ Stages overlap by design; use them to orient, not to gate.
 - For any concrete requirement (item counts, ingredients, ore levels, boss mechanics),
   point at the quest entry and JEI instead of stating numbers — per Research Grounding
   above. Flag anything version-sensitive as approximate.
+- **Endgame questions go to the two endgame docs.** "What does the ATM Star need?" →
+  `references/atm-star-checklist.md`: Chapter 3's components grouped by source mod, with
+  the verified quest titles and item ids, the build order, and the parts the pack marks
+  optional. "Which boss, where, and when?" → `references/boss-checklist.md`: boss →
+  dimension → arena → roughly when, from verified kill, structure, and dimension tasks.
+  Quote them as what the book asks for, keep their hedges, and still send the player to
+  the in-game quest book and JEI for current counts and drops.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -128,10 +153,31 @@ Stages overlap by design; use them to orient, not to gate.
 
 ### 3. Record completion and report progress
 
-When the user says a chapter (or several) is done — or wants one reopened — edit
-`data/progress.json`, flipping that chapter's `status` between `pending` and `done`.
+When the user says a chapter (or several) is done — or wants one reopened — record it with
+`--set`:
+
+```bash
+python3 scripts/progress.py --set mekanism done --set "Chapter 2: Allthemodium" done
+```
+
+```powershell
+python scripts/progress.py --set mekanism done --set "Chapter 2: Allthemodium" done
+```
+
+`--set` takes a chapter `id` (`mekanism`) or its exact `title` (`Mekanism`; case and
+surrounding spaces ignored) plus `done` or `pending` — `pending` reopens a finished
+chapter. Repeat the flag for several chapters; they are all applied in one atomic write.
+Every request is validated **before** anything is written, so an unknown id, a near-miss
+title, or a bad status exits 1 with one message that names the closest known ids and
+points at `examples/progress.example.json` — and the file is left untouched. A change that
+would alter nothing is reported as `already done` and the file is not rewritten. The script
+never raises a traceback, and it refuses to overwrite the file with a document that fails
+the schema.
+
 Change only what the user reported; never mark chapters done on his behalf "because he
-probably has". Then run the report:
+probably has".
+
+The report itself — a `--set` run prints its change lines, then exactly this:
 
 ```bash
 python3 scripts/progress.py
@@ -144,6 +190,7 @@ python scripts/progress.py
 ```
 atm10 quest companion - chapter progress
 data: <skill>/data/progress.json
+pack: 8.x  (known chapter list: pack 8.x, 66 chapters)
 
 overall: 16/66 chapters done (24.2%)
 
@@ -168,14 +215,43 @@ outranks the mod chapters in the book, so pair it with the stage guidance from
 `references/progression.md` when recommending what to play next.)*
 
 The script prints overall completion, per-stage percentages, and the next unfinished
-chapters in quest-book order. Options: `--data PATH` for another file, `--next N` to cap
-the list length (default 10). It never writes the file and never raises a traceback: a
-missing, empty, malformed, or schema-breaking file is reported as one clear message with
-exit status 1 — relay that message and the fix it suggests, do not paper over it.
+chapters in quest-book order. Options:
+
+| Option | Effect |
+|---|---|
+| `--data PATH` | Use another progress file (default `data/progress.json`). |
+| `--next N` | Cap the next-chapters list (default 10). |
+| `--stage STAGE` | List only that stage's unfinished chapters: `early-game`, `tech`, `magic`, `endgame`. Counts and percentages stay whole-file — the stage table shows every stage and marks the filtered row with `<==`. A stage with nothing left says so. |
+| `--set CHAPTER STATUS` | Record `CHAPTER` (id or exact title) as `done` or `pending`, then report. Repeatable. The only option that writes. |
+
+```bash
+python3 scripts/progress.py --stage endgame --next 5
+```
+
+```powershell
+python scripts/progress.py --stage endgame --next 5
+```
+
+An invalid stage or status exits 1 with the valid values named. The script never raises a
+traceback: a missing, empty, malformed, or schema-breaking file is reported as one clear
+message with exit status 1 — relay that message and the fix it suggests, do not paper over
+it.
 
 Use the report to answer "what next?" too: the first listed pending chapter in the
 player's current stage is the natural recommendation, cross-checked against what he told
 you he has already built (the file may lag reality — update it first).
+
+### Pack drift: a warning, never an error
+
+Every report compares the file with the shipped chapter list for pack 8.x. If the file
+carries chapter ids the pack does not have, is missing ids it should have, or was stamped
+with a different — or no — `pack_version`, the report prints a `pack drift` block listing
+the ids (at most six per line, then `(+N more)`) and **still exits 0**, counting every
+chapter as usual. A pack update is information, not a broken file.
+
+Relay the warning when it appears, say that the user's in-game quest book is authoritative,
+and change `data/progress.json` (or its stamp) only with him — never silently reconcile it
+to the shipped list.
 
 ## Privacy
 
@@ -196,8 +272,13 @@ Before saying the companion is up to date, confirm:
   nothing silently dropped.
 - `progress.py` exits 0 and its percentages match the file (done/total per stage and
   overall).
+- Any `pack drift` warning the report printed was relayed to the user, not hidden, and no
+  chapter was added, dropped, or restamped without him.
 - The advice given names the next steps in quest-book order and grounds each in a
   chapter/mod from the references.
+- Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
+  `references/boss-checklist.md`, kept their hedges, and still pointed at the in-game quest
+  book and JEI for current counts.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
