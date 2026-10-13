@@ -9,6 +9,7 @@ Agent-Mode sessions.
 | Skill | What it does |
 |---|---|
 | [`application-security-engineering`](skills/application-security-engineering/) | Review code like a senior application security engineer — scope, threat modeling, manual review, safe validation, impact-based reporting, and root-cause remediation. Uses OWASP ASVS 5.0.0, WSTG, API Top 10:2023, and CWE. **License: UNLICENSED** (vendored; author: Zelyq; no upstream license declared). |
+| [`arena-pr-watcher`](skills/arena-pr-watcher/) | Watchdog for the open PRs of httpurax/arena: on a 30-minute schedule it diffs each PR's CI state against a gitignored local file and pings Telegram — via Hermes cron's no-agent mode, reusing the existing Telegram setup — when a PR is opened, its checks all go green, or CI fails. Notify only; a human merges. |
 | [`atm10-quest-companion`](skills/atm10-quest-companion/) | Progression companion for All the Mods 10: maps where the player is to the pack's researched FTB Quests structure (66 chapters, early game → tech → magic → ATM Star endgame), recommends the next steps in quest-book order, and tracks chapter completion in an ignored `data/` file. Defers all specifics to the in-game quest book and JEI — never invents requirements or recipes. |
 | [`course-material-ingestion`](skills/course-material-ingestion/) | Downloads Moodle course files under their real names (one folder per course), validates that each file is really what it claims to be, and rewrites Obsidian `[[wikilinks]]` to match what is on disk. |
 | [`job-application-kit`](skills/job-application-kit/) | Tailors a CV and cover letter to each posting using only real base-CV experience, with offline keyword suggestions and mandatory user review. Private inputs and drafts stay gitignored. |
@@ -35,6 +36,7 @@ category its `SKILL.md` declares, which is the layout Hermes loads:
 ```
 <skills root>/gaming/atm10-quest-companion/
 <skills root>/research/course-material-ingestion/
+<skills root>/productivity/arena-pr-watcher/
 <skills root>/productivity/job-application-kit/
 <skills root>/productivity/job-application-tracker/
 <skills root>/productivity/moodle-course-management/
