@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -21,6 +21,9 @@ a local record of which chapters are finished.
 
 - The user says where he is in ATM10 (a quest chapter, a base he has built, a boss or
   resource he is stuck on) and asks *what should I do next?*
+- The user asks the beginner automation question — *what should I automate first?* —
+  about ore processing, power, item transport, storage, or the first resource/food farm
+  (answered from `references/automation-first-steps.md`).
 - The user finishes a quest chapter and wants it recorded ("mark Mekanism done").
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
@@ -58,15 +61,18 @@ They do **not** capture exact requirements, and this skill must never pretend ot
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
-- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
+- **The endgame docs and the automation doc date themselves.**
+  `references/atm-star-checklist.md`,
+  `references/boss-checklist.md`, `references/creative-checklist.md`, and
+  `references/automation-first-steps.md` were read from the
   pack repository's `config/ftbquests/quests/chapters/*.snbt` and
   `lang/en_us/chapters/*.snbt` (mod names and versions from
   `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
-  `examples/progress.example.json`; the creative checklist pins the exact commit
-  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
-  the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
-  and still defer to the in-game quest book and JEI.
+  `examples/progress.example.json`; the creative checklist and the automation doc pin the
+  exact commit (`e5e3d1d83e`). The item ids, quest titles, quoted counts, and quoted
+  quest text there are that snapshot's; the pack changes them between versions. Quote
+  them as *what the book asked for in 8.2*, keep the automation doc's ranking marked as
+  judgement, and still defer to the in-game quest book and JEI.
 
 ## Setup — first run only
 
@@ -147,6 +153,12 @@ Stages overlap by design; use them to orient, not to gate.
 - For any concrete requirement (item counts, ingredients, ore levels, boss mechanics),
   point at the quest entry and JEI instead of stating numbers — per Research Grounding
   above. Flag anything version-sensitive as approximate.
+- **Beginner automation questions go to `references/automation-first-steps.md`.** "What
+  should I automate first?" → the five first automations in impact order — ore
+  processing, power, item transport, storage, farms — each anchored to verified quest
+  titles, ids, and quest text from the pack 8.2 config, with the ranking itself marked as
+  judgement and the in-game quest book and JEI still authoritative for requirements and
+  recipes.
 - **Endgame questions go to the three endgame docs.** "What does the ATM Star need?" →
   `references/atm-star-checklist.md`: Chapter 3's components grouped by source mod, with
   the verified quest titles and item ids, the build order, and the parts the pack marks
@@ -376,6 +388,9 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Automation answers quoted verified quest titles from
+  `references/automation-first-steps.md`, kept the 1–5 ranking marked as judgement, and
+  still pointed at the in-game quest book and JEI for requirements and recipes.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
