@@ -28,7 +28,8 @@ Covered:
     token in the doc must be in the snapshot; every bold run must be a verified
     title or an allow-listed phrase; no coordinates, y-levels, or placeholder
     markers;
-  * SKILL.md wiring: version 1.3.0, the doc linked from When to Use / Research
+  * SKILL.md wiring: version 1.4.0, the doc linked from When to Use / Research
+
     Grounding / Behaviors / Completion Checklist, the beginner question named;
   * offline guarantee: this suite imports no network module.
 """
@@ -48,7 +49,8 @@ PACK_REPO = "AllTheMods/ATM-10"
 PACK_COMMIT = "e5e3d1d83e"
 PACK_DATE = "2026-09-22"
 PACK_VERSION = "8.2"
-SKILL_VERSION = "1.3.0"
+SKILL_VERSION = "1.4.0"
+
 
 # (quest id, verified title, chapter config filename) - every titled quest whose id
 # the doc cites, read from config/ftbquests/quests/{chapters,lang/en_us/chapters} at
