@@ -98,7 +98,8 @@ approximate.
 | **Roots Classic** | Druidic wands and nature rituals. | Verified in the mod list; "Roots Classic" also appears as a Chapter 3 (ATM Star) quest title. |
 | **Iron Furnaces** | Upgraded furnaces (iron/gold/diamond/... tiers). | Verified in the mod list; matches Chapter 1's "Furnace Upgrades!" quest title. Guides push it as a first-hour build. |
 | **FTB Ultimine** | Vein-mining: harvest many blocks at once (default keybind commonly `~`). | Verified in the mod list. The single biggest time-saver for mining and tree-chopping; check Controls for the exact bind. |
-| **Sophisticated Storage / Backpacks, Functional Storage, Pipez** | Chest/barrel/drawer upgrades, portable storage, simple pipes. | Verified in the mod list; the "Basic Storage" and "Basic Logistics" chapters lean on this family (approximate mapping — read the chapters). |
+| **Sophisticated Storage / Backpacks, Functional Storage, Pipez** | Chest/barrel/drawer upgrades, portable storage, simple pipes. | Verified in the mod list *and* in the quest config: `references/storage-ladder.md` maps the "Basic Storage" chapter (Sophisticated Storage, Sophisticated Backpacks, Functional Storage) quest by quest, and "Basic Logistics" covers Pipez. |
+| **LaserIO** | Node-and-card routing: cards configure what a Laser Node pulls, pushes, or stores. | Verified in the mod list (1.9.11) and in the quest config — the "Basic Logistics" chapter has a quest whose task is `laserio:card_holder`. |
 | **Corail Tombstone, JourneyMap, FTB Chunks, FTB Essentials** | Death recovery, minimap/waypoints, chunk claiming, `/home` `/rtp` `/spawn` commands. | Verified in the mod list; the Welcome chapter teaches the commands and chunk claiming. |
 | **Time in a Bottle** | Store time in bottles to speed up machines. | Verified in the mod list; guides list it among early-game milestones. |
 
@@ -111,8 +112,9 @@ Do not claim these are in ATM10 without checking in-game first:
   quest chapter. The verified magic lineup is the Magic group in `progression.md` (Ars
   Nouveau, Occultism, EvilCraft, ...) plus Roots Classic and Reliquary-style mods. Treat
   Botania as absent unless JEI says otherwise.
-- **Thermal series, Laserio, Super Factory Manager, Botany Pots** — staples of *other*
-  kitchen sinks and often mentioned in generic advice; not verified for ATM10 here.
+- **Thermal series, Super Factory Manager, Botany Pots** — staples of *other* kitchen
+  sinks and often mentioned in generic advice; not verified for ATM10 here. (LaserIO used
+  to sit in this list; it is verified present — see the table above.)
 
 The safe move for any mod: search its signature item in JEI in-game — if the item
 resolves, the mod is there; then let JEI and the quest book supply every detail.

@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -23,8 +23,9 @@ a local record of which chapters are finished.
   resource he is stuck on) and asks *what should I do next?*
 - The user finishes a quest chapter and wants it recorded ("mark Mekanism done").
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
-  magic line, storage network), what the ATM Star endgame needs at a high level, or what
-  comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+  magic line, storage network), how to grow storage from chests to a network, what the ATM
+  Star endgame needs at a high level, or what comes *after* the star (Chapter 4: Creative,
+  star automation, creative-tier items).
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -67,6 +68,15 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
+- **The storage ladder is dated the same way.** `references/storage-ladder.md` was read
+  from that same pack **8.2** snapshot (`e5e3d1d83e`): the four Storage-group chapter
+  files (`storage`, `refined_storage`, `applied_energistics_2`, `extended__advanced_ae`),
+  their `lang/en_us/chapters/*.snbt` titles, subtitles, and descriptions,
+  `chapter_groups.snbt`, `config/crash_assistant/modlist.json`, and
+  `config/ftbquests/quests/chapters/chapter_2_the_star.snbt` for the Chapter 3
+  cross-check. Its tier chains, item ids, quest titles, and quoted numbers are that
+  snapshot's — quote them as *what the book asked for in 8.2*, keep the hedges, and still
+  defer to the in-game quest book and JEI for recipes, slot counts, and current numbers.
 
 ## Setup — first run only
 
@@ -159,10 +169,23 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Storage questions go to `references/storage-ladder.md`.** "My chests are full",
+  "backpack, drawers, or bigger chests?", "when do I start a storage network?", "Refined
+  Storage or AE2?", "what does the next storage tier unlock?" → the Storage group's four
+  chapters in dependency order: **Basic Storage** (90 quests — the vanilla chest line,
+  Sophisticated Storage's copper → netherite chests and barrels, Sophisticated Backpacks,
+  Functional Storage's drawers), then **Refined Storage** (72) and **Applied Energistics
+  2** (74) as the two alternative first networks, then **Extended \& Advanced AE** (56)
+  on the AE2 side. The doc carries the verified titles, the item ids each rung asks for,
+  the pack's own quoted signals for moving up a rung, and the AE2-family items Chapter 3
+  wants. Quote them as what the book asks for, keep the hedges, and send the player to the
+  in-game quest book and JEI for recipes, slot counts, and current numbers.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
-  optional and mods are not gated.
+  optional and mods are not gated. `references/storage-ladder.md` has the verified
+  side-by-side for the storage pair, including the fact that Chapter 3's storage tasks are
+  all AE2-family.
 
 ### 3. Record completion and report progress
 
@@ -376,6 +399,10 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Storage answers quoted verified titles or ids from `references/storage-ladder.md`,
+  presented Refined Storage and AE2 as alternatives rather than a required path, kept the
+  hedges (no invented slot counts, recipes, or energy numbers), and pointed at the in-game
+  quest book and JEI for current specifics.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
