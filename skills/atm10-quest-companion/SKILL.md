@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.2.0
+version: 1.3.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -16,7 +16,9 @@ for Minecraft 1.21.1 (NeoForge) whose FTB Quests book holds 66 chapters and roug
 4,790 quests. The skill knows the pack's main stages — early game → tech → magic →
 endgame (the ATM Star) — tells the player what to do next from wherever he is, keeps a
 full recommended play order for all 66 chapters in four phases, and records which
-chapters are finished.
+chapters are finished. A brand-new player gets a first-hour walkthrough: spawn → the
+Welcome chapter → Chapter 1: The Beginning's opening chain, every step quoted from the
+pack's own quest config.
 endgame (the ATM Star) — tells the player what to do next from wherever he is, and keeps
 a local record of which chapters are finished. It also maps power: which
 generation and storage to build at each stage, how the mods' power systems relate,
@@ -29,6 +31,10 @@ pack's own shipped config rather than from generic advice.
 
 - The user says where he is in ATM10 (a quest chapter, a base he has built, a boss or
   resource he is stuck on) and asks *what should I do next?*
+- The user has just started and asks the beginner's very first question — *"I just
+  started, what do I do first?"*, "what do I do in my first hour?", "I spawned, now
+  what?", "what should I build first?" — answered from
+  `references/first-hour-walkthrough.md`.
 - The user asks the beginner automation question — *what should I automate first?* —
   about ore processing, power, item transport, storage, or the first resource/food farm
   (answered from `references/automation-first-steps.md`).
@@ -285,6 +291,20 @@ those fields or pretend the skill knows every requirement:
   no flight totem, no quest for the vanilla Elytra) is what the 8.2 book and modlist lack;
   never fill those gaps from memory.
 
+- **The first-hour doc dates itself the same way.**
+  `references/first-hour-walkthrough.md` was read from the same commit (`e5e3d1d83e`,
+  pack 8.2): the **Welcome** chapter (`config/ftbquests/quests/chapters/welcome.snbt`,
+  6 quests) and the opening of `mainquestline_part_1.snbt` (**Chapter 1: The
+  Beginning**, 36 quests), their `lang/en_us/chapters/*.snbt` titles and descriptions,
+  `chapter_groups.snbt`, the quest book's own `data.snbt` switches, and
+  `config/ftbultimine-server.snbt`. Its quest titles, ids, task items, counts, rewards
+  and dependencies are that snapshot's; quote them as *what the book asked for in 8.2*.
+  The walkthrough's **order** follows verified dependencies, but the whole "what fits in
+  an hour" framing — every minute estimate, and the "don't do this yet" list — is
+  **judgement**; repeat it as such. Four Welcome entries and several Chapter 1 entries
+  have no title in the config: mark them, never rename them. State no recipe,
+  coordinate, or keybind the config does not, and still defer to the in-game quest book
+  and JEI.
 - **The reward guide is also a pinned snapshot.** `references/best-reward-quests.md`
   uses only quest config from pack **8.2**, `main` commit `e5e3d1d83e` (2026-09-22).
   It quotes actual titles, quest ids, fixed item rewards and stored components; priorities
@@ -364,6 +384,17 @@ Stages overlap by design; use them to orient, not to gate.
 - Work from `references/progression.md` (stages, quest-book order) and
   `references/key-mods.md` (what each mod does, when to start it, what it leads to).
   First-hour and setup questions go to `references/getting-started.md`.
+- **"I just started — what do I do first?" goes to
+  `references/first-hour-walkthrough.md`:** the route from spawn to the first quests
+  done — the **Welcome** chapter's five player-visible quests (10 XP each), then
+  **Chapter 1: The Beginning**'s opening chain (*Welcome to Getting Started!* →
+  *Putting the Craft in Minecraft* → *Our First Pick* → *Stone Age* → *The Metal Age* →
+  *An Iron Pick*) and the branches off it (*Crafting, but on a Stick*, *Basic Ore
+  Doubling*, *Lava Bucket*, the starter generators), each quoted with the config's own
+  task items, counts, rewards and dependencies. Give the steps in that order, keep the
+  doc's *(judgement)* labels on the timing and on its "not a first-hour problem" list,
+  mark its untitled entries as untitled rather than renaming them, and state no recipe,
+  coordinate, or keybind the config does not.
 - **"Which chapter first, second, third?" goes to `references/progression-roadmap.md`:**
   all 66 chapters as one recommended play order in four phases (early / mid / late /
   endgame), one grounded line per chapter. Relay it as what it is — a recommendation
@@ -790,6 +821,12 @@ Before saying the companion is up to date, confirm:
 - Automation answers quoted verified quest titles from
   `references/automation-first-steps.md`, kept the 1–5 ranking marked as judgement, and
   still pointed at the in-game quest book and JEI for requirements and recipes.
+- First-hour answers quoted verified quest titles and ids from
+  `references/first-hour-walkthrough.md`, gave the Welcome chapter and Chapter 1's
+  opening chain in dependency order with the config's own task items and rewards, kept
+  its *(judgement)* labels on timing and on the "don't do this yet" list, marked
+  untitled entries as untitled instead of renaming them, and stated no recipe,
+  coordinate, or keybind the config does not.
 - Enchanting answers quoted verified titles, ids, and configured levels from
   `references/enchanting-guide.md`, kept every Eterna / Quanta / Arcana figure attributed
   to the quest text, and pointed at JEI and the table's pool view for exact windows.
