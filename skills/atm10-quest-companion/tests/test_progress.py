@@ -1176,6 +1176,197 @@ class TestPackVersionDrift(TempFileTestCase):
 
 
 # --------------------------------------------------------------------------------------
+# --list, --json, and --sync CLI additions
+# --------------------------------------------------------------------------------------
+
+class TestListCommand(unittest.TestCase):
+
+    def test_lists_every_known_chapter_grouped_by_progression_stage(self) -> None:
+        known = progress.load_known_chapters()
+        self.assertIsNotNone(known)
+        assert known is not None
+        code, out, err = run_main(["--list", "--data", "/does/not/exist/progress.json"])
+        self.assertEqual(code, 0, err)
+        self.assertEqual(err, "")
+        lines = out.splitlines()
+        headings = [f"[{stage_id}] {title}" for stage_id, title in progress.STAGES]
+        self.assertEqual([line for line in lines if line.startswith("[")], headings)
+        listed_ids = [line[2:].split(" - ", 1)[0]
+                      for line in lines if line.startswith("  ")]
+        expected_ids = [chapter["id"] for stage_id, _ in progress.STAGES
+                        for chapter in known.chapters if chapter["stage"] == stage_id]
+        self.assertEqual(listed_ids, expected_ids)
+        self.assertEqual(len(listed_ids), known.total)
+        for chapter in known.chapters:
+            self.assertIn(f"  {chapter['id']} - {chapter['title']}", out)
+        self.assertNotIn("Traceback", out)
+
+    def test_list_rejects_report_only_filters_cleanly(self) -> None:
+        code, out, err = run_main(["--list", "--stage", "tech"])
+        self.assertEqual(code, 1)
+        self.assertNotIn("Traceback", out + err)
+        self.assertIn("cannot be combined with --stage", err)
+
+
+class TestJsonReport(TempFileTestCase):
+
+    def sample_chapters(self) -> "list[dict[str, Any]]":
+        return [
+            make_chapter(id="welcome", title="Welcome", status="done"),
+            make_chapter(id="mekanism", title="Mekanism", group="Tech", stage="tech"),
+            make_chapter(id="ars_nouveau", title="Ars Nouveau", group="Magic", stage="magic"),
+        ]
+
+    def test_json_stdout_is_a_full_indented_machine_readable_report(self) -> None:
+        self.write_data(stamped_document(self.sample_chapters()))
+        code, out, err = run_main(["--json", "--data", str(self.data_path), "--next", "1"])
+        self.assertEqual(code, 0, err)
+        self.assertEqual(err, "")
+        report = json.loads(out)
+        self.assertEqual(out, json.dumps(report, indent=2, ensure_ascii=False) + "\n")
+        self.assertEqual(report["pack_version"], "8.x")
+        self.assertEqual(report["known_pack_version"], "8.x")
+        self.assertEqual(report["known_chapter_count"],
+                         len(json.loads(EXAMPLE_DATA.read_text(encoding="utf-8"))["chapters"]))
+        self.assertEqual(report["overall"], {"total": 3, "done": 1, "percent": 33.3})
+        self.assertEqual([row["id"] for row in report["per_stage"]], list(progress.STAGE_ORDER))
+        self.assertEqual(report["per_stage"][0]["done"], 1)
+        self.assertEqual(report["per_stage"][1]["total"], 1)
+        self.assertEqual(report["next_chapters"], [{
+            "id": "mekanism", "title": "Mekanism", "stage": "tech", "group": "Tech",
+            "status": "pending",
+        }])
+        self.assertEqual(report["pending_chapter_count"], 2)
+        self.assertEqual(report["stage_filter"], None)
+        self.assertIsInstance(report["pack_drift"], list)
+        self.assertNotIn("atm10 quest companion", out)
+        self.assertNotIn("Traceback", out)
+
+    def test_json_supports_stage_filter_and_json_only_set_output(self) -> None:
+        self.write_data(stamped_document(self.sample_chapters()))
+        code, out, err = run_main([
+            "--json", "--data", str(self.data_path), "--stage", "tech",
+            "--next", "1", "--set", "mekanism", "done",
+        ])
+        self.assertEqual(code, 0, err)
+        self.assertEqual(err, "")
+        report = json.loads(out)
+        self.assertEqual(report["overall"]["done"], 2)
+        self.assertEqual(report["stage_filter"], "tech")
+        self.assertEqual([row["id"] for row in report["next_chapters"]], [])
+        self.assertEqual(report["set_changes"], [{
+            "id": "mekanism", "title": "Mekanism", "previous_status": "pending",
+            "status": "done", "changed": True,
+        }])
+        self.assertEqual(progress.load_progress(self.data_path)[1]["status"], "done")
+
+    def test_bad_json_input_fails_without_traceback_or_json_garbage(self) -> None:
+        self.write_data(None, raw="{ definitely not JSON")
+        code, out, err = run_main(["--json", "--data", str(self.data_path)])
+        self.assertEqual(code, 1)
+        self.assertEqual(out, "")
+        self.assertNotIn("Traceback", err)
+        self.assertIn("not valid json", err.lower())
+
+
+class TestSyncCommand(TempFileTestCase):
+
+    @staticmethod
+    def known_chapters() -> "list[dict[str, Any]]":
+        return json.loads(EXAMPLE_DATA.read_text(encoding="utf-8"))["chapters"]
+
+    def drifted_document(self) -> "dict[str, Any]":
+        chapters = copy.deepcopy(self.known_chapters()[1:])
+        # Put two records out of order to prove sync restores the book order as well.
+        chapters[0], chapters[1] = chapters[1], chapters[0]
+        chapters[1]["status"] = "done"
+        chapters.append(make_chapter(id="removed_chapter", title="Removed Chapter", stage="tech"))
+        return stamped_document(chapters, pack_version="7.3",
+                                pack_version_source="previous catalog provenance")
+
+    def test_sync_dry_run_prints_all_changes_and_never_writes(self) -> None:
+        self.write_data(self.drifted_document())
+        before = self.data_path.read_text(encoding="utf-8")
+        code, out, err = run_main(["--sync", "--data", str(self.data_path)])
+        self.assertEqual(code, 0, err)
+        self.assertEqual(err, "")
+        self.assertIn("unknown chapter ids (will be dropped): 1", out)
+        self.assertIn("removed_chapter", out)
+        self.assertIn("known chapters missing from the file (will be added as pending): 1", out)
+        self.assertIn("welcome", out)
+        self.assertIn("pack_version: 7.3 -> 8.x", out)
+        self.assertIn("chapter order: will be restored", out)
+        self.assertIn("dry run: no file written", out)
+        self.assertEqual(self.data_path.read_text(encoding="utf-8"), before)
+        self.assertLess(out.index("sync preview"), out.index("dry run"))
+
+    def test_sync_yes_drops_unknown_adds_missing_preserves_progress_and_stamps(self) -> None:
+        self.write_data(self.drifted_document())
+        code, out, err = run_main(["--sync", "--yes", "--data", str(self.data_path)])
+        self.assertEqual(code, 0, err)
+        self.assertEqual(err, "")
+        self.assertLess(out.index("sync preview"), out.index("applied:"))
+        self.assertIn("dropped 1 unknown", out)
+        self.assertIn("added 1 missing as pending", out)
+        data = json.loads(self.data_path.read_text(encoding="utf-8"))
+        known = progress.load_known_chapters()
+        assert known is not None
+        self.assertEqual(data["pack_version"], known.version)
+        self.assertEqual(data["pack_version_source"], "previous catalog provenance")
+        self.assertEqual([chapter["id"] for chapter in data["chapters"]], list(known.order))
+        self.assertNotIn("removed_chapter", [chapter["id"] for chapter in data["chapters"]])
+        by_id = {chapter["id"]: chapter for chapter in data["chapters"]}
+        self.assertEqual(by_id["welcome"]["status"], "pending")
+        self.assertEqual(by_id["bounty_board"]["status"], "done")
+        self.assertEqual(progress.validate(data), [])
+
+    def test_clean_sync_does_not_rewrite_the_file(self) -> None:
+        self.write_data(stamped_document(self.known_chapters()))
+        before = self.data_path.read_text(encoding="utf-8")
+        code, out, err = run_main(["--sync", "--yes", "--data", str(self.data_path)])
+        self.assertEqual(code, 0, err)
+        self.assertIn("result: no changes needed", out)
+        self.assertIn("unchanged:", out)
+        self.assertEqual(self.data_path.read_text(encoding="utf-8"), before)
+
+    def test_sync_can_preview_and_create_a_missing_progress_file(self) -> None:
+        missing = self.data_path.parent / "nested" / "progress.json"
+        code, out, err = run_main(["--sync", "--data", str(missing)])
+        self.assertEqual(code, 0, err)
+        self.assertIn("progress file: missing", out)
+        self.assertIn("known chapters missing from the file", out)
+        self.assertFalse(missing.exists(), "a dry run must not create the file or parent directory")
+
+        code, out, err = run_main(["--sync", "--yes", "--data", str(missing)])
+        self.assertEqual(code, 0, err)
+        self.assertTrue(missing.is_file())
+        data = json.loads(missing.read_text(encoding="utf-8"))
+        self.assertEqual([chapter["id"] for chapter in data["chapters"]],
+                         [chapter["id"] for chapter in self.known_chapters()])
+        self.assertTrue(all(chapter["status"] == "pending" for chapter in data["chapters"]))
+
+    def test_sync_reports_malformed_files_cleanly_and_leaves_them_untouched(self) -> None:
+        self.write_data(None, raw="{broken")
+        before = self.data_path.read_text(encoding="utf-8")
+        code, out, err = run_main(["--sync", "--yes", "--data", str(self.data_path)])
+        self.assertEqual(code, 1)
+        self.assertNotIn("Traceback", out + err)
+        self.assertIn("not valid json", err.lower())
+        self.assertEqual(self.data_path.read_text(encoding="utf-8"), before)
+
+    def test_bad_option_combinations_and_path_values_never_traceback(self) -> None:
+        for argv, needle in (
+            (["--yes"], "only valid with --sync"),
+            (["--sync", "--set", "welcome", "done"], "cannot be combined with --set"),
+            (["--sync", "--data", "\x00"], "null character"),
+        ):
+            code, out, err = run_main(argv)
+            self.assertEqual(code, 1)
+            self.assertNotIn("Traceback", out + err)
+            self.assertIn(needle, (out + err).lower())
+
+
+# --------------------------------------------------------------------------------------
 # the three endgame reference docs
 # --------------------------------------------------------------------------------------
 
@@ -1373,8 +1564,11 @@ class TestEndgameReferenceDocs(unittest.TestCase):
         for name in ("references/atm-star-checklist.md", "references/boss-checklist.md",
                      "references/creative-checklist.md"):
             self.assertIn(name, skill, f"SKILL.md must point at {name}")
-        for behaviour in ("--set", "--stage", "pack_version", "drift"):
+        for behaviour in ("--set", "--stage", "--list", "--json", "--sync", "--yes",
+                          "pack_version", "drift"):
             self.assertIn(behaviour, skill, f"SKILL.md must document {behaviour}")
+        self.assertIn("two-space indentation", skill)
+        self.assertIn("without `--yes`, it", skill)
 
 
 # --------------------------------------------------------------------------------------

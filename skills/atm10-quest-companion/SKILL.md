@@ -82,6 +82,10 @@ New-Item -ItemType Directory -Force data | Out-Null
 Copy-Item examples/progress.example.json data/progress.json
 ```
 
+Alternatively, `python3 scripts/progress.py --sync --yes` (or `python` on Windows) can
+initialize a missing progress file after displaying its full preview; without `--yes`, it
+never creates or changes a file.
+
 Run these from the skill directory (`<skills root>/gaming/atm10-quest-companion/`).
 `progress.py` is stdlib-only Python 3.8+, needs no third-party packages and no network;
 the interpreter is `python3` on Linux and macOS, `python` (or `py -3`) on Windows.
@@ -230,20 +234,34 @@ chapters in quest-book order. Options:
 | `--data PATH` | Use another progress file (default `data/progress.json`). |
 | `--next N` | Cap the next-chapters list (default 10). |
 | `--stage STAGE` | List only that stage's unfinished chapters: `early-game`, `tech`, `magic`, `endgame`. Counts and percentages stay whole-file — the stage table shows every stage and marks the filtered row with `<==`. A stage with nothing left says so. |
-| `--set CHAPTER STATUS` | Record `CHAPTER` (id or exact title) as `done` or `pending`, then report. Repeatable. The only option that writes. |
+| `--set CHAPTER STATUS` | Record `CHAPTER` (id or exact title) as `done` or `pending`, then report. Repeatable; validates every request before writing. |
+| `--list` | Print every known chapter as `id - title`, grouped under stage headings in progression order. Does not read the progress file. |
+| `--json` | Print the full report as JSON with two-space indentation. It includes `pack_version` (the file's stamp, or `null`), `known_pack_version`, `known_chapter_count`, `overall` (`done`, `total`, `percent`), `per_stage`, `next_chapters`, `pending_chapter_count`, and `pack_drift`. It honors `--next` and `--stage`; combining it with `--set` keeps stdout valid JSON and adds structured `set_changes`. |
+| `--sync` | Preview unknown ids to drop, known ids to add as `pending`, pack-version changes, and any chapter-order correction. A missing file is previewed as all known chapters missing. Exits 0 without writing. |
+| `--yes` | Apply the preview only when used with `--sync`. Drops unknown ids, adds missing chapters as `pending`, restores quest-book order, and sets `pack_version` to the known version. Preserves existing statuses and optional `pack_version_source`. Writes only if something changes. |
 
 ```bash
 python3 scripts/progress.py --stage endgame --next 5
+python3 scripts/progress.py --list
+python3 scripts/progress.py --json --next 5
+python3 scripts/progress.py --sync                 # preview only
+python3 scripts/progress.py --sync --yes           # apply after reviewing the preview
 ```
 
 ```powershell
 python scripts/progress.py --stage endgame --next 5
+python scripts/progress.py --list
+python scripts/progress.py --json --next 5
+python scripts/progress.py --sync                 # preview only
+python scripts/progress.py --sync --yes           # apply after reviewing the preview
 ```
 
-An invalid stage or status exits 1 with the valid values named. The script never raises a
-traceback: a missing, empty, malformed, or schema-breaking file is reported as one clear
-message with exit status 1 — relay that message and the fix it suggests, do not paper over
-it.
+`--list`, `--json`, and `--sync` are separate output modes. `--yes` is valid only with
+`--sync`; `--sync` cannot be combined with `--set` or `--stage`. An invalid stage or status
+exits 1 with the valid values named. The script never raises a traceback: a missing, empty,
+malformed, or schema-breaking progress file is reported as one clear message with exit
+status 1 — relay that message and the fix it suggests, do not paper over it. Bad CLI syntax
+uses argparse's clear usage error rather than a traceback.
 
 Use the report to answer "what next?" too: the first listed pending chapter in the
 player's current stage is the natural recommendation, cross-checked against what he told
@@ -257,9 +275,10 @@ with a different — or no — `pack_version`, the report prints a `pack drift` 
 the ids (at most six per line, then `(+N more)`) and **still exits 0**, counting every
 chapter as usual. A pack update is information, not a broken file.
 
-Relay the warning when it appears, say that the user's in-game quest book is authoritative,
-and change `data/progress.json` (or its stamp) only with him — never silently reconcile it
-to the shipped list.
+Relay the warning when it appears and say that the user's in-game quest book is
+authoritative. Never silently reconcile the file: `--sync` first prints every id and
+version change it would make, and `--sync --yes` is used only after the player explicitly
+approves that preview. The dry run does not write anything.
 
 ## Privacy
 
@@ -280,8 +299,8 @@ Before saying the companion is up to date, confirm:
   nothing silently dropped.
 - `progress.py` exits 0 and its percentages match the file (done/total per stage and
   overall).
-- Any `pack drift` warning the report printed was relayed to the user, not hidden, and no
-  chapter was added, dropped, or restamped without him.
+- Any `pack drift` warning the report printed was relayed to the user, not hidden; no
+  chapter was added, dropped, or restamped without explicit approval of a `--sync` preview.
 - The advice given names the next steps in quest-book order and grounds each in a
   chapter/mod from the references.
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /

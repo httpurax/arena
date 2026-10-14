@@ -2,7 +2,12 @@
 """progress.py - offline chapter-progress tracker for the atm10-quest-companion skill.
 
 Reads one local JSON file (``<skill>/data/progress.json`` by default) mapping every
-FTB Quests chapter of All the Mods 10 to a status (``pending`` or ``done``) and prints:
+FTB Quests chapter of All the Mods 10 to a status (``pending`` or ``done``) and prints a
+human-readable progress report by default. ``--list`` prints the known catalog grouped by
+stage, ``--json`` emits the report as JSON, and ``--sync`` previews differences between
+the local file and the catalog (``--sync --yes`` applies them).
+
+The report includes:
 
   * the overall completion percentage;
   * one completion line per progression stage (early-game -> tech -> magic -> endgame),
@@ -38,6 +43,7 @@ message, and the exit status is 1.
 Usage:
     python3 scripts/progress.py [--data PATH] [--next N] [--stage STAGE_ID]
                                 [--set CHAPTER_ID STATUS]...
+    python3 scripts/progress.py [--list | --json | --sync [--yes]] [--data PATH]
 """
 
 from __future__ import annotations
@@ -78,7 +84,7 @@ VALID_STATUSES = frozenset({"pending", "done"})
 REQUIRED_FIELDS = ("id", "title", "stage", "status")
 OPTIONAL_FIELDS = ("group",)
 KNOWN_FIELDS = frozenset(REQUIRED_FIELDS + OPTIONAL_FIELDS)
-# The order ``--set`` rewrites each chapter in, matching the shipped example file.
+# The canonical field order used by ``--set`` and ``--sync`` writes.
 CHAPTER_FIELD_ORDER = ("id", "title", "group", "stage", "status")
 
 # Pack-version stamp: which ATM10 version the chapter list was researched from. The
@@ -117,6 +123,7 @@ class KnownChapters(NamedTuple):
     order: Tuple[str, ...]
     version: str
     path: Path
+    chapters: Tuple[Dict[str, Any], ...] = ()
 
     @property
     def total(self) -> int:
@@ -128,8 +135,13 @@ class KnownChapters(NamedTuple):
 # loading and validation
 # --------------------------------------------------------------------------------------
 
-def load_document(path: Path) -> "tuple[list[dict[str, Any]], dict[str, str]]":
+def load_document(
+    path: Path, allow_empty_chapters: bool = False
+) -> "tuple[list[dict[str, Any]], dict[str, str]]":
     """Read the progress file and return ``(chapters, stamps)``.
+
+    ``allow_empty_chapters`` is reserved for ``--sync``: an empty list can be reconciled
+    by adding every known chapter as pending, while normal reports still reject it.
 
     ``stamps`` holds whichever pack-version fields the file carries (possibly none).
     Every failure mode - missing, unreadable, empty, malformed JSON, wrong shape, bad
@@ -160,7 +172,7 @@ def load_document(path: Path) -> "tuple[list[dict[str, Any]], dict[str, str]]":
             f"the progress file {path} is not valid JSON: {exc.msg} (line {exc.lineno}, column {exc.colno})"
         ) from exc
 
-    problems = validate(data)
+    problems = validate(data, allow_empty_chapters=allow_empty_chapters)
     if problems:
         listing = "\n".join(f"  - {problem}" for problem in problems)
         raise ProgressError(f"the progress file {path} does not match the schema:\n{listing}")
@@ -180,34 +192,44 @@ def load_progress(path: Path) -> "list[dict[str, Any]]":
 def load_known_chapters(path: Path = EXAMPLE_DATA) -> "Optional[KnownChapters]":
     """Load the shipped chapter list that ``data/progress.json`` is checked against.
 
-    Returns ``None`` - silently disabling the drift check rather than breaking the
-    report - when the example file is missing, unreadable, malformed, or carries no
-    usable chapter ids. A progress report is more useful without a drift check than
-    without a report.
+    Returns ``None`` rather than breaking an ordinary report when the example file is
+    missing, unreadable, malformed, or fails the chapter schema. New commands that need
+    the catalog (``--list``, ``--json``, and ``--sync``) turn that condition into a clear
+    user-facing error instead of silently guessing.
     """
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+    except (OSError, ValueError, TypeError):
         return None
-    if not isinstance(data, dict):
+    if not isinstance(data, dict) or validate(data):
         return None
-    chapters = data.get("chapters")
-    if not isinstance(chapters, list) or not chapters:
+    raw_chapters = data.get("chapters")
+    if not isinstance(raw_chapters, list) or not raw_chapters:
         return None
-    ids = [
-        chapter["id"].strip() for chapter in chapters
-        if isinstance(chapter, dict) and isinstance(chapter.get("id"), str) and chapter["id"].strip()
-    ]
-    if not ids:
+
+    # validate() guarantees these fields and their types; copy each record so callers
+    # cannot mutate the parsed catalog by accident.
+    chapters = tuple(
+        dict(chapter, id=chapter["id"].strip()) for chapter in raw_chapters
+    )
+    ids = [chapter["id"] for chapter in chapters]
+    if len(ids) != len(set(ids)):
         return None
+
     version = data.get(PACK_VERSION_FIELD)
     if not isinstance(version, str) or not version.strip():
         version = DEFAULT_PACK_VERSION
-    return KnownChapters(ids=frozenset(ids), order=tuple(ids), version=version.strip(), path=path)
+    return KnownChapters(
+        ids=frozenset(ids), order=tuple(ids), version=version.strip(), path=path,
+        chapters=chapters,
+    )
 
 
-def validate(data: Any) -> "list[str]":
+def validate(data: Any, allow_empty_chapters: bool = False) -> "list[str]":
     """Return every schema problem in ``data`` (empty list when it is valid).
+
+    ``allow_empty_chapters`` is used only while planning a sync; the resulting document
+    must still contain chapters before it is written.
 
     The document is ``{"chapters": [...]}`` plus the optional pack-version stamp keys;
     each chapter needs ``id``, ``title``, ``stage``, and ``status``, may carry ``group``,
@@ -233,7 +255,7 @@ def validate(data: Any) -> "list[str]":
         return problems
     if not isinstance(chapters, list):
         return problems + ["'chapters' must be a list of chapter objects"]
-    if not chapters:
+    if not chapters and not allow_empty_chapters:
         return problems + ["'chapters' is empty - copy examples/progress.example.json and edit statuses"]
 
     seen_ids: "dict[str, int]" = {}
@@ -496,8 +518,74 @@ def format_report(
     return "\n".join(lines)
 
 
+def format_chapter_list(known: KnownChapters) -> str:
+    """Render the known catalog as plain text, grouped in progression-stage order."""
+    lines: "list[str]" = []
+    for stage_id, title in STAGES:
+        lines.append(f"[{stage_id}] {title}")
+        for chapter in known.chapters:
+            if chapter["stage"] == stage_id:
+                lines.append(f"  {chapter['id']} - {chapter['title']}")
+    return "\n".join(lines)
+
+
+def json_report_data(
+    chapters: "Sequence[dict[str, Any]]",
+    data_path: Path,
+    limit: int,
+    stage: "Optional[str]" = None,
+    known: "Optional[KnownChapters]" = None,
+    stamps: "Optional[Dict[str, str]]" = None,
+    set_changes: "Optional[Sequence[dict[str, Any]]]" = None,
+) -> "dict[str, Any]":
+    """Build the machine-readable equivalent of the human progress report."""
+    stamps = stamps or {}
+    return {
+        "data_path": str(data_path),
+        # pack_version is what the progress file claims; known_pack_version makes a drift
+        # explicit without losing the user's original stamp.
+        "pack_version": stamps.get(PACK_VERSION_FIELD),
+        "known_pack_version": known.version if known is not None else None,
+        "known_chapter_count": known.total if known is not None else None,
+        "overall": overall_summary(chapters),
+        "per_stage": stage_summary(chapters),
+        "next_chapters": [
+            {
+                "id": chapter["id"],
+                "title": chapter["title"],
+                "stage": chapter["stage"],
+                "group": chapter.get("group", ""),
+                "status": chapter["status"],
+            }
+            for chapter in next_pending(chapters, limit, stage)
+        ],
+        "pending_chapter_count": pending_count(chapters, stage),
+        "stage_filter": stage,
+        "pack_drift": check_drift(chapters, known, stamps),
+        **({"set_changes": list(set_changes)} if set_changes is not None else {}),
+    }
+
+
+def format_json_report(
+    chapters: "Sequence[dict[str, Any]]",
+    data_path: Path,
+    limit: int,
+    stage: "Optional[str]" = None,
+    known: "Optional[KnownChapters]" = None,
+    stamps: "Optional[Dict[str, str]]" = None,
+    set_changes: "Optional[Sequence[dict[str, Any]]]" = None,
+) -> str:
+    """Serialize the full progress report with stable two-space indentation."""
+    return json.dumps(
+        json_report_data(chapters, data_path, limit, stage, known, stamps, set_changes),
+        indent=2,
+        ensure_ascii=False,
+        allow_nan=False,
+    )
+
+
 # --------------------------------------------------------------------------------------
-# writing (--set)
+# writing (--set / --sync)
 # --------------------------------------------------------------------------------------
 
 def parse_stage(value: str) -> str:
@@ -606,7 +694,8 @@ def write_progress(path: Path, document: "dict[str, Any]") -> None:
     The document is re-validated immediately before writing, so a malformed document can
     never reach the disk, and it is written to a temporary file in the same directory
     followed by ``os.replace``, so an interrupted run leaves either the old file or the
-    new one - never a half-written progress file.
+    new one - never a half-written progress file. Missing parent directories are created
+    only when a validated write is actually requested.
     """
     problems = validate(document)
     if problems:
@@ -619,6 +708,7 @@ def write_progress(path: Path, document: "dict[str, Any]") -> None:
     handle = None
     temporary: "Optional[Path]" = None
     try:
+        directory.mkdir(parents=True, exist_ok=True)
         handle = tempfile.NamedTemporaryFile(
             mode="w", encoding="utf-8", newline="\n", dir=str(directory),
             prefix=f".{path.name}.", suffix=".tmp", delete=False,
@@ -646,6 +736,122 @@ def write_progress(path: Path, document: "dict[str, Any]") -> None:
                 pass
 
 
+class SyncPlan(NamedTuple):
+    """Changes needed to bring a local progress document in line with the catalog."""
+
+    unknown: Tuple[str, ...]
+    missing: Tuple[str, ...]
+    current_version: Optional[str]
+    target_version: str
+    order_changed: bool
+    file_exists: bool
+    document: Dict[str, Any]
+
+    @property
+    def changes_required(self) -> bool:
+        return bool(
+            self.unknown or self.missing
+            or self.current_version != self.target_version
+            or self.order_changed or not self.file_exists
+        )
+
+
+def build_sync_plan(
+    chapters: "Sequence[dict[str, Any]]",
+    stamps: "Dict[str, str]",
+    known: KnownChapters,
+    file_exists: bool = True,
+) -> SyncPlan:
+    """Plan a sync without mutating input or writing any files.
+
+    Existing known chapters keep their statuses and metadata. Unknown chapters are
+    removed, missing ones are copied from the catalog as pending, and the final list is
+    restored to quest-book order. Optional provenance is preserved; only pack_version is
+    always replaced with the catalog's version.
+    """
+    chapter_by_id = {chapter["id"]: chapter for chapter in chapters}
+    present_ids = set(chapter_by_id)
+    unknown = tuple(chapter["id"] for chapter in chapters if chapter["id"] not in known.ids)
+    missing = tuple(chapter_id for chapter_id in known.order if chapter_id not in present_ids)
+    existing_known_order = [chapter["id"] for chapter in chapters if chapter["id"] in known.ids]
+    expected_existing_order = [chapter_id for chapter_id in known.order if chapter_id in present_ids]
+    order_changed = existing_known_order != expected_existing_order
+
+    reconciled: "list[dict[str, Any]]" = []
+    for known_chapter in known.chapters:
+        chapter_id = known_chapter["id"]
+        existing = chapter_by_id.get(chapter_id)
+        if existing is not None:
+            reconciled.append(dict(existing))
+        else:
+            added = dict(known_chapter)
+            added["status"] = "pending"
+            reconciled.append(added)
+
+    updated_stamps = dict(stamps)
+    updated_stamps[PACK_VERSION_FIELD] = known.version
+    updated_document = build_document(reconciled, updated_stamps)
+    return SyncPlan(
+        unknown=unknown,
+        missing=missing,
+        current_version=stamps.get(PACK_VERSION_FIELD),
+        target_version=known.version,
+        order_changed=order_changed,
+        file_exists=file_exists,
+        document=updated_document,
+    )
+
+
+def format_sync_preview(path: Path, plan: SyncPlan) -> str:
+    """Describe every sync change before any write is attempted."""
+    lines = [f"sync preview: {path}"]
+    if not plan.file_exists:
+        lines.append("progress file: missing (it will be created only with --yes)")
+
+    lines.append(f"unknown chapter ids (will be dropped): {len(plan.unknown)}")
+    lines.extend(f"  - {chapter_id}" for chapter_id in plan.unknown)
+    if not plan.unknown:
+        lines.append("  none")
+
+    lines.append(
+        "known chapters missing from the file (will be added as pending): "
+        f"{len(plan.missing)}"
+    )
+    lines.extend(f"  - {chapter_id}" for chapter_id in plan.missing)
+    if not plan.missing:
+        lines.append("  none")
+
+    current = plan.current_version if plan.current_version is not None else "<missing>"
+    if plan.current_version != plan.target_version:
+        lines.append(f"pack_version: {current} -> {plan.target_version}")
+    else:
+        lines.append(f"pack_version: {current} (matches the known version)")
+
+    if plan.order_changed:
+        lines.append("chapter order: will be restored to the known quest-book order")
+    else:
+        lines.append("chapter order: already matches the known quest-book order")
+    if not plan.changes_required:
+        lines.append("result: no changes needed")
+    return "\n".join(lines)
+
+
+def sync_action_summary(plan: SyncPlan) -> str:
+    """Return a concise summary of the changes in an applied sync plan."""
+    actions: "list[str]" = []
+    if plan.unknown:
+        actions.append(f"dropped {len(plan.unknown)} unknown")
+    if plan.missing:
+        actions.append(f"added {len(plan.missing)} missing as pending")
+    if plan.current_version != plan.target_version:
+        actions.append(f"set pack_version to {plan.target_version}")
+    if plan.order_changed:
+        actions.append("restored quest-book order")
+    if not plan.file_exists:
+        actions.append("created the progress file")
+    return "; ".join(actions) if actions else "no changes needed"
+
+
 # --------------------------------------------------------------------------------------
 # entry point
 # --------------------------------------------------------------------------------------
@@ -653,8 +859,8 @@ def write_progress(path: Path, document: "dict[str, Any]") -> None:
 def parse_args(argv: "Optional[Sequence[str]]") -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="progress.py",
-        description="Report ATM10 quest-chapter progress from a local JSON file, "
-                    "and optionally flip chapter statuses.",
+        description="Offline ATM10 quest progress: report, list known chapters, emit JSON, "
+                    "or preview/apply a catalog sync.",
     )
     parser.add_argument(
         "--data", default=str(DEFAULT_DATA),
@@ -676,44 +882,162 @@ def parse_args(argv: "Optional[Sequence[str]]") -> argparse.Namespace:
         help="mark a chapter done or pending (id or exact title), then report; repeatable, "
              "validated before the file is written",
     )
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument(
+        "--list", action="store_true", dest="list_chapters",
+        help="print the known chapter ids and titles, grouped by progression stage",
+    )
+    modes.add_argument(
+        "--json", action="store_true", dest="json_output",
+        help="print the full progress report as indented JSON",
+    )
+    modes.add_argument(
+        "--sync", action="store_true",
+        help="preview reconciliation of the progress file with the known chapter list",
+    )
+    parser.add_argument(
+        "--yes", action="store_true",
+        help="apply the changes previewed by --sync (without this, no file is written)",
+    )
     return parser.parse_args(argv)
 
 
+def _json_set_changes(
+    chapters: "Sequence[dict[str, Any]]",
+    requested: "Sequence[Sequence[str]]",
+    data_path: Path,
+) -> "list[dict[str, Any]]":
+    """Validate and describe --set operations for the optional JSON report field."""
+    statuses = {chapter["id"]: chapter["status"] for chapter in chapters}
+    changes: "list[dict[str, Any]]" = []
+    for wanted, raw_status in requested:
+        status = (raw_status or "").strip().lower()
+        if status not in VALID_STATUSES:
+            raise ProgressError(
+                f"--set status '{raw_status}' is not one of: {', '.join(sorted(VALID_STATUSES))}"
+            )
+        chapter = resolve_chapter(chapters, wanted, data_path)
+        previous = statuses[chapter["id"]]
+        changes.append({
+            "id": chapter["id"],
+            "title": chapter["title"],
+            "previous_status": previous,
+            "status": status,
+            "changed": previous != status,
+        })
+        statuses[chapter["id"]] = status
+    return changes
+
+
+def _require_known_chapters() -> KnownChapters:
+    """Load the catalog or report a clear error for commands that require it."""
+    known = load_known_chapters()
+    if known is None:
+        raise ProgressError(
+            f"cannot load the known chapter list at {EXAMPLE_DATA}; restore a valid "
+            "examples/progress.example.json before using this command"
+        )
+    return known
+
+
 def main(argv: "Optional[Sequence[str]]" = None) -> int:
-    """Print the progress report; return 0 on success, 1 on any user-facing problem."""
+    """Run a CLI operation; return a nonzero status on any user-facing problem."""
     try:
-        args = parse_args(argv)
+        try:
+            args = parse_args(argv)
+        except SystemExit as exc:
+            # argparse already printed a clear usage/error message; do not let its
+            # SystemExit escape when main() is called by the stdlib test suite.
+            return exc.code if isinstance(exc.code, int) else 1
+
         if args.next_limit < 1:
             raise ProgressError(f"--next must be at least 1 (got {args.next_limit})")
-        stage = parse_stage(args.stage) if args.stage else None
-        data_path = Path(args.data).expanduser()
-        known = load_known_chapters()
+        if args.yes and not args.sync:
+            raise ProgressError("--yes is only valid with --sync")
+        if args.list_chapters and args.set_status:
+            raise ProgressError("--list cannot be combined with --set")
+        if args.list_chapters and args.stage:
+            raise ProgressError("--list cannot be combined with --stage")
+        if args.sync and args.set_status:
+            raise ProgressError("--sync cannot be combined with --set")
+        if args.sync and args.stage:
+            raise ProgressError("--sync cannot be combined with --stage")
 
+        stage = parse_stage(args.stage) if args.stage else None
+        if "\x00" in args.data:
+            raise ProgressError("--data path cannot contain a null character")
+        data_path = Path(args.data).expanduser()
+
+        if args.list_chapters:
+            print(format_chapter_list(_require_known_chapters()))
+            return 0
+
+        if args.sync:
+            known = _require_known_chapters()
+            if data_path.exists():
+                chapters, stamps = load_document(data_path, allow_empty_chapters=True)
+                file_exists = True
+            else:
+                # A missing file is an all-missing sync plan. A dry run remains read-only;
+                # --sync --yes creates the data directory and initializes it.
+                chapters, stamps = [], {}
+                file_exists = False
+            plan = build_sync_plan(chapters, stamps, known, file_exists=file_exists)
+            print(format_sync_preview(data_path, plan))
+            if not args.yes:
+                if plan.changes_required:
+                    print("dry run: no file written; pass --yes to apply these changes")
+                return 0
+            if not plan.changes_required:
+                print(f"unchanged: {data_path} was not written")
+                return 0
+            write_progress(data_path, plan.document)
+            print(f"applied: {sync_action_summary(plan)}")
+            print(f"wrote: {data_path}")
+            return 0
+
+        known = _require_known_chapters() if args.json_output else load_known_chapters()
+        json_changes: "Optional[list[dict[str, Any]]]" = None
         if args.set_status:
             chapters, stamps = load_document(data_path)
+            if args.json_output:
+                json_changes = _json_set_changes(chapters, args.set_status, data_path)
             lines, changed = apply_status_changes(chapters, args.set_status, data_path)
-            for line in lines:
-                print(line)
+            if not args.json_output:
+                for line in lines:
+                    print(line)
             if changed:
                 write_progress(data_path, build_document(chapters, stamps))
-                noun = "chapter" if changed == 1 else "chapters"
-                print(f"wrote: {data_path} ({changed} {noun} updated)")
-            else:
+                if not args.json_output:
+                    noun = "chapter" if changed == 1 else "chapters"
+                    print(f"wrote: {data_path} ({changed} {noun} updated)")
+            elif not args.json_output:
                 print(f"unchanged: {data_path} was not written")
             # Report what is on disk now, so the numbers shown are the numbers saved.
             chapters, stamps = load_document(data_path)
-            print("")
+            if not args.json_output:
+                print("")
         else:
             chapters, stamps = load_document(data_path)
 
-        print(format_report(chapters, data_path, args.next_limit,
-                            stage=stage, known=known, stamps=stamps))
+        if args.json_output:
+            print(format_json_report(
+                chapters, data_path, args.next_limit, stage=stage, known=known,
+                stamps=stamps, set_changes=json_changes,
+            ))
+        else:
+            print(format_report(chapters, data_path, args.next_limit,
+                                stage=stage, known=known, stamps=stamps))
         return 0
     except ProgressError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
-    except OSError as exc:  # an unwritable stdout, a broken pipe - still no traceback
+    except OSError as exc:  # unreadable input, unwritable output, or a broken pipe
         print(f"error: {exc}", file=sys.stderr)
+        return 1
+    except Exception as exc:  # malformed paths and unusual input must never emit tracebacks
+        detail = str(exc).strip() or exc.__class__.__name__
+        print(f"error: cannot process the request: {detail}", file=sys.stderr)
         return 1
 
 
