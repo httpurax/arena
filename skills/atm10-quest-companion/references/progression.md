@@ -172,7 +172,10 @@ Undergarden, Eternal Starlight, ...) gate late-game materials and several star
 components — though in practice many of them (Bumblezone, Twilight Forest) are quite
 doable mid-game. The stage boundary is fuzzy here by design; say so when advising.
 `references/boss-checklist.md` maps each of those bosses to its dimension, its arena, and
-roughly when in the progression it lands.
+roughly when in the progression it lands; `references/dimension-guide.md` covers the
+dimensions themselves — what opens each one, which chapter and stage it belongs to, what
+the book sends you there for, and a recommended order to visit them in (several open well
+before the endgame: Chapter 1 itself says diamonds let you visit the Twilight Forest).
 
 ## Using this document in a session
 
@@ -185,7 +188,9 @@ roughly when in the progression it lands.
    endgame questions, work from `references/atm-star-checklist.md` (star components by
    source mod), `references/boss-checklist.md` (boss, dimension, arena, roughly when), and
    `references/creative-checklist.md` (what Chapter 4 asks for after the star, and what
-   each creative item does); all three quote verified quest titles and still defer to the
+   each creative item does); for "which dimension next?", work from
+   `references/dimension-guide.md` (what unlocks each dimension, its chapter, and a
+   recommended visit order). All four quote verified quest titles and still defer to the
    in-game book.
 4. When a chapter is finished, record it in `data/progress.json` and run
    `scripts/progress.py` to show what is next.

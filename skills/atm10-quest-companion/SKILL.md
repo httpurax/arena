@@ -25,6 +25,9 @@ a local record of which chapters are finished.
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+- The user asks which dimension to open next, what unlocks one (the Twilight Forest, the
+  Aether, the Undergarden, Eternal Starlight, Allthemodium's The Other, ...), which
+  chapter it belongs to, or what it is worth going there for.
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -58,15 +61,17 @@ They do **not** capture exact requirements, and this skill must never pretend ot
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
-- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
-  pack repository's `config/ftbquests/quests/chapters/*.snbt` and
-  `lang/en_us/chapters/*.snbt` (mod names and versions from
-  `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
-  `examples/progress.example.json`; the creative checklist pins the exact commit
-  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
-  the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
-  and still defer to the in-game quest book and JEI.
+- **The snapshot docs date themselves.** The three endgame docs —
+  `references/atm-star-checklist.md`, `references/boss-checklist.md`, and
+  `references/creative-checklist.md` — and the dimension guide,
+  `references/dimension-guide.md`, were read from the pack repository's
+  `config/ftbquests/quests/chapters/*.snbt` and `lang/en_us/chapters/*.snbt` (mod names
+  and versions from `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"`
+  stamp in `examples/progress.example.json`; the creative checklist and the dimension
+  guide pin the exact commit (`e5e3d1d83e`). The item ids, dimension ids, quest titles, and
+  quoted counts there are that snapshot's; the pack changes them between versions. Quote
+  them as *what the book asked for in 8.2*, and still defer to the in-game quest book and
+  JEI.
 
 ## Setup — first run only
 
@@ -159,6 +164,16 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Dimension questions go to `references/dimension-guide.md`.** "Which dimension should I
+  open first?", "what unlocks the Aether / The Other?", "is the Undergarden worth it yet?"
+  → the 13 destinations the config's 28 `dimension` tasks (plus the Twilight Forest's
+  `twilightforest:root` advancement) reach, in a recommended visit order: each with its
+  verified unlock quest and dimension id, its chapter and stage tag, what the book sends
+  the player there for (bosses, resources, key quests, star components), and a "roughly
+  when" that marks which steps are verified dependency links or quest text and which are
+  approximate judgement. The book gates nothing, so present the order as a
+  recommendation. Portal recipes and coordinates are deliberately not on that page — send
+  the player to the quest entry and JEI for those.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -376,6 +391,9 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Dimension answers named the verified unlock quest and dimension id from
+  `references/dimension-guide.md`, kept its verified/approximate labels, and supplied no
+  portal recipe or coordinates.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.

@@ -3,7 +3,8 @@
 **What this page is.** A boss map for **All the Mods 10**: every boss the pack's quest book
 actually tracks, the dimension and structure it lives in, and roughly where in the
 progression it lands. It exists so a session can answer "which boss do I need, where is it,
-and am I ready?" without inventing a fight.
+and am I ready?" without inventing a fight. For the dimensions themselves — what opens
+each one, and in which order to visit them — see `references/dimension-guide.md`.
 
 ## Provenance — everything here was read, not remembered
 

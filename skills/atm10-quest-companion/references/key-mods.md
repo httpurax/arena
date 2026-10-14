@@ -71,11 +71,15 @@ approximate.
 | **Forbidden & Arcanus** | Magic/tech hybrid: arcana, rituals, Hephaestus forge. | Mid-late. | "Automatic Hepheastus Forge" is a Chapter 4 quest. |
 | **Nature's Aura** | Aura-based nature magic: altars, offerings, aura collectors. | Mid magic, small chapter (25 quests). | Niche star components. |
 | **Theurgy** | Summoning/knowledge magic (small chapter, 45 quests; mechanics approximated — read its in-game guide). | Mid magic, optional. | Niche components. |
-| **Neo Vitae** | Newer magic mod with its own chapter (49 quests) and a Dungeon-dimension tie-in per quest metadata; details are version-fresh, so treat everything beyond "it has a chapter" as approximate. | Mid-late magic, optional. | Chapter rewards. |
+| **Neo Vitae** | Newer magic mod with its own chapter (49 quests) and its own dimension (`neovitae:dungeon`, opened by rites after *Tier III: The Master's Orb* — see `references/dimension-guide.md`); details are version-fresh, so treat everything beyond "it has a chapter" as approximate. | Mid-late magic, optional. | Chapter rewards. |
 | **Mahou Tsukai** | Anime-flavored magic: large spell repertoire, reality-marble-style powers. | Optional magic side-path (booked under Tools and Gear). | Utility spells. |
 | **Apothic Enchanting** | The enchanting-table overhaul chapter (requires Apotheosis Gear first per the book). | After gear sockets exist. | High-tier enchants. |
 
 ## Exploration and dimensions
+
+Which dimension to open first, what unlocks each one, and a recommended visit order — from
+verified quest titles at pack 8.2 — are in `references/dimension-guide.md`; the "When to
+go" column below is the orientation-level summary.
 
 | Mod / Chapter | What it does | When to go | Notes |
 |---|---|---|---|
@@ -88,7 +92,7 @@ approximate.
 | **Ice and Fire** | Dragons and mythic beasts; dragon bone/steel gear. | Mid-late, dangerous. | 87-quest chapter, ties to "The Other" dimension per quest metadata. |
 | **Eternal Starlight** | Newer magic dimension with bosses (Lunar Monstrosity, Starlight Golem, Gatekeeper). | Late-ish; biggest exploration chapter (193 quests). | Details version-fresh — treat as approximate. |
 | **Auroral** | Small chapter (21 quests); newer content — treat specifics as approximate and read the chapter in-game. | Optional. | — |
-| **Mining Dimension / The Other / The Beyond** | Pack-tied dimensions referenced by the Allthemodium chapter's quest titles (portals/pads per that chapter — requirements version-sensitive, read the quests). | Late game. | Where Allthemodium/Vibranium/Unobtainium gathering happens per the main questline. |
+| **Mining Dimension / The Other / The Beyond** | Pack-tied dimensions reached with Chapter 2's Teleport Pad — placed in the Overworld, the Nether, or the End respectively, per the chapter's quest text (`references/dimension-guide.md`); the pad's recipe is JEI's. | Late game. | Where Allthemodium/Vibranium/Unobtainium gathering happens per the main questline. |
 
 ## Small but verified: worth knowing early
 
