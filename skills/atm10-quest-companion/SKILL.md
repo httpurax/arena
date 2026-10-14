@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.1.1
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -58,8 +58,9 @@ They do **not** capture exact requirements, and this skill must never pretend ot
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
-- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
+- **The four endgame docs date themselves.** `references/atm-star-checklist.md`,
+  `references/boss-checklist.md`, `references/creative-checklist.md`, and
+  `references/armor-tools-ladder.md` were read from the
   pack repository's `config/ftbquests/quests/chapters/*.snbt` and
   `lang/en_us/chapters/*.snbt` (mod names and versions from
   `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
@@ -374,8 +375,9 @@ Before saying the companion is up to date, confirm:
 - The advice given names the next steps in quest-book order and grounds each in a
   chapter/mod from the references.
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
-  `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
-  and still pointed at the in-game quest book and JEI for current counts.
+  `references/boss-checklist.md` / `references/creative-checklist.md` /
+  `references/armor-tools-ladder.md`, kept their hedges, and still pointed at the
+  in-game quest book and JEI for current counts.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
