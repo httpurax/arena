@@ -31,6 +31,11 @@ Covered:
     Chapter 3 components, the boss lines, and Chapter 4's post-star quests — the multiblock
     automation line, the five star parts, and the eleven creative-tier items behind
     *Fully Automated ATM Star*;
+  * the Bounty Board reference doc: all 50 quests of the standalone ``bounty_board``
+    chapter at the same pinned commit — the eight 5/10/50/100-kill lines, the four
+    variant hunts, the twelve single-kill bounties, the three named random reward
+    tables, the 25 titled quests (and the 25 untitled ones the page marks, never
+    renames), and the honest limits (kill-only, no collect quests, no "Chapter 5");
   * offline guarantee: the script imports no network module;
   * privacy: ``.gitignore`` excludes ``data/`` so real progress cannot be committed.
 """
@@ -59,6 +64,7 @@ GETTING_STARTED_MD = SKILL_ROOT / "references" / "getting-started.md"
 STAR_CHECKLIST_MD = SKILL_ROOT / "references" / "atm-star-checklist.md"
 BOSS_CHECKLIST_MD = SKILL_ROOT / "references" / "boss-checklist.md"
 CREATIVE_CHECKLIST_MD = SKILL_ROOT / "references" / "creative-checklist.md"
+BOUNTY_CHECKLIST_MD = SKILL_ROOT / "references" / "bounty-board-checklist.md"
 SCRIPT_PATH = SKILL_ROOT / "scripts" / "progress.py"
 
 _spec = importlib.util.spec_from_file_location("progress", SCRIPT_PATH)
@@ -740,6 +746,90 @@ CREATIVE_TASK_ITEMS = (
     "railcraft:creative_locomotive",
     "evilcraft:blood",
 )  # 54 ids: every item task plus the one biome task the config states
+
+
+# Bounty Board -- the 50 quests of bounty_board, by the titles its en_us lang file gives
+# them at the same pinned commit (e5e3d1d83e, pack 8.2). The chapter is standalone
+# (group ""), NOT a numbered "Chapter 5"; the Main Questline spine ends at Chapter 4.
+# Exactly half the quests carry no title in the config; the page must mark those, never
+# derive a name for them (its "tier 1-4" labels are the page's own shorthand).
+BOUNTY_CHAPTER_ID = "bounty_board"
+BOUNTY_COMMIT = "e5e3d1d83e"
+BOUNTY_TITLED_QUESTS = (
+    "Bounty Board",
+    "Overworld Bounty: Zombies",
+    "Overworld Bounty: Skeletons",
+    "Overworld Bounty: Creepers",
+    "Overworld Bounty: Spiders",
+    "Overworld Bounty: Witches",
+    "The Nether Bounty: Blazes",
+    "The Nether Bounty: Wither Skeletons",
+    "The End Bounty: Endermen",
+    "Zombie Variants",
+    "Skeleton Variants",
+    "Overhauled Creepers",
+    "Overhauled Endermen",
+    "Kill The Ender Dragon",
+    "Kill The Wither",
+    "Kill The Warden",
+    "Kill A Elder Guardian",
+    "Kill A Ravager",
+    "Kill A Piglin Brute",
+    "Kill The Trader Villager and His Annoying Llamas",
+    "Kill The Wilden Chimera",
+    "Kill The Lunar Monstrosity",
+    "Kill The Starlight Golem",
+    "Kill The Forgotten Guardian",
+    "Kill A Rotbeast",
+)  # 25 titled quests; the other 25 are the untitled ones the page marks
+
+# The eight repeating lines: (titled first tier, the one entity all four tiers kill).
+BOUNTY_LINES = (
+    ("Overworld Bounty: Zombies", "minecraft:zombie"),
+    ("Overworld Bounty: Skeletons", "minecraft:skeleton"),
+    ("Overworld Bounty: Creepers", "minecraft:creeper"),
+    ("Overworld Bounty: Spiders", "minecraft:spider"),
+    ("Overworld Bounty: Witches", "minecraft:witch"),
+    ("The Nether Bounty: Blazes", "minecraft:blaze"),
+    ("The Nether Bounty: Wither Skeletons", "minecraft:wither_skeleton"),
+    ("The End Bounty: Endermen", "minecraft:enderman"),
+)
+
+# The 42 one-kill variant tasks: 8 from Variants&Ventures + vanilla cousins, 16 from
+# Creeper Overhaul, 18 from Enderman Overhaul -- every entity id the config states.
+BOUNTY_VARIANT_ENTITIES = (
+    "minecraft:husk", "minecraft:drowned",
+    "variantsandventures:gelid", "variantsandventures:thicket",
+    "minecraft:stray", "minecraft:bogged",
+    "variantsandventures:murk", "variantsandventures:verdant",
+    "creeperoverhaul:badlands_creeper", "creeperoverhaul:dripstone_creeper",
+    "creeperoverhaul:spruce_creeper", "creeperoverhaul:swamp_creeper",
+    "creeperoverhaul:cave_creeper", "creeperoverhaul:birch_creeper",
+    "creeperoverhaul:ocean_creeper", "creeperoverhaul:jungle_creeper",
+    "creeperoverhaul:desert_creeper", "creeperoverhaul:dark_oak_creeper",
+    "creeperoverhaul:bamboo_creeper", "creeperoverhaul:beach_creeper",
+    "creeperoverhaul:savannah_creeper", "creeperoverhaul:hills_creeper",
+    "creeperoverhaul:mushroom_creeper", "creeperoverhaul:snowy_creeper",
+    "endermanoverhaul:mushroom_fields_enderman", "endermanoverhaul:swamp_enderman",
+    "endermanoverhaul:badlands_enderman", "endermanoverhaul:end_islands_enderman",
+    "endermanoverhaul:cave_enderman", "endermanoverhaul:snowy_enderman",
+    "endermanoverhaul:ice_spikes_enderman", "endermanoverhaul:savanna_enderman",
+    "endermanoverhaul:crimson_forest_enderman", "endermanoverhaul:windswept_hills_enderman",
+    "endermanoverhaul:nether_wastes_enderman", "endermanoverhaul:desert_enderman",
+    "endermanoverhaul:coral_enderman", "endermanoverhaul:dark_oak_enderman",
+    "endermanoverhaul:soulsand_valley_enderman", "endermanoverhaul:flower_fields_enderman",
+    "endermanoverhaul:warped_forest_enderman", "endermanoverhaul:end_enderman",
+)
+
+# The twelve single-kill bounties' kill tasks (the trader quest carries two).
+BOUNTY_SINGLE_KILL_ENTITIES = (
+    "minecraft:ender_dragon", "minecraft:wither", "minecraft:warden",
+    "minecraft:elder_guardian", "minecraft:ravager", "minecraft:piglin_brute",
+    "minecraft:wandering_trader", "minecraft:trader_llama",
+    "ars_nouveau:wilden_boss", "eternal_starlight:lunar_monstrosity",
+    "eternal_starlight:starlight_golem", "undergarden:forgotten_guardian",
+    "undergarden:rotbeast",
+)
 
 
 def stamped_document(chapters: "list[dict[str, Any]]", **stamps: Any) -> "dict[str, Any]":
@@ -1562,13 +1652,142 @@ class TestEndgameReferenceDocs(unittest.TestCase):
     def test_skill_md_documents_the_new_reference_docs(self) -> None:
         skill = SKILL_MD.read_text(encoding="utf-8")
         for name in ("references/atm-star-checklist.md", "references/boss-checklist.md",
-                     "references/creative-checklist.md"):
+                     "references/creative-checklist.md",
+                     "references/bounty-board-checklist.md"):
             self.assertIn(name, skill, f"SKILL.md must point at {name}")
         for behaviour in ("--set", "--stage", "--list", "--json", "--sync", "--yes",
                           "pack_version", "drift"):
             self.assertIn(behaviour, skill, f"SKILL.md must document {behaviour}")
         self.assertIn("two-space indentation", skill)
         self.assertIn("without `--yes`, it", skill)
+
+
+# --------------------------------------------------------------------------------------
+# the Bounty Board reference doc
+# --------------------------------------------------------------------------------------
+
+class TestBountyBoardChecklist(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.bounty = (BOUNTY_CHECKLIST_MD.read_text(encoding="utf-8")
+                      if BOUNTY_CHECKLIST_MD.is_file() else "")
+        cls.bounty_lower = cls.bounty.lower()
+        cls.flat = re.sub(r"\s+", " ", cls.bounty)
+        cls.flat_lower = cls.flat.lower()
+
+    def test_bounty_checklist_exists_and_is_grounded(self) -> None:
+        self.assertTrue(BOUNTY_CHECKLIST_MD.is_file(), f"missing {BOUNTY_CHECKLIST_MD}")
+        self.assertGreater(len(self.bounty.strip()), 2000,
+                           "bounty-board-checklist.md looks like a stub")
+        for needle in ("in-game quest book", "jei", "authoritative", "approximate"):
+            self.assertIn(needle, self.bounty_lower,
+                          f"bounty-board-checklist.md must state the {needle!r} rule")
+        for source in SOURCE_FILES:
+            self.assertIn(source.lower(), self.bounty_lower,
+                          f"bounty-board-checklist.md must name its source: {source}")
+        for source in ("chapters/bounty_board.snbt", "lang/en_us/chapter.snbt",
+                       "reward_tables/common.snbt", "reward_tables/uncommon.snbt",
+                       "reward_tables/rare.snbt", "lang/en_us/reward_table.snbt"):
+            self.assertIn(source, self.bounty,
+                          f"bounty-board-checklist.md must name its source: {source}")
+        self.assertIn("8.2", self.bounty, "the doc must date itself against pack 8.2")
+        self.assertIn("8.x", self.bounty, "the doc must tie 8.2 to the skill's 8.x stamp")
+        self.assertRegex(self.bounty_lower, r"never invented|not invented|never invent",
+                         "the doc must say its details were read, not invented")
+
+    def test_bounty_checklist_lists_every_verified_quest_title(self) -> None:
+        self.assertEqual(len(BOUNTY_TITLED_QUESTS), 25)
+        for title in BOUNTY_TITLED_QUESTS:
+            self.assertIn(title, self.bounty,
+                          f"the bounty checklist is missing a verified title: {title}")
+        # Half the chapter carries no title in the config; the page must mark each one
+        # in place rather than derive a name (its tier labels included) for it.
+        self.assertGreaterEqual(self.flat.count("(no title in the config)"), 25,
+                                "all 25 untitled quests must be marked")
+        self.assertIn("25 of the 50 quests carry an explicit title", self.flat)
+        self.assertIn("Do not present a derived name", self.flat)
+
+    def test_bounty_checklist_covers_the_eight_lines_in_tiers(self) -> None:
+        self.assertEqual(len(BOUNTY_LINES), 8)
+        for line_title, entity in BOUNTY_LINES:
+            self.assertIn(line_title, self.bounty)
+            for count in (5, 10, 50, 100):
+                self.assertIn(f"kill `{entity}` ×{count}", self.bounty,
+                              f"{line_title} must quote the ×{count} tier of {entity}")
+        # 49 playable quests get a tick box; the 50th (hidden, invisible) does not.
+        self.assertEqual(self.bounty.count("- [ ]"), 49,
+                         "every playable bounty must be tick-off-able")
+        self.assertIn("Quests in the chapter | **50**", self.flat)
+        self.assertIn("87 `kill`", self.bounty)
+        self.assertIn("one `advancement`, two `checkmark`", self.flat)
+        self.assertIn("invisible: true", self.bounty,
+                      "the hidden config quest must be flagged, not sold as playable")
+
+    def test_bounty_checklist_lists_the_variant_hunts(self) -> None:
+        self.assertEqual(len(BOUNTY_VARIANT_ENTITIES), 42)
+        self.assertIn("Each task in the quest wants exactly one", self.flat,
+                      "each variant hunt must state its one-kill-per-entity count")
+        for entity in BOUNTY_VARIANT_ENTITIES:
+            self.assertIn(f"`{entity}`", self.bounty,
+                          f"the bounty checklist must cite the variant kill {entity}")
+        self.assertIn("(4 quests, 42 kills)", self.flat)
+        for mod in ("Variants&Ventures", "Creeper Overhaul", "Enderman Overhaul"):
+            self.assertIn(mod, self.bounty, f"the doc must name the {mod} source")
+        for title in ("Zombie Variants", "Skeleton Variants",
+                      "Overhauled Creepers", "Overhauled Endermen"):
+            self.assertIn(title, self.bounty)
+
+    def test_bounty_checklist_lists_the_single_kill_bounties(self) -> None:
+        for entity in BOUNTY_SINGLE_KILL_ENTITIES:
+            self.assertIn(entity, self.bounty,
+                          f"the bounty checklist must cite the kill task {entity}")
+        self.assertIn("The twelve single-kill bounties (12 quests)", self.flat)
+        self.assertIn("Kill 1 Wandering Trader", self.bounty)
+        self.assertIn("Kill 2 Trader Llamas", self.bounty)
+        self.assertIn("Sword of AlfredGG", self.bounty)
+        # Hearts figures stay attributed to the quest descriptions, never asserted.
+        self.assertIn("quest text", self.bounty_lower)
+
+    def test_bounty_checklist_names_the_reward_tables_and_the_claim_trap(self) -> None:
+        for table in ("Reward: Common", "Reward: Uncommon", "Reward: Rare"):
+            self.assertIn(table, self.bounty, f"missing reward table: {table}")
+        self.assertIn("exclude_from_claim_all: true", self.bounty,
+                      "the Claim All exclusion must be quoted from the config")
+        self.assertIn("loot_size: 1", self.bounty)
+        self.assertIn("Claim All", self.bounty)
+
+    def test_bounty_checklist_dates_itself_and_corrects_the_chapter_number(self) -> None:
+        self.assertIn(BOUNTY_COMMIT, self.bounty)
+        self.assertIn("CHANGELOG.md", self.bounty)
+        self.assertIn("pack 8.2", self.bounty)
+        self.assertIn(BOUNTY_CHAPTER_ID, self.bounty)
+        self.assertIn("standalone", self.bounty_lower)
+        self.assertIn("early-game", self.bounty)
+        # The config knows no "Chapter 5": the doc must say so, never repeat it as fact.
+        self.assertIn('no "Chapter 5" in this snapshot', self.flat)
+        self.assertNotIn("Chapter 5: Bounty", self.bounty)
+        self.assertNotIn("Chapter 5 — Bounty", self.bounty)
+
+    def test_bounty_checklist_refuses_to_invent_collect_quests(self) -> None:
+        self.assertIn("no collect quests in this chapter", self.flat_lower)
+        self.assertIn("zero `item` tasks", self.flat)
+        self.assertIn("never turn a bounty into", self.flat_lower)
+        self.assertIn("no recipes", self.flat_lower)
+        self.assertIn("does not tell you", self.flat_lower)
+        self.assertIn("never a guess", self.flat_lower)
+
+    def test_the_bounty_doc_cross_references_its_siblings(self) -> None:
+        for sibling in ("boss-checklist.md", "progression.md", "getting-started.md"):
+            self.assertIn(sibling, self.bounty,
+                          f"bounty-board-checklist.md must point at {sibling}")
+
+    def test_skill_md_documents_the_bounty_doc(self) -> None:
+        skill = SKILL_MD.read_text(encoding="utf-8")
+        self.assertIn("references/bounty-board-checklist.md", skill)
+        self.assertIn("Bounty questions go to the bounty doc.", skill)
+        self.assertIn(BOUNTY_COMMIT, skill,
+                      "SKILL.md must pin the bounty checklist to the same commit")
 
 
 # --------------------------------------------------------------------------------------
