@@ -31,6 +31,8 @@ Covered:
     Chapter 3 components, the boss lines, and Chapter 4's post-star quests — the multiblock
     automation line, the five star parts, and the eleven creative-tier items behind
     *Fully Automated ATM Star*;
+  * every reference doc, including ``chunk-loading-guide.md`` (whose own grounding is
+    tested in detail by ``tests/test_chunk_loading_guide.py``), exists and is not a stub;
   * offline guarantee: the script imports no network module;
   * privacy: ``.gitignore`` excludes ``data/`` so real progress cannot be committed.
 """
@@ -59,6 +61,7 @@ GETTING_STARTED_MD = SKILL_ROOT / "references" / "getting-started.md"
 STAR_CHECKLIST_MD = SKILL_ROOT / "references" / "atm-star-checklist.md"
 BOSS_CHECKLIST_MD = SKILL_ROOT / "references" / "boss-checklist.md"
 CREATIVE_CHECKLIST_MD = SKILL_ROOT / "references" / "creative-checklist.md"
+CHUNK_LOADING_MD = SKILL_ROOT / "references" / "chunk-loading-guide.md"
 SCRIPT_PATH = SKILL_ROOT / "scripts" / "progress.py"
 
 _spec = importlib.util.spec_from_file_location("progress", SCRIPT_PATH)
@@ -188,7 +191,8 @@ class TestSkillDocs(unittest.TestCase):
 
     def test_reference_docs_exist_and_cover_the_stages(self) -> None:
         for path in (PROGRESSION_MD, KEY_MODS_MD, GETTING_STARTED_MD,
-                     STAR_CHECKLIST_MD, BOSS_CHECKLIST_MD, CREATIVE_CHECKLIST_MD):
+                     STAR_CHECKLIST_MD, BOSS_CHECKLIST_MD, CREATIVE_CHECKLIST_MD,
+                     CHUNK_LOADING_MD):
             self.assertTrue(path.is_file(), f"missing reference doc: {path}")
             self.assertGreater(len(path.read_text(encoding="utf-8").strip()), 400,
                                f"{path.name} looks like a stub")

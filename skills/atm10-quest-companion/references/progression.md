@@ -186,6 +186,9 @@ roughly when in the progression it lands.
    source mod), `references/boss-checklist.md` (boss, dimension, arena, roughly when), and
    `references/creative-checklist.md` (what Chapter 4 asks for after the star, and what
    each creative item does); all three quote verified quest titles and still defer to the
-   in-game book.
+   in-game book. For "how do I keep my farm running while I'm away?", work from
+   `references/chunk-loading-guide.md` — it is a cross-stage question (the FTB Chunks
+   answer works in the first hour, the AE2 and spawner-rune answers arrive in tech), so
+   answer it from where the player is rather than treating it as a stage.
 4. When a chapter is finished, record it in `data/progress.json` and run
    `scripts/progress.py` to show what is next.

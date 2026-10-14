@@ -46,7 +46,7 @@ approximate.
 |---|---|---|---|
 | **Integrated Dynamics** | Logic/energy/item cables with programmable connectors; dynamic tank/crystal menagerie. | When you need smarter item routing than pipes. | Automation glue for farms and machines. |
 | **Modular Routers** | One-block item/fluid/energy routing with upgrade modules. | Early-mid; cheap and everywhere useful. | Compact automation without full networks. |
-| **Pylons** | Utility pylons: harvesting, growth acceleration, chunk-ish helpers (exact pylon roster — check the chapter, it is short at 13 quests). | Early-mid, especially the harvest pylon for Mystical Agriculture. | Farm automation. |
+| **Pylons** | Utility pylons: harvesting, growth acceleration, chunk-*area* helpers that are **not** chunk loaders (exact pylon roster — check the chapter, it is short at 13 quests; `references/chunk-loading-guide.md` has the verified roster and what each pylon's own quest text says). | Early-mid, especially the harvest pylon for Mystical Agriculture. | Farm automation. |
 | **Silent Gear** | Modular tools/armor built from material parts (blueprint + parts system). | First hours — it replaces vanilla tool progression. | Better-than-diamond gear before Netherite/Allthemodium tiers. |
 | **Apotheosis (Gear / Spawners / Apothic Enchanting)** | Enchanting overhaul: gem sockets on gear ("Apotheosis Gear"), spawner capture/modification ("Apothic Spawners"), and the enchanting table rework ("Apothic Enchanting"). | Gear sockets early; spawners when you want mob farms; enchanting chapter after gear chapter (the book marks it as requiring Apotheosis Gear). | Enchant cap raising, mob farming, endgame gear. |
 | **Hostile Neural Networks** | Data-model mob simulation: kill mobs virtually for their drops. | Mid — pairs with spawners/loot. | Drop farms for star components (e.g. Ender Dragon Data Model is a Chapter 3 title). |
@@ -99,7 +99,7 @@ approximate.
 | **Iron Furnaces** | Upgraded furnaces (iron/gold/diamond/... tiers). | Verified in the mod list; matches Chapter 1's "Furnace Upgrades!" quest title. Guides push it as a first-hour build. |
 | **FTB Ultimine** | Vein-mining: harvest many blocks at once (default keybind commonly `~`). | Verified in the mod list. The single biggest time-saver for mining and tree-chopping; check Controls for the exact bind. |
 | **Sophisticated Storage / Backpacks, Functional Storage, Pipez** | Chest/barrel/drawer upgrades, portable storage, simple pipes. | Verified in the mod list; the "Basic Storage" and "Basic Logistics" chapters lean on this family (approximate mapping — read the chapters). |
-| **Corail Tombstone, JourneyMap, FTB Chunks, FTB Essentials** | Death recovery, minimap/waypoints, chunk claiming, `/home` `/rtp` `/spawn` commands. | Verified in the mod list; the Welcome chapter teaches the commands and chunk claiming. |
+| **Corail Tombstone, JourneyMap, FTB Chunks, FTB Essentials** | Death recovery, minimap/waypoints, chunk claiming and force-loading, `/home` `/rtp` `/spawn` commands. | Verified in the mod list; the Welcome chapter teaches the commands and chunk claiming. For keeping a farm running while the player is away, `references/chunk-loading-guide.md` has the verified claim/force-load steps and every chunk loader this pack's config actually enables or disables. |
 | **Time in a Bottle** | Store time in bottles to speed up machines. | Verified in the mod list; guides list it among early-game milestones. |
 
 ## Mods frequently assumed present but NOT verified here

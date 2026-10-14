@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -25,6 +25,10 @@ a local record of which chapters are finished.
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+- The user asks how to keep a farm running while he is away ("my farm stops when I
+  leave", "do I need a chunk loader?", "how do I force-load my base?") — chunk claiming
+  and force-loading, the chunk loaders this pack's config actually enables or disables,
+  and the spawner runes that remove the player requirement.
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -58,15 +62,18 @@ They do **not** capture exact requirements, and this skill must never pretend ot
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
-- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
-  pack repository's `config/ftbquests/quests/chapters/*.snbt` and
-  `lang/en_us/chapters/*.snbt` (mod names and versions from
-  `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
-  `examples/progress.example.json`; the creative checklist pins the exact commit
-  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
-  the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
-  and still defer to the in-game quest book and JEI.
+- **The four config-pinned docs date themselves.** `references/atm-star-checklist.md`,
+  `references/boss-checklist.md`, `references/creative-checklist.md`, and
+  `references/chunk-loading-guide.md` were read from the pack repository's
+  `config/ftbquests/quests/chapters/*.snbt` and `lang/en_us/chapters/*.snbt` (mod names and
+  versions from `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp
+  in `examples/progress.example.json`; the creative checklist and the chunk-loading guide
+  pin the exact commit (`e5e3d1d83e`), and the chunk-loading guide also reads the pack's
+  shipped mod configs (`config/*.toml`, `config/*.json`), its `kubejs/` tweaks and
+  localization overrides, and its `changelogs/`. The item ids, quest titles, config values,
+  and quoted counts there are that snapshot's; the pack changes them between versions.
+  Quote them as *what the book and the config said in 8.2*, and still defer to the in-game
+  quest book and JEI.
 
 ## Setup — first run only
 
@@ -159,6 +166,15 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **"How do I keep my farm running while I'm away?" goes to
+  `references/chunk-loading-guide.md`.** It is a cross-stage question, so answer it from
+  where the player is rather than treating it as a stage: the FTB Chunks answer (claim,
+  then shift-left-click to force-load) works in the first hour and is what the Welcome
+  chapter's *Claiming Chunks* task teaches; the AE2 Spatial Anchor and the Apothic
+  Spawners *Ignore Players* rune arrive in tech. Work down that page's ordered answer,
+  quote its verified quest titles and config values, keep its `judgement` and
+  `translation` flags, and **never state a claim or force-load limit** — the pack ships no
+  FTB Chunks config, so any number would be invented.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -376,6 +392,11 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Chunk-loading answers came from `references/chunk-loading-guide.md`: they quoted the
+  Welcome chapter's verified claim/force-load steps, named only chunk loaders this pack's
+  config verifies, kept the four switches it ships **off** off, stated no claim or
+  force-load limit, and flagged every `judgement` call and every `translation` of the
+  pack's bundled pt_br/ru_ru strings.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.

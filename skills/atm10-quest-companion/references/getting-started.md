@@ -37,7 +37,8 @@ JEI override everything written here.**
 1. **Spawn in, open the quest book immediately** (FTB Quests — the book item or its
    keybind; check Controls if it is not on the hotbar). Do the **Welcome** chapter: it
    teaches `/sethome`, `/home`, `/rtp`, `/spawn`, chunk claiming via the map, and FTB
-   teams, and hands out starting rewards.
+   teams, and hands out starting rewards. Its *Claiming Chunks* task is also the pack's
+   only chunk-loading tutorial — see `references/chunk-loading-guide.md`.
 2. **Start Chapter 1: The Beginning** and follow it. Its early quests (verified titles):
    *Our First Pick → Stone Age → The Metal Age → An Iron Pick → Furnace Upgrades! →
    Crafting, but on a Stick*. Furnace upgrades = Iron Furnaces; crafting-on-a-stick is a
@@ -83,6 +84,11 @@ JEI override everything written here.**
   number in this skill's docs) over the live quest entry.
 - Stuck on *what to do next*: look at the Main Questline group; its four chapters are the
   intended spine (Chapter 1 → Allthemodium → The ATM Star → Creative).
+- Stuck on a *farm that stops when you leave it*: that is chunk loading, not a broken farm.
+  `references/chunk-loading-guide.md` has the verified claim-and-force-load steps from the
+  Welcome chapter, the chunk loaders this pack's config actually enables, and the four it
+  ships switched **off** — plus the rule that no claim or force-load *limit* is quoted
+  anywhere, because the pack repo ships no FTB Chunks config.
 - Stuck on *performance*: check RAM per above, lower render distance, use `/spark` (the
   profiler mod ships with the pack) or Observable to find lag sources (approximate —
   read their docs).
@@ -92,7 +98,8 @@ JEI override everything written here.**
 
 ## Multiplayer notes (approximate, from hosting guides)
 
-- Claim chunks (FTB Chunks, taught in the Welcome chapter) before building together.
+- Claim chunks (FTB Chunks, taught in the Welcome chapter) before building together; force
+  load the ones a shared farm needs (`references/chunk-loading-guide.md`).
 - Lootr makes loot chests per-player, so shared exploration does not race.
 - `/ftbteams party create <name>` shares quest progress within a team (from the Welcome
   chapter's quest text).
