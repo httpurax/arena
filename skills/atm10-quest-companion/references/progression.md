@@ -81,7 +81,9 @@ system), first machines and power gen, first storage upgrade past wooden chests,
 habit of following the quest book for rewards. Guides consistently highlight early
 quality-of-life wins here — vein-mining keybind, Waystones from village loot, an
 Osmium Paxel from Mekanism, a Time in a Bottle (exact availability varies by version;
-check JEI).
+check JEI). Flight starts here too: Tips and Tricks' *Iron Jetpacks* quest has no
+dependencies and asks for the Wood jetpack — `references/flight-guide.md` maps every flight
+item the book tracks, cheapest first, and roughly when each one arrives.
 
 **Player's typical "what next" question here:** "I have iron/diamonds and a few machines —
 which big mod do I commit to?" Answer: pick **one** tech path and **one** magic path (see
@@ -104,13 +106,16 @@ Dynamics, Modular Routers, Pylons), and scalable power (Powah, Extreme Reactors,
 Mekanism reactors). Resource mods belong here because they *are* tech progression in a
 kitchen-sink: Mystical Agriculture grows ores, Productive Bees and Hostile Neural
 Networks automate mob/loot drops, and everything feeds the endgame's enormous material
-costs.
+costs. The farming chapters' verified tiers, mob-farm routes, and a "what to set up
+first" answer are in `references/farming-guide.md`.
 
 **What it unlocks.** Near-infinite base resources, a real storage network, flight-capable
 gear and big power plants — the prerequisites for the Main Questline's late chapters.
 Community guides converge on the same advice: a full AE2 network, Mystical Agriculture
-farms (with growth pylons/accelerators), and one serious power setup carry almost
-everything else.
+farms (with growth accelerators), and one serious power setup carry almost
+everything else. Which power setup, at which stage, is `references/power-guide.md`:
+the Basic Power chapter's own Early/Mid/End hubs expanded with the Powah, Extreme
+Reactors, Mekanism, and endgame lines behind them.
 
 **Where players get stuck:** choosing between overlapping mods. The standard answer —
 they are alternatives, not sequence: AE2 *or* Refined Storage; Mekanism *or* Create *or*
@@ -125,7 +130,9 @@ Theurgy) plus Mahou Tsukai (booked under Tools and Gear but a magic mod).
 
 **What it covers.** Spellcasting and enchanting (Ars Nouveau's glyph system, Iron's
 Spells' spellbooks), summoning and dimensional storage (Occultism), blood/void mechanics
-(EvilCraft), ritual enchanting (Apothic Enchanting), and the smaller magic lines
+(EvilCraft), the enchanting-table overhaul and its Infusion recipes (Apothic Enchanting —
+`references/enchanting-guide.md` answers "how do I get the best enchants?" from the
+chapter's verified quests and the pack's enchantment config), and the smaller magic lines
 (Nature's Aura, Theurgy, Neo Vitae, Forbidden & Arcanus, Mahou Tsukai). Magic runs in
 parallel with tech — the guides treat "one tech mod + one magic mod" as the sane pairing,
 and the ATM Star chapter wants outputs from several magic mods.
@@ -151,6 +158,9 @@ walks it in three movements, all verified from the chapter quest titles:
   (Overworld deepslate levels; guides say Deep Dark, below roughly Y -40 — approximate,
   verify in-game), *Vibranium* (Nether), *Unobtainium* (End), plus their alloys, tools,
   armor sets, the Teleport Pad, the Mining Dimension, and the Piglich boss fight.
+  `references/resource-farming-guide.md` maps each of those materials — and the smithing
+  templates, Piglich Hearts, and farm systems around them — to the pack's own quest titles
+  and roughly which stage they belong to.
 - **Chapter 3: The ATM Star** — 128 quests in pack 8.2, one component per major mod
   system. Observed quest titles include items from Mekanism, AE2, Create, Ars Nouveau,
   Occultism, EvilCraft, Iron's Spells, Forbidden & Arcanus, Productive Bees/Trees,
@@ -172,7 +182,10 @@ Undergarden, Eternal Starlight, ...) gate late-game materials and several star
 components — though in practice many of them (Bumblezone, Twilight Forest) are quite
 doable mid-game. The stage boundary is fuzzy here by design; say so when advising.
 `references/boss-checklist.md` maps each of those bosses to its dimension, its arena, and
-roughly when in the progression it lands.
+roughly when in the progression it lands; `references/dimension-guide.md` covers the
+dimensions themselves — what opens each one, which chapter and stage it belongs to, what
+the book sends you there for, and a recommended order to visit them in (several open well
+before the endgame: Chapter 1 itself says diamonds let you visit the Twilight Forest).
 
 ## Using this document in a session
 
@@ -183,9 +196,18 @@ roughly when in the progression it lands.
    any concrete requirement (counts, ingredients, boss mechanics) tell the player to read
    the quest entry / JEI — do not state numbers from memory or from this file. For
    endgame questions, work from `references/atm-star-checklist.md` (star components by
-   source mod), `references/boss-checklist.md` (boss, dimension, arena, roughly when), and
+   source mod), `references/boss-checklist.md` (boss, dimension, arena, roughly when),
    `references/creative-checklist.md` (what Chapter 4 asks for after the star, and what
-   each creative item does); all three quote verified quest titles and still defer to the
-   in-game book.
+   each creative item does), and `references/resource-farming-guide.md` (where the gated
+   materials — allthemodium, vibranium, unobtainium, templates, Piglich Hearts, alloys —
+   actually come from); for "which dimension next?", work from
+   `references/dimension-guide.md` (what unlocks each dimension, its chapter, and a
+   recommended visit order). All five quote verified quest titles and still defer to the
+   in-game book. For "how do I keep my farm running while I'm away?", work from
+   `references/chunk-loading-guide.md` — it is a cross-stage question (the FTB Chunks
+   answer works in the first hour, the AE2 and spawner-rune answers arrive in tech), so
+   answer it from where the player is rather than treating it as a stage. "When can I
+   fly?" goes to `references/flight-guide.md`, which does the same for every flight item,
+   from the first jetpack to the Creative Jetpack.
 4. When a chapter is finished, record it in `data/progress.json` and run
    `scripts/progress.py` to show what is next.
