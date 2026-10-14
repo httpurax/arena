@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -25,6 +25,9 @@ a local record of which chapters are finished.
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+- The user asks about the **Bounty Board** chapter: "what bounties are left?", "which
+  bounty pays what?", "how many zombies do I have to kill?", "do I have to claim that in
+  the quest?" — one page lists all 50 quests, what each asks, and what the book pays.
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -58,15 +61,15 @@ They do **not** capture exact requirements, and this skill must never pretend ot
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
-- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
-  pack repository's `config/ftbquests/quests/chapters/*.snbt` and
-  `lang/en_us/chapters/*.snbt` (mod names and versions from
-  `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
-  `examples/progress.example.json`; the creative checklist pins the exact commit
-  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
-  the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
-  and still defer to the in-game quest book and JEI.
+- **The endgame and Bounty Board docs date themselves.** `references/atm-star-checklist.md`,
+  `references/boss-checklist.md`, `references/creative-checklist.md`, and
+  `references/bounty-board-checklist.md` were read from the pack repository's
+  `config/ftbquests/quests/chapters/*.snbt` and `lang/en_us/chapters/*.snbt` (mod names and
+  versions from `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp
+  in `examples/progress.example.json`; the creative and bounty-board checklists pin the
+  exact commit (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that
+  snapshot's; the pack changes them between versions. Quote them as *what the book asked
+  for in 8.2*, and still defer to the in-game quest book and JEI.
 
 ## Setup — first run only
 
@@ -159,6 +162,15 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Bounty Board questions go to `references/bounty-board-checklist.md`.** "What is left on
+  the board?", "how many zombies is the top rung?", "which bounties pay the loot crates?"
+  → that chapter's 50 quests: the eight kill-count ladders (5 / 10 / 50 / 100 per mob) with
+  their verified titles and task entity ids, the twelve boss and miniboss bounties, the
+  hub, the one invisible authoring quest, and what every quest pays. Remember the claiming
+  trap: the crates' rolls are marked `exclude_from_claim_all`, so a player who only uses
+  the book's *Claim All* leaves them behind — tell him to claim them in the quest entry.
+  Quote the counts as the 8.2 config's, keep the hedges, and still defer to the in-game
+  quest book and JEI.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -376,6 +388,9 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Bounty Board answers quoted verified titles, task entity ids, and counts from
+  `references/bounty-board-checklist.md`, kept their hedges, and mentioned the crate rolls
+  the book's *Claim All* skips.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.

@@ -74,7 +74,8 @@ JEI override everything written here.**
   this is a mid-tech-stage decision; both have full chapters, and Extended & Advanced AE
   / MEGA-style addons extend AE2 (addon availability approximate; check the mod list).
 - **Bounty Board chapter** gives kill-count quests with loot rewards — a low-pressure way
-  to gear up while doing other things.
+  to gear up while doing other things; the tick-off list of its 50 quests is
+  `references/bounty-board-checklist.md`.
 
 ## When you are stuck
 

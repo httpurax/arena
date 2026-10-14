@@ -47,7 +47,9 @@ Chapter groups in the order the book shows them (from `chapter_groups.snbt`):
     Eternal Starlight, Ice and Fire, The Twilight Forest, The Undergarden
 
 Plus 4 standalone chapters shown outside the groups: **Welcome, Bounty Board, Building
-Tips, Tips and Tricks**.
+Tips, Tips and Tricks**. The Bounty Board chapter's 50 kill bounties — what each rung or
+boss asks for and what the book pays — are checklisted in
+`references/bounty-board-checklist.md`.
 
 `examples/progress.example.json` ships all 66 chapters in that quest-book order
 (standalone chapters first, then group by group, ordered by each chapter's
