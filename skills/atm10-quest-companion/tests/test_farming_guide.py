@@ -20,7 +20,7 @@ check that the guide still says that, and nothing invented:
   * no invented names: every backticked id in the guide is in a frozen allowlist read
     from the config, every bold name in its tables is a verified title, no
     resource-chicken mod is named, and no growth-acceleration pylon is claimed;
-  * wiring: SKILL.md (version 1.4.0) points at the guide and routes farming questions to
+  * wiring: SKILL.md (version 1.5.0) points at the guide and routes farming questions to
 
     it, and the sibling reference docs link it and no longer claim a growth pylon;
   * offline guarantee: this suite imports no network or process module.
@@ -41,7 +41,7 @@ KEY_MODS_MD = REFERENCES / "key-mods.md"
 GETTING_STARTED_MD = REFERENCES / "getting-started.md"
 
 PINNED_COMMIT = "e5e3d1d83ec6885bb9a5e9fb309fb8e9730db025"
-SKILL_VERSION = "1.4.0"
+SKILL_VERSION = "1.5.0"
 
 
 SOURCE_FILES = (

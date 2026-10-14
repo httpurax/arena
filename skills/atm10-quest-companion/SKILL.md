@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.4.0
+version: 1.5.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -57,6 +57,13 @@ pack's own shipped config rather than from generic advice.
 - The user asks where a gated material comes from or how to farm it ("where do I find
   vibranium?", "how do I get more allthemodium?", "do I have to mine unobtainium?", "what
   are all these mats for?") — answer from `references/resource-farming-guide.md`.
+- The user asks a **mining** question about the three ATM ores specifically — which
+  dimension allthemodium, vibranium, or unobtainium is in, where in that dimension it
+  spawns, or what pickaxe / mining level it needs ("where does allthemodium spawn?",
+  "what pickaxe do I need for vibranium?", "is unobtainium in The Beyond?", "what
+  harvest tier is unobtainium?") — answer from
+  `references/allthemodium-mining-guide.md`, the mining companion to
+  `references/resource-farming-guide.md`.
 - The user asks which power system to build (Powah or Mekanism or reactors or …),
   which power generation or storage fits his stage, whether two mods' power connects,
   or when to upgrade the setup he has.
@@ -175,13 +182,15 @@ those fields or pretend the skill knows every requirement:
   Apotheosis Gear). Present the order as advice, keep the Main Questline's own Chapter
   1→2→3→4 numbering as the pack's, and never present the roadmap's picks between
   alternative mods as required.
-- **The four researched docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, `references/creative-checklist.md`, and
-  `references/resource-farming-guide.md` were read from the pack repository's
+- **The five researched docs date themselves.** `references/atm-star-checklist.md`,
+  `references/boss-checklist.md`, `references/creative-checklist.md`,
+  `references/resource-farming-guide.md`, and
+  `references/allthemodium-mining-guide.md` were read from the pack repository's
   `config/ftbquests/quests/chapters/*.snbt` and `lang/en_us/chapters/*.snbt` (mod names and
   versions from `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp
-  in `examples/progress.example.json`; the creative checklist and the resource-farming
-  guide pin the exact commit (`e5e3d1d83e`). The item ids, quest titles, and quoted counts
+  in `examples/progress.example.json`; the creative checklist, the resource-farming
+  guide, and the allthemodium mining guide pin the exact commit (`e5e3d1d83e`). The
+  item ids, quest titles, and quoted counts
   there are that snapshot's; the pack changes them between versions. Quote them as *what
   the book asked for in 8.2*, and still defer to the in-game quest book and JEI.
 - **The resource guide never locates anything the config does not.** "Where it is found"
@@ -510,6 +519,15 @@ Stages overlap by design; use them to orient, not to gate.
   Productive Bees, Hostile Neural Networks). Quote its verified quest titles and the pack's
   own "where" sentences, keep the rare/very-rare hedges, and never add a coordinate, ore
   level, or recipe of your own — the quest entry and JEI settle those.
+- **Allthemodium-ore questions go to the mining guide.** "Which dimension is
+  allthemodium in?", "where does vibranium spawn?", "what pickaxe mines unobtainium?",
+  "what harvest tier are the ATM ores?" → `references/allthemodium-mining-guide.md`:
+  the three ores with their ore block ids, the dimension each is in, the biome tag that
+  gates spawning, the pickaxe tier each needs, and the pack's own in-game tooltip lines
+  quoted verbatim, plus the Basic Tools chapter's Harvest Tier 1–6 ladder. Quote the
+  tooltip line and the quest title, keep the rare/very-rare hedges, and publish no ore
+  level, coordinate, or recipe — where two pack sources disagree (vibranium's biome tag
+  versus its tooltip), print both rather than picking one.
 - **Power questions go to the power guide.** "Which power should I build?", "Powah or
   Mekanism or a reactor?", "does Create power run my machines?", "when to upgrade
   power?" → `references/power-guide.md`: the pack's own Early/Mid/End Power hubs
@@ -842,6 +860,13 @@ Before saying the companion is up to date, confirm:
 - Resource answers came from `references/resource-farming-guide.md` (or the quest book /
   JEI), kept its "rarely / very rarely / approximate" hedges and its *(no title in the
   config)* markings, and stated no coordinate, ore level, or recipe the config does not.
+- Allthemodium-ore mining answers came from `references/allthemodium-mining-guide.md`:
+  they named the ore's dimension and spawn biome from the pack's biome tags and its own
+  in-game tooltip lines, gave the needed pickaxe and the harvest tier from the Basic
+  Tools chapter, and published no ore level, coordinate, or recipe. Where the page's two
+  sources disagree (vibranium's biome tag versus its tooltip), both were relayed rather
+  than one chosen, and the answer still pointed at the in-game quest book, the ore
+  tooltip, and JEI.
 - Power answers quoted verified titles or ids from `references/power-guide.md`, kept
   its approximate flags (including every unconverted output figure and every
   unverified cross-system bridge), and still pointed at the quest entry and JEI.

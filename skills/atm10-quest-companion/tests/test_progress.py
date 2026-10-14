@@ -1995,8 +1995,8 @@ class TestResourceFarmingGuide(unittest.TestCase):
         skill = SKILL_MD.read_text(encoding="utf-8")
         self.assertIn("references/resource-farming-guide.md", skill,
                       "SKILL.md must point at the new reference doc")
-        self.assertIn("four researched docs", skill,
-                      "SKILL.md must describe the four researched docs together")
+        self.assertIn("five researched docs", skill,
+                      "SKILL.md must describe the five researched docs together")
         self.assertIn("no title in the config", skill,
                       "SKILL.md must repeat the untitled-quest marking rule")
 
