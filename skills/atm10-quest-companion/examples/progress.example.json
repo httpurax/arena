@@ -1,4 +1,6 @@
 {
+  "pack_version": "8.x",
+  "pack_version_source": "Chapter list verified against the official AllTheMods/ATM-10 quest config (config/ftbquests/quests: chapter files, chapter_groups.snbt, and the en_us lang titles) on the main branch at pack 8.2, 2026-09-22 - 66 chapters, 4790 quests. The in-game quest book is authoritative; re-research this list when the pack moves on.",
   "chapters": [
     {
       "id": "welcome",

@@ -3,7 +3,7 @@
 All the Mods 10 (ATM10) is a kitchen-sink pack for **Minecraft 1.21.1 on NeoForge** with
 roughly **450–500 mods**. Its FTB Quests book is the backbone of progression: at the time
 of writing (pack 8.x, checked against the official
-[AllTheMods/ATM-10 quest config](https://github.com/AllTheMods/ATM-10/tree/master/config/ftbquests/quests))
+[AllTheMods/ATM-10 quest config](https://github.com/AllTheMods/ATM-10/tree/main/config/ftbquests/quests))
 it contains **66 chapters and ~4,790 quests**, organized into 4 standalone chapters plus
 10 chapter groups.
 
@@ -151,22 +151,28 @@ walks it in three movements, all verified from the chapter quest titles:
   (Overworld deepslate levels; guides say Deep Dark, below roughly Y -40 — approximate,
   verify in-game), *Vibranium* (Nether), *Unobtainium* (End), plus their alloys, tools,
   armor sets, the Teleport Pad, the Mining Dimension, and the Piglich boss fight.
-- **Chapter 3: The ATM Star** — ~160 quests, one component per major mod system. Observed
-  quest titles include items from Mekanism, AE2, Create, Ars Nouveau, Occultism, EvilCraft,
-  Iron's Spells, Forbidden & Arcanus, Productive Bees/Trees, Mystical Agriculture
-  (Creative Essence), Industrial Foregoing, PneumaticCraft, Extreme Reactors, Draconic
-  Evolution, Modern Industrialization, Oritech, Twilight Forest, Deeper and Darker and
-  more. This chapter is the pack's "checklist of everything you built".
-- **Chapter 4: Creative** — post-star flex content: creative-tier items (Creative
-  Energy Cube, Creative Jetpack, Creative Spellbook, ...) via things like the Runic Star
-  Altar and a "Fully Automated ATM Star" line. Requirements here are version-sensitive;
-  treat every number as approximate and read the quests.
+- **Chapter 3: The ATM Star** — 128 quests in pack 8.2, one component per major mod
+  system. Observed quest titles include items from Mekanism, AE2, Create, Ars Nouveau,
+  Occultism, EvilCraft, Iron's Spells, Forbidden & Arcanus, Productive Bees/Trees,
+  Mystical Agriculture (Creative Essence), Industrial Foregoing, PneumaticCraft, Extreme
+  Reactors, Draconic Evolution, Modern Industrialization, Oritech, Twilight Forest, Deeper
+  and Darker and more. This chapter is the pack's "checklist of everything you built" —
+  `references/atm-star-checklist.md` breaks it down by source mod, with the build order and
+  the parts the pack marks optional.
+- **Chapter 4: Creative** — post-star content: 38 quests in pack 8.2 that automate the
+  star (the Runic Star Altar and its sibling multiblocks, the bees/Star Shards, the five
+  star parts) and then spend it on creative-tier items (Creative Energy Cube, Creative
+  Jetpack, Creative Spellbook, ...) behind the chapter's *Fully Automated ATM Star* quest.
+  Requirements here are version-sensitive; treat every number as approximate and read the
+  quests. `references/creative-checklist.md` maps the whole chapter, in dependency order.
 
 The **Exploration** chapters are tracked in this stage because the dimensions and their
 bosses (Twilight Forest's progression bosses, L'Ender's Cataclysm fights, Aether,
 Undergarden, Eternal Starlight, ...) gate late-game materials and several star
 components — though in practice many of them (Bumblezone, Twilight Forest) are quite
 doable mid-game. The stage boundary is fuzzy here by design; say so when advising.
+`references/boss-checklist.md` maps each of those bosses to its dimension, its arena, and
+roughly when in the progression it lands.
 
 ## Using this document in a session
 
@@ -175,6 +181,11 @@ doable mid-game. The stage boundary is fuzzy here by design; say so when advisin
 2. Map that to a stage above, then to the specific quest-book chapters that apply.
 3. Recommend the next steps *in quest-book order within the relevant chapters*, and for
    any concrete requirement (counts, ingredients, boss mechanics) tell the player to read
-   the quest entry / JEI — do not state numbers from memory or from this file.
+   the quest entry / JEI — do not state numbers from memory or from this file. For
+   endgame questions, work from `references/atm-star-checklist.md` (star components by
+   source mod), `references/boss-checklist.md` (boss, dimension, arena, roughly when), and
+   `references/creative-checklist.md` (what Chapter 4 asks for after the star, and what
+   each creative item does); all three quote verified quest titles and still defer to the
+   in-game book.
 4. When a chapter is finished, record it in `data/progress.json` and run
    `scripts/progress.py` to show what is next.
