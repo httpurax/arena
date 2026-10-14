@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -25,6 +25,8 @@ a local record of which chapters are finished.
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+- The user asks *when can I fly?* — which flight item comes first, whether the pack has an
+  Angel Ring or a flight totem, or when creative flight becomes possible.
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -67,6 +69,13 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
+- **The flight guide dates itself too.** `references/flight-guide.md` was read from the same
+  commit (`e5e3d1d83e`, pack 8.2): the same chapter and lang files, plus the pack's Iron
+  Jetpacks tier files (`config/ironjetpacks/jetpacks/*.json`). Its titles, task items, and
+  quotes are verified; its *(judgement)* labels — how early a flight item arrives — are
+  read off dependency chains, so repeat them as judgement. Its absent list (no Angel Ring,
+  no flight totem, no quest for the vanilla Elytra) is what the 8.2 book and modlist lack;
+  never fill those gaps from memory.
 
 ## Setup — first run only
 
@@ -159,6 +168,14 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Flight questions go to `references/flight-guide.md`.** "When can I fly?", "is there an
+  Angel Ring?", "how do I get creative flight?" → the flight items the book tracks,
+  cheapest first: the dependency-free Wood jetpack and Charging Station in Tips and
+  Tricks, XyCraft's tethered balloon, the elytra add-ons, then the creative-flight
+  upgrades (Just Dire Things, Advanced AE, Draconic Evolution, the MekaSuit) and the
+  Creative Jetpack — each with its verified quest, task item, and dependency chain. Lead
+  with the cheapest reliable path, keep the doc's *(judgement)* labels on timing, say
+  plainly what the 8.2 book does not have, and send recipes and energy numbers to JEI.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -376,6 +393,9 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Flight answers quoted verified titles or ids from `references/flight-guide.md`, kept its
+  *(judgement)* labels on timing, and promised nothing the 8.2 book lacks — no Angel Ring,
+  no flight totem, no elytra location.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.

@@ -81,7 +81,9 @@ system), first machines and power gen, first storage upgrade past wooden chests,
 habit of following the quest book for rewards. Guides consistently highlight early
 quality-of-life wins here — vein-mining keybind, Waystones from village loot, an
 Osmium Paxel from Mekanism, a Time in a Bottle (exact availability varies by version;
-check JEI).
+check JEI). Flight starts here too: Tips and Tricks' *Iron Jetpacks* quest has no
+dependencies and asks for the Wood jetpack — `references/flight-guide.md` maps every flight
+item the book tracks, cheapest first, and roughly when each one arrives.
 
 **Player's typical "what next" question here:** "I have iron/diamonds and a few machines —
 which big mod do I commit to?" Answer: pick **one** tech path and **one** magic path (see
@@ -186,6 +188,7 @@ roughly when in the progression it lands.
    source mod), `references/boss-checklist.md` (boss, dimension, arena, roughly when), and
    `references/creative-checklist.md` (what Chapter 4 asks for after the star, and what
    each creative item does); all three quote verified quest titles and still defer to the
-   in-game book.
+   in-game book. "When can I fly?" goes to `references/flight-guide.md`, which does the
+   same for every flight item, from the first jetpack to the Creative Jetpack.
 4. When a chapter is finished, record it in `data/progress.json` and run
    `scripts/progress.py` to show what is next.
