@@ -233,7 +233,7 @@ class TestBestRewardQuests(unittest.TestCase):
                        'not a quest title or a reward', 'JEI', 'not the complete reward list'):
             self.assertIn(phrase, self.text)
         skill = (ROOT / 'SKILL.md').read_text(encoding='utf-8')
-        self.assertIn('version: 1.2.0', skill)
+        self.assertIn('version: 1.3.0', skill)
         self.assertIn('references/best-reward-quests.md', skill)
         self.assertIn('which quests are worth doing for their rewards', skill)
 
