@@ -28,16 +28,19 @@ JEI override everything written here.**
   official server files ship `-Xms4G -Xmx8G` in `user_jvm_args.txt` which hosts raise to
   fit. A 16 GB *machine* cannot host a 10–12 GB server and a 8 GB client at once — run
   the server elsewhere or lower expectations.
-- Performance mods are already in the pack (ModernFix, Embeddium, FerriteCore, spark...).
-  If FPS is low, drop render distance and shader load before blaming RAM (approximate —
-  system-dependent).
+- Performance mods are already in the pack — the 8.2 modlist names **ModernFix, Sodium,
+  Sodium Extra, ImmediatelyFast, FerriteCore, All The Leaks, memorysettings, spark** and
+  more (`references/lag-fix-guide.md` lists them with versions). There is nothing to
+  install: if FPS is low, drop render distance and shader load before blaming RAM
+  (approximate — system-dependent).
 
 ## First hour checklist
 
 1. **Spawn in, open the quest book immediately** (FTB Quests — the book item or its
    keybind; check Controls if it is not on the hotbar). Do the **Welcome** chapter: it
    teaches `/sethome`, `/home`, `/rtp`, `/spawn`, chunk claiming via the map, and FTB
-   teams, and hands out starting rewards.
+   teams, and hands out starting rewards. Its *Claiming Chunks* task is also the pack's
+   only chunk-loading tutorial — see `references/chunk-loading-guide.md`.
 2. **Start Chapter 1: The Beginning** and follow it. Its early quests (verified titles):
    *Our First Pick → Stone Age → The Metal Age → An Iron Pick → Furnace Upgrades! →
    Crafting, but on a Stick*. Furnace upgrades = Iron Furnaces; crafting-on-a-stick is a
@@ -68,8 +71,12 @@ JEI override everything written here.**
   Netherite → the Nether → the End → Wither → Deep Dark/Warden (verified quest titles).
   Community players who "did the FULL quests in order" report it as the smoothest route.
 - **Start Mystical Agriculture early-ish** (Resources group): inferium farming scales into
-  ore seeds and is the highest-leverage farm in the pack; a harvest/growth pylon (Pylons
-  mod) automates it.
+  ore seeds and is the highest-leverage farm in the pack — its own *Inferium Farmland*
+  quest says *"You'll want to start growing Inferium as soon as you can!"* A crop
+  harvester the book teaches (the Harvester Pylon, Mystical Agriculture's Harvester, or
+  Industrial Foregoing's Plant Gatherer) automates the harvest; which crops each accepts
+  is not in the config, so check in-game. What to farm, and what to set up first:
+  `references/farming-guide.md`.
 - **Choose your storage network** (AE2 vs Refined Storage) once chests stop scaling —
   this is a mid-tech-stage decision; both have full chapters, and Extended & Advanced AE
   / MEGA-style addons extend AE2 (addon availability approximate; check the mod list).
@@ -83,16 +90,23 @@ JEI override everything written here.**
   number in this skill's docs) over the live quest entry.
 - Stuck on *what to do next*: look at the Main Questline group; its four chapters are the
   intended spine (Chapter 1 → Allthemodium → The ATM Star → Creative).
-- Stuck on *performance*: check RAM per above, lower render distance, use `/spark` (the
-  profiler mod ships with the pack) or Observable to find lag sources (approximate —
-  read their docs).
+- Stuck on *performance*: work through `references/lag-fix-guide.md` — FPS or TPS, the
+  pack's own memory table, shaders, the video settings the pack ships translations for, the
+  machines and farms the quest book calls laggy, and the profilers (spark and Observable
+  both ship with the pack; read their own docs for the commands).
+- Stuck on a *farm that stops when you leave it*: that is chunk loading, not a broken farm.
+  `references/chunk-loading-guide.md` has the verified claim-and-force-load steps from the
+  Welcome chapter, the chunk loaders this pack's config actually enables, and the four it
+  ships switched **off** — plus the rule that no claim or force-load *limit* is quoted
+  anywhere, because the pack repo ships no FTB Chunks config.
 - Stuck on a *boss*: the Exploration chapters (Twilight Forest, Cataclysm, ...) and the
   mods' own in-game guide books (Patchouli/Modonomicon entries) carry the mechanics; the
   quest book lists the boss quests but not tactics.
 
 ## Multiplayer notes (approximate, from hosting guides)
 
-- Claim chunks (FTB Chunks, taught in the Welcome chapter) before building together.
+- Claim chunks (FTB Chunks, taught in the Welcome chapter) before building together; force
+  load the ones a shared farm needs (`references/chunk-loading-guide.md`).
 - Lootr makes loot chests per-player, so shared exploration does not race.
 - `/ftbteams party create <name>` shares quest progress within a team (from the Welcome
   chapter's quest text).
