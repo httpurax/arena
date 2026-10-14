@@ -14,8 +14,9 @@ metadata:
 A progression companion for **All the Mods 10** (ATM10), the ~500-mod kitchen-sink pack
 for Minecraft 1.21.1 (NeoForge) whose FTB Quests book holds 66 chapters and roughly
 4,790 quests. The skill knows the pack's main stages — early game → tech → magic →
-endgame (the ATM Star) — tells the player what to do next from wherever he is, and keeps
-a local record of which chapters are finished.
+endgame (the ATM Star) — tells the player what to do next from wherever he is, keeps a
+full recommended play order for all 66 chapters in four phases, and records which
+chapters are finished.
 
 ## When to Use
 
@@ -58,15 +59,24 @@ They do **not** capture exact requirements, and this skill must never pretend ot
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
-- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
-  pack repository's `config/ftbquests/quests/chapters/*.snbt` and
+- **The three endgame docs and the roadmap date themselves.**
+  `references/atm-star-checklist.md`, `references/boss-checklist.md`,
+  `references/creative-checklist.md`, and `references/progression-roadmap.md` were read
+  from the pack repository's `config/ftbquests/quests/chapters/*.snbt` and
   `lang/en_us/chapters/*.snbt` (mod names and versions from
   `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
-  `examples/progress.example.json`; the creative checklist pins the exact commit
-  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
-  the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
-  and still defer to the in-game quest book and JEI.
+  `examples/progress.example.json`; the creative checklist and the roadmap pin the exact
+  commit (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that
+  snapshot's; the pack changes them between versions. Quote them as *what the book asked
+  for in 8.2*, and still defer to the in-game quest book and JEI.
+- **The roadmap's order is a recommendation, not pack canon.**
+  `references/progression-roadmap.md` sequences all 66 chapters into four phases (early,
+  mid, late, endgame), but the pack itself enforces almost no order — quests are optional,
+  mods are not gated, and the whole book holds exactly five cross-chapter dependency
+  links (Modern Industrialization's four-age ladder, and Apothic Enchanting after
+  Apotheosis Gear). Present the order as advice, keep the Main Questline's own Chapter
+  1→2→3→4 numbering as the pack's, and never present the roadmap's picks between
+  alternative mods as required.
 
 ## Setup — first run only
 
@@ -140,6 +150,11 @@ Stages overlap by design; use them to orient, not to gate.
 - Work from `references/progression.md` (stages, quest-book order) and
   `references/key-mods.md` (what each mod does, when to start it, what it leads to).
   First-hour and setup questions go to `references/getting-started.md`.
+- **"Which chapter first, second, third?" goes to `references/progression-roadmap.md`:**
+  all 66 chapters as one recommended play order in four phases (early / mid / late /
+  endgame), one grounded line per chapter. Relay it as what it is — a recommendation
+  built on the pack-8.2 config, not pack canon — and let the player's book and
+  interests override it whenever they differ.
 - Give the next steps **in quest-book order** within the relevant chapters — a short,
   ordered list ("1. finish the X chapter up to Y; 2. start Z; 3. ..."), not a lecture.
 - For each step, name the chapter/mod it belongs to and *why* it is next (what it
@@ -372,7 +387,8 @@ Before saying the companion is up to date, confirm:
 - Any `pack drift` warning the report printed was relayed to the user, not hidden; no
   chapter was added, dropped, or restamped without explicit approval of a `--sync` preview.
 - The advice given names the next steps in quest-book order and grounds each in a
-  chapter/mod from the references.
+  chapter/mod from the references. Play-order recommendations came from
+  `references/progression-roadmap.md` and were offered as a recommendation, not canon.
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
