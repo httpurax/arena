@@ -64,7 +64,7 @@ class TestBaseSpotsGuide(unittest.TestCase):
                        "No recipe", "no verified best coordinate"):
             self.assertIn(needle, self.text)
         self.assertIn("references/base-spots-guide.md", self.skill)
-        self.assertIn("version: 1.2.0", self.skill)
+        self.assertIn("version: 1.3.0", self.skill)
 
 
 if __name__ == "__main__":
