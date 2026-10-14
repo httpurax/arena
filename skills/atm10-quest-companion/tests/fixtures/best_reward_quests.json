@@ -1,0 +1,1075 @@
+{
+  "commit": "e5e3d1d83ec6885bb9a5e9fb309fb8e9730db025",
+  "pack_version": "8.2",
+  "date": "2026-09-22",
+  "quests": [
+    {
+      "chapter": "mainquestline_part_1",
+      "chapter_title_raw": "&aChapter 1&r: &bThe Beginning",
+      "title_raw": "&eWelcome to Getting Started&r!",
+      "quest": {
+        "id": "5CF320E9C4C1B1E1",
+        "rewards": [
+          {
+            "count": 4,
+            "id": "64451D3624C2085E",
+            "item": {
+              "count": 1,
+              "id": "minecraft:torch"
+            },
+            "type": "item"
+          },
+          {
+            "count": 4,
+            "id": "5C8109AE8C1BAD29",
+            "item": {
+              "count": 1,
+              "id": "minecraft:cooked_beef"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "285A53DB9D54595D",
+            "item": {
+              "components": {
+                "ftbfiltersystem:filter": "item_tag(minecraft:logs)"
+              },
+              "count": 1,
+              "id": "ftbfiltersystem:smart_filter"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "ATM10 is a &aKitchensink&r pack, meaning you are free to explore and play the modpack any way that you want!\\n\\nHowever, there is an endgame goal: Making the &6ATM Star&r!\\n\\nThis questline serves as a guide for all players, whether you are brand new to Minecraft or you've played through previous ATM packs.\\n\\nJust like almost every modpack, gather some wood to get started!"
+      ]
+    },
+    {
+      "chapter": "tips_and_tricks",
+      "chapter_title_raw": "Tips and Tricks",
+      "title_raw": "&l&aCharging Gadgets",
+      "quest": {
+        "id": "637981B64BBE0D92",
+        "rewards": [
+          {
+            "id": "346B64D599131B3F",
+            "item": {
+              "components": {
+                "mekanism:energy": {
+                  "energy_containers": [
+                    4000000
+                  ]
+                }
+              },
+              "count": 1,
+              "id": "mekanism:basic_energy_cube"
+            },
+            "type": "item"
+          },
+          {
+            "exclude_from_claim_all": true,
+            "id": "30658ECCE91B8F84",
+            "table_id": 487623848494439020,
+            "type": "random"
+          },
+          {
+            "id": "68E88ABAFD1D5807",
+            "type": "xp",
+            "xp": 10
+          }
+        ],
+        "tasks": [
+          {
+            "id": "1DFE7CC129B8B13A",
+            "item": {
+              "count": 1,
+              "id": "charginggadgets:charging_station"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "The &aCharging Station&r is a very helpful Early Game Block. \\n\\nIt is clearly used for charging Items. Either Pipe in Energy or use Furnace Fuel to make Energy in the form of FE. \\n\\nThen, you can put any Item that needs charging into the Right most Slot."
+      ]
+    },
+    {
+      "chapter": "tips_and_tricks",
+      "chapter_title_raw": "Tips and Tricks",
+      "title_raw": "Tool Belt",
+      "quest": {
+        "id": "378C95C18798D413",
+        "rewards": [
+          {
+            "count": 2,
+            "id": "40BCE4D56FE98018",
+            "item": {
+              "count": 1,
+              "id": "toolbelt:pouch"
+            },
+            "type": "item"
+          },
+          {
+            "id": "4E495FC797AED7A4",
+            "type": "xp",
+            "xp": 10
+          }
+        ],
+        "tasks": [
+          {
+            "id": "7FD9A02EA29669F6",
+            "item": {
+              "count": 1,
+              "id": "toolbelt:belt"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "A quick way to switch between tools.\\n\\nUpgrade with belt pouches in an anvil to increase capacity."
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "chapter_title_raw": "Basic Logistics",
+      "title_raw": "&eItem Pipez",
+      "quest": {
+        "dependencies": [
+          "2329AA0AFBEF1E13"
+        ],
+        "id": "36836AD948F96B9F",
+        "rewards": [
+          {
+            "count": 16,
+            "id": "22360F382F0BA4CE",
+            "item": {
+              "count": 1,
+              "id": "pipez:item_pipe"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "04CFDEC2D4C671F2",
+            "item": {
+              "count": 1,
+              "id": "pipez:item_pipe"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "The simplest of the simplest of &e&lPipes&r, the &eItem Pipe&r. \\n\\nIt will move Items from one Inventory to another. Could be from one Chest to another, could be a Farm to a System, or even a Quarry to a Smelter. \\n\\nVery simple just connect the &ePipes&r to what you want moved, and use your Wrench to configure which side it Pulls from. ",
+        "{image:atm:textures/questpics/logistics/pipez_item.png width:200 height:50 align:center}"
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "chapter_title_raw": "Basic Logistics",
+      "title_raw": "&bFluid Pipez",
+      "quest": {
+        "dependencies": [
+          "2329AA0AFBEF1E13"
+        ],
+        "id": "33433A443B65D252",
+        "rewards": [
+          {
+            "count": 16,
+            "id": "78309F82E7E4AE69",
+            "item": {
+              "count": 1,
+              "id": "pipez:fluid_pipe"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "2E1254C3F9F6079C",
+            "item": {
+              "count": 1,
+              "id": "pipez:fluid_pipe"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "&bWater&r=&bBlue&r &bWater&r=&bFluid&r therefore &bBlue&r=&bFluid&r\\n\\nLots of Mods have their own &bFluids&r, with even Minecraft having their own, with &bWater&r and &cLava&r. You'll most likely need to move those &bFluids&r and a good way of doing so is with &bFluid Pipes&r. \\n\\nThis can be connected to Sinks to move Infinite &bWater&r!",
+        "{image:atm:textures/questpics/logistics/pipez_fluid.png width:200 height:50 align:center}"
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "chapter_title_raw": "Basic Logistics",
+      "title_raw": "&cEnergy Pipez",
+      "quest": {
+        "dependencies": [
+          "2329AA0AFBEF1E13"
+        ],
+        "id": "53EC96FA0E7C4ED4",
+        "rewards": [
+          {
+            "count": 16,
+            "id": "6BFD87108A2B3FE8",
+            "item": {
+              "count": 1,
+              "id": "pipez:energy_pipe"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "17BE12E1047A68A4",
+            "item": {
+              "count": 1,
+              "id": "pipez:energy_pipe"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "Every Tech Mod needs &cEnergy&r, whether it's FE, RF or something else! &cEnergy Pipez&r don't discriminate, it just moves! \\n\\nSome Machines have strict IO ports for &cEnergy&r so make sure to check for those!",
+        "{image:atm:textures/questpics/logistics/pipez_energy.png width:200 height:50 align:center}"
+      ]
+    },
+    {
+      "chapter": "storage",
+      "chapter_title_raw": "Basic Storage",
+      "title_raw": "&fIron Chest",
+      "quest": {
+        "dependencies": [
+          "5E4BC0F59C90433A",
+          "0CD04A00529FE1C9"
+        ],
+        "id": "58514FDE153FD971",
+        "rewards": [
+          {
+            "id": "56A84014FED57806",
+            "item": {
+              "count": 1,
+              "id": "sophisticatedstorage:basic_to_iron_tier_upgrade"
+            },
+            "type": "item"
+          },
+          {
+            "id": "264BB4B6A847C599",
+            "type": "xp",
+            "xp": 50
+          }
+        ],
+        "tasks": [
+          {
+            "id": "49F46466DB8EDD61",
+            "item": {
+              "components": {
+                "ftbfiltersystem:filter": "or(item(sophisticatedstorage:iron_chest)item(sophisticatedstorage:iron_barrel))"
+              },
+              "count": 1,
+              "id": "ftbfiltersystem:smart_filter"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": []
+    },
+    {
+      "chapter": "storage",
+      "chapter_title_raw": "Basic Storage",
+      "title_raw": "&eGold Chest",
+      "quest": {
+        "dependencies": [
+          "58514FDE153FD971"
+        ],
+        "id": "3E33730DC2115D26",
+        "rewards": [
+          {
+            "id": "353D86C58BE6F0B4",
+            "item": {
+              "count": 1,
+              "id": "sophisticatedstorage:iron_to_gold_tier_upgrade"
+            },
+            "type": "item"
+          },
+          {
+            "id": "61859F5DD6D3457B",
+            "type": "xp",
+            "xp": 50
+          }
+        ],
+        "tasks": [
+          {
+            "id": "0427B441A750316F",
+            "item": {
+              "components": {
+                "ftbfiltersystem:filter": "or(item(sophisticatedstorage:gold_chest)item(sophisticatedstorage:gold_barrel))"
+              },
+              "count": 1,
+              "id": "ftbfiltersystem:smart_filter"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": []
+    },
+    {
+      "chapter": "storage",
+      "chapter_title_raw": "Basic Storage",
+      "title_raw": "&6Copper Upgrade",
+      "quest": {
+        "dependencies": [
+          "2746575C929B6C50"
+        ],
+        "id": "485D5664A17E16DF",
+        "rewards": [
+          {
+            "id": "1A50BE5522A32C23",
+            "item": {
+              "count": 1,
+              "id": "functionalstorage:copper_upgrade"
+            },
+            "type": "item"
+          },
+          {
+            "id": "32EA20C4450EE358",
+            "type": "xp",
+            "xp": 80
+          }
+        ],
+        "tasks": [
+          {
+            "id": "0FFBB888FD6684A7",
+            "item": {
+              "count": 1,
+              "id": "functionalstorage:copper_upgrade"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": []
+    },
+    {
+      "chapter": "mainquestline_part_1",
+      "chapter_title_raw": "&aChapter 1&r: &bThe Beginning",
+      "title_raw": "&6Netherite Template&r",
+      "quest": {
+        "dependencies": [
+          "0F3D51FFD2FE8DCB"
+        ],
+        "id": "1E1EB7DC19DDCFB7",
+        "rewards": [
+          {
+            "id": "35CDC7E5C0EE5EDE",
+            "item": {
+              "count": 1,
+              "id": "minecraft:netherite_upgrade_smithing_template"
+            },
+            "type": "item"
+          },
+          {
+            "id": "54CBBF7EEDEE91E7",
+            "type": "xp",
+            "xp": 100
+          }
+        ],
+        "tasks": [
+          {
+            "id": "363806ECF99CBE88",
+            "item": {
+              "count": 1,
+              "id": "minecraft:netherite_upgrade_smithing_template"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "To create Netherite tools and armor you'll need to find the &6Netherite Smithing Template&r in chests found inside of Bastions.\\n\\nThese can be combined with a &cNetherite&r ingot and a Diamond tool or armor piece in a &aSmithing Table&r to upgrade it to &cNetherite&r.\\n\\nTip: Don't use all of your templates in one go! You can create duplicates by using the recipe to create another."
+      ]
+    },
+    {
+      "chapter": "mainquestline_part_1",
+      "chapter_title_raw": "&aChapter 1&r: &bThe Beginning",
+      "title_raw": "&6Summoning The &5Wither",
+      "quest": {
+        "dependencies": [
+          "0F3D51FFD2FE8DCB"
+        ],
+        "id": "4A4C71C43519D5FE",
+        "rewards": [
+          {
+            "count": 3,
+            "id": "1E652F9EA091A842",
+            "item": {
+              "count": 1,
+              "id": "minecraft:wither_skeleton_skull"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "count": 3,
+            "id": "178C4C3288503A66",
+            "item": {
+              "count": 1,
+              "id": "minecraft:wither_skeleton_skull"
+            },
+            "type": "item"
+          },
+          {
+            "count": 4,
+            "id": "14C0350713AC4214",
+            "item": {
+              "count": 1,
+              "id": "minecraft:soul_sand"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "To summon the boss of the Nether, we need to gather a few items first. ",
+        "",
+        "We'll need to get at least 3 &5Wither Skeleton Skulls&r. These are rare drops from killing &7Wither Skeletons&r, or can be crafted with the more common drop, the &3Wither Skull Fragments&r. ",
+        "",
+        "You'll also need at least 4 pieces of Soul Sand, and probably some pretty good armor."
+      ]
+    },
+    {
+      "chapter": "allthemodium",
+      "chapter_title_raw": "&aChapter 2&r: &eAllthemodium",
+      "title_raw": "&6Allthemodium Ingot",
+      "quest": {
+        "dependencies": [
+          "111E4ACF7D570EE8"
+        ],
+        "id": "201EE3566D4D3123",
+        "rewards": [
+          {
+            "id": "5F1EE465FCFB867B",
+            "item": {
+              "count": 1,
+              "id": "allthemodium:allthemodium_ingot"
+            },
+            "type": "item"
+          },
+          {
+            "id": "27481CE73F1BF1AA",
+            "type": "xp",
+            "xp": 500
+          }
+        ],
+        "tasks": [
+          {
+            "id": "68FF6DFF022ECC91",
+            "item": {
+              "count": 1,
+              "id": "allthemodium:allthemodium_ingot"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "To mine &6Allthemodium&r you'll need a Pickaxe that is &cNetherite&r Tier or higher! \\n\\nOnce you finally get the Ore (first I recommend processing it either with Fortune, Occultism, or Mekanism to get more) then you can get a few choices of what to do with it. \\n\\nI recommend making 2 Teleport Pads with the &6Nuggets&r! You can use those to get to the &7&lMining Dimension&r to find more &6Allthemodium&r or &b&lThe Other&r to find other adventures. \\n\\nAfter that I recommend upgrading your Pickaxe so you can Mine &3Vibranium&r. The rest is all up to you!",
+        "{image:atm:textures/questpics/allthemodium/all_1.png width:100 height:100 align:center}"
+      ]
+    },
+    {
+      "chapter": "allthemodium",
+      "chapter_title_raw": "&aChapter 2&r: &eAllthemodium",
+      "title_raw": "Teleport Pad",
+      "quest": {
+        "dependencies": [
+          "201EE3566D4D3123"
+        ],
+        "id": "07FDA46D83F8360D",
+        "rewards": [
+          {
+            "count": 4,
+            "id": "7B9C021468A1C753",
+            "item": {
+              "count": 1,
+              "id": "allthemodium:allthemodium_nugget"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "2E083A11E2CFAF86",
+            "item": {
+              "count": 1,
+              "id": "allthemodium:teleport_pad"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "For 4 &6Allthemodium Nuggets&r and an Ender Pearl you get a Teleport Pad. \\n\\nPlace it down in one of the Minecraft dimensions to teleport to a different dimension. \\n\\nTo teleport you need to shift right click with your main and offhand empty! That is important, read it! \\n\\nBOTH hands need to be EMPTY!"
+      ]
+    },
+    {
+      "chapter": "storage",
+      "chapter_title_raw": "Basic Storage",
+      "title_raw": "&dNetherite Backpack",
+      "quest": {
+        "dependencies": [
+          "67704F7341EDCC49"
+        ],
+        "id": "46D756F4DC6CC894",
+        "rewards": [
+          {
+            "id": "59CF4A7ACDAD67B2",
+            "item": {
+              "count": 1,
+              "id": "minecraft:netherite_ingot"
+            },
+            "type": "item"
+          },
+          {
+            "id": "1FE2052AB0B6A756",
+            "type": "xp",
+            "xp": 100
+          }
+        ],
+        "tasks": [
+          {
+            "id": "53378C165A5E39A5",
+            "item": {
+              "count": 1,
+              "id": "sophisticatedbackpacks:netherite_backpack"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": []
+    },
+    {
+      "chapter": "powah",
+      "chapter_title_raw": "Powah",
+      "title_raw": "&aWelcome to &9Powah&r!!!",
+      "quest": {
+        "id": "6B2027DA7AA6FF34",
+        "rewards": [
+          {
+            "id": "344F5D87627A95C7",
+            "item": {
+              "count": 1,
+              "id": "powah:book"
+            },
+            "type": "item"
+          },
+          {
+            "id": "0A20CAF72F0E3E11",
+            "item": {
+              "count": 1,
+              "id": "powah:wrench"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "3C45AF8C3DC5A45E",
+            "item": {
+              "count": 1,
+              "id": "powah:uraninite_raw"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "&9Powah&r is a tech mod that's all about generating, storing, and transmitting &dPower&r. Ranging from basic FE generation to &aReactors&r that produce &b250k FE/t&r, Powah has you covered!\\n\\nTo get started, go out and mine some &aUraninite&r!"
+      ]
+    },
+    {
+      "chapter": "iron_spells_and_spellbooks",
+      "chapter_title_raw": "Iron's Spells 'n Spellbooks",
+      "title_raw": "&6Legendary&r Ink",
+      "quest": {
+        "id": "67D40A1A9332C03D",
+        "rewards": [
+          {
+            "count": 2,
+            "id": "2AC73A86B874938C",
+            "item": {
+              "count": 1,
+              "id": "irons_spellbooks:legendary_ink"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "4948A54224513853",
+            "item": {
+              "count": 1,
+              "id": "irons_spellbooks:legendary_ink"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": []
+    },
+    {
+      "chapter": "iron_spells_and_spellbooks",
+      "chapter_title_raw": "Iron's Spells 'n Spellbooks",
+      "title_raw": "Ancient Codex",
+      "quest": {
+        "dependencies": [
+          "615C3E012B2DECD3"
+        ],
+        "id": "7408CCF998D9CD37",
+        "rewards": [
+          {
+            "id": "4A55C808BAC88ECE",
+            "item": {
+              "count": 1,
+              "id": "irons_spellbooks:legendary_ink"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "6F0B2D8E0F4A8F27",
+            "item": {
+              "components": {
+                "irons_spellbooks:spell_container": {
+                  "data": [],
+                  "maxSpells": 12,
+                  "mustEquip": 1,
+                  "spellWheel": 1
+                }
+              },
+              "count": 1,
+              "id": "irons_spellbooks:netherite_spell_book"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "A Craftable &eSpell Book&r... yeah it's not easy to craft. \\n\\nHardest to get would be the Ruined Book, which you can find in &9Ancient City&r Chests. &4Blood Vials&r can be obtained from either putting a Mob (or even yourself) into a Cauldron above a Campfire or an Alchemical Cauldron. &5Bottle O' Lightning&r comes from using a Bottle on a Charged Creeper. \\n\\nOnce you do all that you can craft the Ancient Codex. Its 12 &3Spell&r Slots is very helpful!"
+      ]
+    },
+    {
+      "chapter": "iron_spells_and_spellbooks",
+      "chapter_title_raw": "Iron's Spells 'n Spellbooks",
+      "title_raw": "&6Allthemodium&r Spell Book",
+      "quest": {
+        "dependencies": [
+          "7408CCF998D9CD37"
+        ],
+        "id": "445C21949ADA1FE3",
+        "rewards": [
+          {
+            "id": "5016E225DFFE4510",
+            "item": {
+              "count": 1,
+              "id": "allthemodium:allthemodium_upgrade_smithing_template"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "7C13F89FE54C5D8D",
+            "item": {
+              "components": {
+                "irons_spellbooks:spell_container": {
+                  "data": [],
+                  "maxSpells": 13,
+                  "mustEquip": 1,
+                  "spellWheel": 1
+                }
+              },
+              "count": 1,
+              "id": "allthewizardgear:allthemodium_spell_book"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "Combine an Ancient Codex with an &6Allthemodium Ingot&r and Template in a Smithing Table.\\n\\nYou can get the Template from Brushing Suspicious Clay in an &9Ancient City&r."
+      ]
+    },
+    {
+      "chapter": "deeper_and_darker",
+      "chapter_title_raw": "Deeper and Darker",
+      "title_raw": "&3Soul Elytra",
+      "quest": {
+        "dependencies": [
+          "4D57A07592AED307",
+          "5E287410EE969244",
+          "736F4A43EEBDD7B3"
+        ],
+        "id": "4A01C5F5DCF32C19",
+        "rewards": [
+          {
+            "id": "2B9557AF128E187F",
+            "item": {
+              "components": {
+                "minecraft:stored_enchantments": {
+                  "levels": {
+                    "minecraft:mending": 1
+                  }
+                }
+              },
+              "count": 1,
+              "id": "minecraft:enchanted_book"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "453D4F29D23FC118",
+            "item": {
+              "count": 1,
+              "id": "deeperdarker:soul_elytra"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "The &3Soul Elytra&r works just like a normal &8Elytra&r, just now with more Durability and Armor Points! \\n\\nThey can't be repaired with &7Phantom Membranes&r like normal &8Elytras&r... but Enchantments can still repair them! \\n\\nTo Craft one you'll need an &8Elytra&r, 4 &3Sculk Bones&r which drop from &3Shattered&r, 2 &3Soul Dust&r which drop from &3Sculk Snappers &for &3Sculk Leeches&r, and a &3Soul Crystal&r which drops from the &3&lStalker&r."
+      ]
+    },
+    {
+      "chapter": "aether",
+      "chapter_title_raw": "The Aether",
+      "title_raw": "&e&lValkyrie Queen",
+      "quest": {
+        "dependencies": [
+          "52007C01B52F7295"
+        ],
+        "id": "0D2F07FC0F804223",
+        "rewards": [
+          {
+            "id": "3767B08F0AB63105",
+            "item": {
+              "count": 1,
+              "id": "aether:valkyrie_helmet"
+            },
+            "type": "item"
+          },
+          {
+            "id": "4EADCE81B2E55194",
+            "item": {
+              "count": 1,
+              "id": "aether:valkyrie_chestplate"
+            },
+            "type": "item"
+          },
+          {
+            "id": "0A4C6E4986428951",
+            "item": {
+              "count": 1,
+              "id": "aether:valkyrie_leggings"
+            },
+            "type": "item"
+          },
+          {
+            "id": "5037F7BE4D5B4556",
+            "item": {
+              "count": 1,
+              "id": "aether:valkyrie_boots"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "entity": "aether:valkyrie_queen",
+            "id": "513822189B4BE046",
+            "type": "kill",
+            "value": 1
+          }
+        ]
+      },
+      "description": [
+        "Bring her the 10 &eVictory Medals&r and now you can fight her! \\n\\nThe &e&lQueen&r has 500 &4Hearts&r. She'll dash around the room swinging her Sword at you. \\n\\nSometimes she'll throw Thunders Crystals at you that will summon Lightning which 1. should be impossible because of the roof and 2. is definitely cheating. \\n\\nOnce beaten in Battle she'll give her &eGold Sword&r and...",
+        "{image:atm:textures/questpics/aether/aether_silver2.png width:200 height:100 align:center}"
+      ]
+    },
+    {
+      "chapter": "achapter_2r_6the_atm_star",
+      "chapter_title_raw": "&aChapter 4&r: &dCreative",
+      "title_raw": "&6Star Shards&r",
+      "quest": {
+        "dependencies": [
+          "405D2571E61694FD",
+          "7C9154EF6068BE27"
+        ],
+        "id": "73201E591C2A40CC",
+        "rewards": [
+          {
+            "count": 10,
+            "id": "561AC4CEA2FC687B",
+            "item": {
+              "count": 1,
+              "id": "allthetweaks:atm_star_shard"
+            },
+            "type": "item"
+          },
+          {
+            "id": "0DA7DBFE693517B1",
+            "type": "xp_levels",
+            "xp_levels": 10
+          }
+        ],
+        "tasks": [
+          {
+            "id": "24321595C5F52B83",
+            "item": {
+              "count": 1,
+              "id": "allthetweaks:atm_star_shard"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "Now that you got &6Star Shards&r, you can start making the different parts to remake our &6&lStars&r! \\n\\nYou'll need 262 &6Star Shards&r total to remake 1 &6&lStar&r... hope you've got a good Bee set up!"
+      ]
+    },
+    {
+      "chapter": "achapter_2r_6the_atm_star",
+      "chapter_title_raw": "&aChapter 4&r: &dCreative",
+      "title_raw": "Fully Automated &6&lATM Star",
+      "quest": {
+        "dependencies": [
+          "71B72958B9F80355",
+          "38BFF6F845EA479E",
+          "149C260C10B34BB0",
+          "203C91B992BA8CF9",
+          "427BBEB1F24E9DEE",
+          "14C27D44D3C8EDF5",
+          "235273F7C9A9B0D0",
+          "66BAC2B478F9B119",
+          "7A066DD274F970C2",
+          "1FC1588A131B6A4A"
+        ],
+        "id": "5436157FDFC9633E",
+        "rewards": [
+          {
+            "count": 50,
+            "id": "4A6946466714414A",
+            "item": {
+              "count": 1,
+              "id": "allthetweaks:atm_star_shard"
+            },
+            "type": "item"
+          },
+          {
+            "id": "387B3FE87AA90D80",
+            "item": {
+              "count": 1,
+              "id": "allthetweaks:patrick_star"
+            },
+            "type": "item"
+          },
+          {
+            "id": "29F3962171357984",
+            "type": "xp_levels",
+            "xp_levels": 50
+          }
+        ],
+        "tasks": [
+          {
+            "id": "0A47948D921AFC10",
+            "item": {
+              "count": 1,
+              "id": "allthetweaks:atm_star"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "With the Infused &dPatrick &aStar&r, 5 &6Star Fragments&r, &5Corrupti Dust&r, &cMundabitur Dust&r, and the Lens of the &4Killer&r we can rebuild &6&lATM Stars&r, 100% automated! \\n\\nNow these &5Creative&r Items will be a breeze to craft!"
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "chapter_title_raw": "Basic Logistics",
+      "title_raw": null,
+      "quest": {
+        "dependencies": [
+          "2329AA0AFBEF1E13"
+        ],
+        "id": "2A976D41F79C34B1",
+        "rewards": [
+          {
+            "id": "11D2714AB566A00B",
+            "item": {
+              "count": 1,
+              "id": "pipez:advanced_upgrade"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "5F9D69AF08F576AB",
+            "item": {
+              "count": 1,
+              "id": "pipez:filter_destination_tool"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "&e&lPipez&r do have their own way of Filtering Items, you need atleast an Advanced Upgrade to get it though. When an Advanced Upgrade is in you can click the Add button to add Filters. \\nThen you can add: Item, Tag, or NBT in the Filter. \\n\\nThere you can also add the set Destination Filter. To set it, Shift Right Click an Inventory with it. \\n\\nYou'll also have to set it to either Whitelist the Filter or Blacklist, so only the Filter or everything but the Filter."
+      ]
+    },
+    {
+      "chapter": "mainquestline_part_1",
+      "chapter_title_raw": "&aChapter 1&r: &bThe Beginning",
+      "title_raw": "&5Kill The Warden",
+      "quest": {
+        "dependencies": [
+          "6EDAB29FBD3C60A3"
+        ],
+        "id": "6D09511D64DDC282",
+        "rewards": [
+          {
+            "id": "7949A3E032C67EB5",
+            "type": "xp",
+            "xp": 250
+          },
+          {
+            "id": "64B7287BFF555B4E",
+            "item": {
+              "components": {
+                "minecraft:potion_contents": {
+                  "potion": "potionsmaster:allthemodium"
+                }
+              },
+              "count": 1,
+              "id": "minecraft:potion"
+            },
+            "type": "item"
+          }
+        ],
+        "tasks": [
+          {
+            "entity": "minecraft:warden",
+            "icon": {
+              "id": "minecraft:sculk_shrieker"
+            },
+            "id": "6CAD0E4CF3577BEB",
+            "type": "kill",
+            "value": 1
+          }
+        ]
+      },
+      "description": [
+        "The &dWarden&r can be summoned by setting off a &5Sculk Sensor&r that is near a &3Sculk Shrieker&r at least 3 times.\\n\\nFun Fact: The Warden is blind! It can only find you if it hears you, so either fly around or sneak!\\n\\nTip: It doesn't matter if you use Ranged or Melee attacks, because it will find you. And it will hit you. If you go too far, it'll burrow into the ground and come up next to you! Good luck :D"
+      ]
+    },
+    {
+      "chapter": "mainquestline_part_1",
+      "chapter_title_raw": "&aChapter 1&r: &bThe Beginning",
+      "title_raw": "The &9Metal&r Age",
+      "quest": {
+        "dependencies": [
+          "7D38BC3DB3406F51"
+        ],
+        "id": "051E0C85E7B71CE0",
+        "rewards": [
+          {
+            "exclude_from_claim_all": true,
+            "id": "4EB9D9828FE1B815",
+            "table_id": 487623848494439020,
+            "type": "loot"
+          },
+          {
+            "id": "47B8B05732B2F09F",
+            "type": "xp",
+            "xp": 25
+          }
+        ],
+        "tasks": [
+          {
+            "id": "38BA6B3FF1EC9185",
+            "item": {
+              "count": 1,
+              "id": "minecraft:iron_ingot"
+            },
+            "type": "item"
+          },
+          {
+            "id": "2E116AC5F25650BE",
+            "item": {
+              "count": 1,
+              "id": "minecraft:copper_ingot"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "I'm going to assume you've been out mining, right? It is MINEcraft after all.\\n\\nYou'll find a ton of new ores that might confuse you, but you can stick to the vanilla materials to get you started!\\n\\nCopper is abundant and has plenty of uses for things like &aOre Hammers&r or &eDrawer Upgrades&r, so make sure to grab plenty of it!\\n\\nIron is probably one of the most important ores you'll want to get every time you run into it. The world of modded MC pretty much runs on Iron."
+      ]
+    },
+    {
+      "chapter": "mainquestline_part_1",
+      "chapter_title_raw": "&aChapter 1&r: &bThe Beginning",
+      "title_raw": "We've Struck &bDiamonds&r!",
+      "quest": {
+        "dependencies": [
+          "698A959C9E449592"
+        ],
+        "id": "76406EFFF8CBA6B4",
+        "rewards": [
+          {
+            "exclude_from_claim_all": true,
+            "id": "197F4FAA40D360D9",
+            "table_id": 4196188979167302596,
+            "type": "loot"
+          },
+          {
+            "id": "22EE7E7246E8E87E",
+            "type": "xp",
+            "xp": 50
+          }
+        ],
+        "tasks": [
+          {
+            "id": "17B9A643AFD7EB39",
+            "item": {
+              "count": 1,
+              "id": "minecraft:diamond"
+            },
+            "type": "item"
+          }
+        ]
+      },
+      "description": [
+        "Diamonds are one of the best materials to use for tool crafting, but they also allow you to visit new dimensions like the Twilight Forest!"
+      ]
+    }
+  ]
+}
