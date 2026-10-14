@@ -31,6 +31,18 @@ Covered:
     Chapter 3 components, the boss lines, and Chapter 4's post-star quests — the multiblock
     automation line, the five star parts, and the eleven creative-tier items behind
     *Fully Automated ATM Star*;
+  * the Bounty Board reference doc: all 50 quests of the standalone ``bounty_board``
+    chapter at the same pinned commit — the eight 5/10/50/100-kill lines, the four
+    variant hunts, the twelve single-kill bounties, the three named random reward
+    tables, the 25 titled quests (and the 25 untitled ones the page marks, never
+    renames), and the honest limits (kill-only, no collect quests, no "Chapter 5");
+  * the resource-farming guide: it exists, is grounded the same way and at the same pinned
+    commit, maps allthemodium / vibranium / unobtainium (plus the smithing templates, the
+    Piglich Heart, the three alloy chains, and the farm systems the book points at) to the
+    pack's verified quest titles, keeps its hedges and its *(no title in the config)*
+    markings, and states no coordinate, ore level, or recipe of its own;
+  * every reference doc, including ``chunk-loading-guide.md`` (whose own grounding is
+    tested in detail by ``tests/test_chunk_loading_guide.py``), exists and is not a stub;
   * offline guarantee: the script imports no network module;
   * privacy: ``.gitignore`` excludes ``data/`` so real progress cannot be committed.
 """
@@ -59,6 +71,10 @@ GETTING_STARTED_MD = SKILL_ROOT / "references" / "getting-started.md"
 STAR_CHECKLIST_MD = SKILL_ROOT / "references" / "atm-star-checklist.md"
 BOSS_CHECKLIST_MD = SKILL_ROOT / "references" / "boss-checklist.md"
 CREATIVE_CHECKLIST_MD = SKILL_ROOT / "references" / "creative-checklist.md"
+BOUNTY_CHECKLIST_MD = SKILL_ROOT / "references" / "bounty-board-checklist.md"
+RESOURCE_GUIDE_MD = SKILL_ROOT / "references" / "resource-farming-guide.md"
+CHUNK_LOADING_MD = SKILL_ROOT / "references" / "chunk-loading-guide.md"
+ORE_LADDER_MD = SKILL_ROOT / "references" / "ore-processing-ladder.md"
 SCRIPT_PATH = SKILL_ROOT / "scripts" / "progress.py"
 
 _spec = importlib.util.spec_from_file_location("progress", SCRIPT_PATH)
@@ -187,8 +203,9 @@ class TestSkillDocs(unittest.TestCase):
         self.assertIn("python scripts/progress.py", self.text)
 
     def test_reference_docs_exist_and_cover_the_stages(self) -> None:
-        for path in (PROGRESSION_MD, KEY_MODS_MD, GETTING_STARTED_MD,
-                     STAR_CHECKLIST_MD, BOSS_CHECKLIST_MD, CREATIVE_CHECKLIST_MD):
+        for path in (PROGRESSION_MD, KEY_MODS_MD, GETTING_STARTED_MD, STAR_CHECKLIST_MD,
+                     BOSS_CHECKLIST_MD, CREATIVE_CHECKLIST_MD, RESOURCE_GUIDE_MD,
+                     CHUNK_LOADING_MD, ORE_LADDER_MD):
             self.assertTrue(path.is_file(), f"missing reference doc: {path}")
             self.assertGreater(len(path.read_text(encoding="utf-8").strip()), 400,
                                f"{path.name} looks like a stub")
@@ -200,8 +217,9 @@ class TestSkillDocs(unittest.TestCase):
         self.assertIn("jei", progression)
         self.assertIn("approximate", progression)
         # progression.md is the orientation doc; the endgame detail lives in the three
-        # endgame docs, and it must point at them.
-        for link in ("atm-star-checklist.md", "boss-checklist.md", "creative-checklist.md"):
+        # endgame docs and the material map in the resource guide, and it must point at them.
+        for link in ("atm-star-checklist.md", "boss-checklist.md", "creative-checklist.md",
+                     "resource-farming-guide.md"):
             self.assertIn(link, progression, f"progression.md must link {link}")
         self.assertIn("128 quests", progression,
                       "the star chapter's verified quest count (pack 8.2) is 128, not ~160")
@@ -740,6 +758,183 @@ CREATIVE_TASK_ITEMS = (
     "railcraft:creative_locomotive",
     "evilcraft:blood",
 )  # 54 ids: every item task plus the one biome task the config states
+
+# The resource-farming guide's material map: the item, dimension, and structure ids the
+# pack's own config states for the gated materials (same pinned commit, e5e3d1d83e).
+RESOURCE_ITEM_IDS = (
+    "allthemodium:allthemodium_ingot",
+    "allthemodium:vibranium_ingot",
+    "allthemodium:unobtainium_ingot",
+    "allthemodium:piglich_heart",
+    "allthemodium:vibranium_allthemodium_alloy_ingot",
+    "allthemodium:unobtainium_allthemodium_alloy_ingot",
+    "allthemodium:unobtainium_vibranium_alloy_ingot",
+    "allthemodium:alloy_paxel",
+    "minecraft:netherite_ingot",
+    "kubejs:magical_soil",
+    "mysticalagradditions:creative_essence",
+    "mysticalagriculture:allthemodium_seeds",
+    "mysticalagriculture:vibranium_seeds",
+    "mysticalagriculture:unobtainium_seeds",
+    "hostilenetworks:sim_chamber",
+    "hostilenetworks:loot_fabricator",
+    "hostilenetworks:deep_learner",
+    "productivebees:configurable_honeycomb",
+    "powah:energizing_orb",
+    "ars_nouveau:enchanting_apparatus",
+    "industrialforegoing:dissolution_chamber",
+    "forbidden_arcanus:eternal_stella",
+)
+
+RESOURCE_DIMENSIONS = (
+    "allthemodium:mining",
+    "allthemodium:the_other",
+    "allthemodium:the_beyond",
+    "minecraft:ancient_city",
+    "allthemodium:ancient_pyramid",
+)
+
+# Verified quest titles (en_us lang at e5e3d1d83e) the guide must quote when it says where
+# the gated materials come from.
+RESOURCE_QUEST_TITLES = (
+    "Allthemodium",
+    "Teleport Pad",
+    "Mining Dimension",
+    "The Other",
+    "The Beyond",
+    "Ancient City",
+    "Allthemodium Ingot",
+    "Allthemodium Smithing Template",
+    "Vibranium Smithing Template",
+    "Vibranium Ingot",
+    "Unobtainium Smithing Template",
+    "Unobtainium Ingot",
+    "The Nether",
+    "The End",
+    "Overworld",
+    "Piglich Boss",
+    "Ancient Pyramid",
+    "Vibranium - Allthemodium Alloy Ingot",
+    "Unobtainium - Allthemodium Alloy Ingot",
+    "Unobtainium - Vibranium Alloy Ingot",
+    "Allthemodium Alloy Paxel",
+    "Basic Ore Doubling",
+    "Netherite Template",
+    "Netherite Tier",
+    "Ancient Metals",
+    "Visit The Deep Dark!",
+    "We've Struck Diamonds!",
+)
+
+# The farming systems the guide maps to their verified quest lines.
+RESOURCE_FARM_TITLES = (
+    "Mystical Agriculture",
+    "Infusion Altar",
+    "Insanium",
+    "Awakened Supremium",
+    "The Awakening",
+    "Cognizant Dust",
+    "Automating Awakened Supremium",
+    "Creative Essence",
+    "Allthemodium Bee",
+    "Vibranium Bee",
+    "Unobtainium Bee",
+    "Ancient Bee",
+    "Diamond Bee",
+    "Draconic Bee",
+    "Hostile Neural Networks",
+    "Modeling Mobs",
+    "Simulating Deaths",
+    "Creating Loot",
+    "The Data Center",
+    "Productive Trees",
+    "Sawing",
+    "Stripping",
+)
+
+
+# Bounty Board -- the 50 quests of bounty_board, by the titles its en_us lang file gives
+# them at the same pinned commit (e5e3d1d83e, pack 8.2). The chapter is standalone
+# (group ""), NOT a numbered "Chapter 5"; the Main Questline spine ends at Chapter 4.
+# Exactly half the quests carry no title in the config; the page must mark those, never
+# derive a name for them (its "tier 1-4" labels are the page's own shorthand).
+BOUNTY_CHAPTER_ID = "bounty_board"
+BOUNTY_COMMIT = "e5e3d1d83e"
+BOUNTY_TITLED_QUESTS = (
+    "Bounty Board",
+    "Overworld Bounty: Zombies",
+    "Overworld Bounty: Skeletons",
+    "Overworld Bounty: Creepers",
+    "Overworld Bounty: Spiders",
+    "Overworld Bounty: Witches",
+    "The Nether Bounty: Blazes",
+    "The Nether Bounty: Wither Skeletons",
+    "The End Bounty: Endermen",
+    "Zombie Variants",
+    "Skeleton Variants",
+    "Overhauled Creepers",
+    "Overhauled Endermen",
+    "Kill The Ender Dragon",
+    "Kill The Wither",
+    "Kill The Warden",
+    "Kill A Elder Guardian",
+    "Kill A Ravager",
+    "Kill A Piglin Brute",
+    "Kill The Trader Villager and His Annoying Llamas",
+    "Kill The Wilden Chimera",
+    "Kill The Lunar Monstrosity",
+    "Kill The Starlight Golem",
+    "Kill The Forgotten Guardian",
+    "Kill A Rotbeast",
+)  # 25 titled quests; the other 25 are the untitled ones the page marks
+
+# The eight repeating lines: (titled first tier, the one entity all four tiers kill).
+BOUNTY_LINES = (
+    ("Overworld Bounty: Zombies", "minecraft:zombie"),
+    ("Overworld Bounty: Skeletons", "minecraft:skeleton"),
+    ("Overworld Bounty: Creepers", "minecraft:creeper"),
+    ("Overworld Bounty: Spiders", "minecraft:spider"),
+    ("Overworld Bounty: Witches", "minecraft:witch"),
+    ("The Nether Bounty: Blazes", "minecraft:blaze"),
+    ("The Nether Bounty: Wither Skeletons", "minecraft:wither_skeleton"),
+    ("The End Bounty: Endermen", "minecraft:enderman"),
+)
+
+# The 42 one-kill variant tasks: 8 from Variants&Ventures + vanilla cousins, 16 from
+# Creeper Overhaul, 18 from Enderman Overhaul -- every entity id the config states.
+BOUNTY_VARIANT_ENTITIES = (
+    "minecraft:husk", "minecraft:drowned",
+    "variantsandventures:gelid", "variantsandventures:thicket",
+    "minecraft:stray", "minecraft:bogged",
+    "variantsandventures:murk", "variantsandventures:verdant",
+    "creeperoverhaul:badlands_creeper", "creeperoverhaul:dripstone_creeper",
+    "creeperoverhaul:spruce_creeper", "creeperoverhaul:swamp_creeper",
+    "creeperoverhaul:cave_creeper", "creeperoverhaul:birch_creeper",
+    "creeperoverhaul:ocean_creeper", "creeperoverhaul:jungle_creeper",
+    "creeperoverhaul:desert_creeper", "creeperoverhaul:dark_oak_creeper",
+    "creeperoverhaul:bamboo_creeper", "creeperoverhaul:beach_creeper",
+    "creeperoverhaul:savannah_creeper", "creeperoverhaul:hills_creeper",
+    "creeperoverhaul:mushroom_creeper", "creeperoverhaul:snowy_creeper",
+    "endermanoverhaul:mushroom_fields_enderman", "endermanoverhaul:swamp_enderman",
+    "endermanoverhaul:badlands_enderman", "endermanoverhaul:end_islands_enderman",
+    "endermanoverhaul:cave_enderman", "endermanoverhaul:snowy_enderman",
+    "endermanoverhaul:ice_spikes_enderman", "endermanoverhaul:savanna_enderman",
+    "endermanoverhaul:crimson_forest_enderman", "endermanoverhaul:windswept_hills_enderman",
+    "endermanoverhaul:nether_wastes_enderman", "endermanoverhaul:desert_enderman",
+    "endermanoverhaul:coral_enderman", "endermanoverhaul:dark_oak_enderman",
+    "endermanoverhaul:soulsand_valley_enderman", "endermanoverhaul:flower_fields_enderman",
+    "endermanoverhaul:warped_forest_enderman", "endermanoverhaul:end_enderman",
+)
+
+# The twelve single-kill bounties' kill tasks (the trader quest carries two).
+BOUNTY_SINGLE_KILL_ENTITIES = (
+    "minecraft:ender_dragon", "minecraft:wither", "minecraft:warden",
+    "minecraft:elder_guardian", "minecraft:ravager", "minecraft:piglin_brute",
+    "minecraft:wandering_trader", "minecraft:trader_llama",
+    "ars_nouveau:wilden_boss", "eternal_starlight:lunar_monstrosity",
+    "eternal_starlight:starlight_golem", "undergarden:forgotten_guardian",
+    "undergarden:rotbeast",
+)
 
 
 def stamped_document(chapters: "list[dict[str, Any]]", **stamps: Any) -> "dict[str, Any]":
@@ -1562,13 +1757,248 @@ class TestEndgameReferenceDocs(unittest.TestCase):
     def test_skill_md_documents_the_new_reference_docs(self) -> None:
         skill = SKILL_MD.read_text(encoding="utf-8")
         for name in ("references/atm-star-checklist.md", "references/boss-checklist.md",
-                     "references/creative-checklist.md"):
+                     "references/creative-checklist.md",
+                     "references/bounty-board-checklist.md",
+                     "references/ore-processing-ladder.md"):
             self.assertIn(name, skill, f"SKILL.md must point at {name}")
         for behaviour in ("--set", "--stage", "--list", "--json", "--sync", "--yes",
                           "pack_version", "drift"):
             self.assertIn(behaviour, skill, f"SKILL.md must document {behaviour}")
         self.assertIn("two-space indentation", skill)
         self.assertIn("without `--yes`, it", skill)
+
+
+# --------------------------------------------------------------------------------------
+# the Bounty Board reference doc
+# --------------------------------------------------------------------------------------
+
+class TestBountyBoardChecklist(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.bounty = (BOUNTY_CHECKLIST_MD.read_text(encoding="utf-8")
+                      if BOUNTY_CHECKLIST_MD.is_file() else "")
+        cls.bounty_lower = cls.bounty.lower()
+        cls.flat = re.sub(r"\s+", " ", cls.bounty)
+        cls.flat_lower = cls.flat.lower()
+
+    def test_bounty_checklist_exists_and_is_grounded(self) -> None:
+        self.assertTrue(BOUNTY_CHECKLIST_MD.is_file(), f"missing {BOUNTY_CHECKLIST_MD}")
+        self.assertGreater(len(self.bounty.strip()), 2000,
+                           "bounty-board-checklist.md looks like a stub")
+        for needle in ("in-game quest book", "jei", "authoritative", "approximate"):
+            self.assertIn(needle, self.bounty_lower,
+                          f"bounty-board-checklist.md must state the {needle!r} rule")
+        for source in SOURCE_FILES:
+            self.assertIn(source.lower(), self.bounty_lower,
+                          f"bounty-board-checklist.md must name its source: {source}")
+        for source in ("chapters/bounty_board.snbt", "lang/en_us/chapter.snbt",
+                       "reward_tables/common.snbt", "reward_tables/uncommon.snbt",
+                       "reward_tables/rare.snbt", "lang/en_us/reward_table.snbt"):
+            self.assertIn(source, self.bounty,
+                          f"bounty-board-checklist.md must name its source: {source}")
+        self.assertIn("8.2", self.bounty, "the doc must date itself against pack 8.2")
+        self.assertIn("8.x", self.bounty, "the doc must tie 8.2 to the skill's 8.x stamp")
+        self.assertRegex(self.bounty_lower, r"never invented|not invented|never invent",
+                         "the doc must say its details were read, not invented")
+
+    def test_bounty_checklist_lists_every_verified_quest_title(self) -> None:
+        self.assertEqual(len(BOUNTY_TITLED_QUESTS), 25)
+        for title in BOUNTY_TITLED_QUESTS:
+            self.assertIn(title, self.bounty,
+                          f"the bounty checklist is missing a verified title: {title}")
+        # Half the chapter carries no title in the config; the page must mark each one
+        # in place rather than derive a name (its tier labels included) for it.
+        self.assertGreaterEqual(self.flat.count("(no title in the config)"), 25,
+                                "all 25 untitled quests must be marked")
+        self.assertIn("25 of the 50 quests carry an explicit title", self.flat)
+        self.assertIn("Do not present a derived name", self.flat)
+
+    def test_bounty_checklist_covers_the_eight_lines_in_tiers(self) -> None:
+        self.assertEqual(len(BOUNTY_LINES), 8)
+        for line_title, entity in BOUNTY_LINES:
+            self.assertIn(line_title, self.bounty)
+            for count in (5, 10, 50, 100):
+                self.assertIn(f"kill `{entity}` ×{count}", self.bounty,
+                              f"{line_title} must quote the ×{count} tier of {entity}")
+        # 49 playable quests get a tick box; the 50th (hidden, invisible) does not.
+        self.assertEqual(self.bounty.count("- [ ]"), 49,
+                         "every playable bounty must be tick-off-able")
+        self.assertIn("Quests in the chapter | **50**", self.flat)
+        self.assertIn("87 `kill`", self.bounty)
+        self.assertIn("one `advancement`, two `checkmark`", self.flat)
+        self.assertIn("invisible: true", self.bounty,
+                      "the hidden config quest must be flagged, not sold as playable")
+
+    def test_bounty_checklist_lists_the_variant_hunts(self) -> None:
+        self.assertEqual(len(BOUNTY_VARIANT_ENTITIES), 42)
+        self.assertIn("Each task in the quest wants exactly one", self.flat,
+                      "each variant hunt must state its one-kill-per-entity count")
+        for entity in BOUNTY_VARIANT_ENTITIES:
+            self.assertIn(f"`{entity}`", self.bounty,
+                          f"the bounty checklist must cite the variant kill {entity}")
+        self.assertIn("(4 quests, 42 kills)", self.flat)
+        for mod in ("Variants&Ventures", "Creeper Overhaul", "Enderman Overhaul"):
+            self.assertIn(mod, self.bounty, f"the doc must name the {mod} source")
+        for title in ("Zombie Variants", "Skeleton Variants",
+                      "Overhauled Creepers", "Overhauled Endermen"):
+            self.assertIn(title, self.bounty)
+
+    def test_bounty_checklist_lists_the_single_kill_bounties(self) -> None:
+        for entity in BOUNTY_SINGLE_KILL_ENTITIES:
+            self.assertIn(entity, self.bounty,
+                          f"the bounty checklist must cite the kill task {entity}")
+        self.assertIn("The twelve single-kill bounties (12 quests)", self.flat)
+        self.assertIn("Kill 1 Wandering Trader", self.bounty)
+        self.assertIn("Kill 2 Trader Llamas", self.bounty)
+        self.assertIn("Sword of AlfredGG", self.bounty)
+        # Hearts figures stay attributed to the quest descriptions, never asserted.
+        self.assertIn("quest text", self.bounty_lower)
+
+    def test_bounty_checklist_names_the_reward_tables_and_the_claim_trap(self) -> None:
+        for table in ("Reward: Common", "Reward: Uncommon", "Reward: Rare"):
+            self.assertIn(table, self.bounty, f"missing reward table: {table}")
+        self.assertIn("exclude_from_claim_all: true", self.bounty,
+                      "the Claim All exclusion must be quoted from the config")
+        self.assertIn("loot_size: 1", self.bounty)
+        self.assertIn("Claim All", self.bounty)
+
+    def test_bounty_checklist_dates_itself_and_corrects_the_chapter_number(self) -> None:
+        self.assertIn(BOUNTY_COMMIT, self.bounty)
+        self.assertIn("CHANGELOG.md", self.bounty)
+        self.assertIn("pack 8.2", self.bounty)
+        self.assertIn(BOUNTY_CHAPTER_ID, self.bounty)
+        self.assertIn("standalone", self.bounty_lower)
+        self.assertIn("early-game", self.bounty)
+        # The config knows no "Chapter 5": the doc must say so, never repeat it as fact.
+        self.assertIn('no "Chapter 5" in this snapshot', self.flat)
+        self.assertNotIn("Chapter 5: Bounty", self.bounty)
+        self.assertNotIn("Chapter 5 — Bounty", self.bounty)
+
+    def test_bounty_checklist_refuses_to_invent_collect_quests(self) -> None:
+        self.assertIn("no collect quests in this chapter", self.flat_lower)
+        self.assertIn("zero `item` tasks", self.flat)
+        self.assertIn("never turn a bounty into", self.flat_lower)
+        self.assertIn("no recipes", self.flat_lower)
+        self.assertIn("does not tell you", self.flat_lower)
+        self.assertIn("never a guess", self.flat_lower)
+
+    def test_the_bounty_doc_cross_references_its_siblings(self) -> None:
+        for sibling in ("boss-checklist.md", "progression.md", "getting-started.md"):
+            self.assertIn(sibling, self.bounty,
+                          f"bounty-board-checklist.md must point at {sibling}")
+
+    def test_skill_md_documents_the_bounty_doc(self) -> None:
+        skill = SKILL_MD.read_text(encoding="utf-8")
+        self.assertIn("references/bounty-board-checklist.md", skill)
+        self.assertIn("Bounty questions go to the bounty doc.", skill)
+        self.assertIn(BOUNTY_COMMIT, skill,
+                      "SKILL.md must pin the bounty checklist to the same commit")
+# the resource-farming guide
+# --------------------------------------------------------------------------------------
+
+class TestResourceFarmingGuide(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.guide = (RESOURCE_GUIDE_MD.read_text(encoding="utf-8")
+                     if RESOURCE_GUIDE_MD.is_file() else "")
+        cls.lowered = cls.guide.lower()
+        # Whitespace-insensitive copy: the page wraps mid-sentence and inside quotes.
+        cls.flat = re.sub(r"\s+", " ", cls.guide)
+        cls.flat_lower = cls.flat.lower()
+
+    def assert_grounded(self, text: str, lowered: str, name: str) -> None:
+        """The resource guide carries the same grounding rules as the endgame docs."""
+        self.assertGreater(len(text.strip()), 2000, f"{name} looks like a stub")
+        for needle in ("in-game quest book", "jei", "authoritative", "approximate"):
+            self.assertIn(needle, lowered, f"{name} must state the {needle!r} rule")
+        for source in SOURCE_FILES:
+            self.assertIn(source.lower(), lowered, f"{name} must name its source: {source}")
+        self.assertIn("8.2", text, f"{name} must date itself against the pack version read")
+        self.assertIn("8.x", text, f"{name} must tie that version to the skill's 8.x stamp")
+        self.assertRegex(lowered, r"never invented|not invented|never invent",
+                         f"{name} must say its details were read, not invented")
+
+    def test_guide_exists_and_is_grounded(self) -> None:
+        self.assertTrue(RESOURCE_GUIDE_MD.is_file(), f"missing {RESOURCE_GUIDE_MD}")
+        self.assert_grounded(self.guide, self.lowered, "resource-farming-guide.md")
+
+    def test_guide_dates_itself_to_the_pinned_commit(self) -> None:
+        self.assertIn("e5e3d1d83e", self.guide)
+        self.assertIn("pack 8.2", self.guide)
+        self.assertIn("2026-09-22", self.guide)
+        self.assertIn("493", self.guide,
+                      "the guide must quote the modlist's verified entry count")
+
+    def test_guide_maps_every_gated_material_to_its_source_ids(self) -> None:
+        # self.flat: the page wraps mid-sentence, so multi-word strings span lines.
+        for item in RESOURCE_ITEM_IDS:
+            self.assertIn(item, self.flat, f"the resource guide must cite {item}")
+        for where in RESOURCE_DIMENSIONS:
+            self.assertIn(where, self.flat, f"the resource guide must name {where}")
+
+    def test_guide_quotes_the_verified_quest_titles(self) -> None:
+        for title in RESOURCE_QUEST_TITLES:
+            self.assertIn(title, self.flat, f"missing verified quest title: {title}")
+
+    def test_guide_covers_the_farm_systems(self) -> None:
+        for title in RESOURCE_FARM_TITLES:
+            self.assertIn(title, self.flat, f"missing farm-system quest title: {title}")
+        # Each system is tied to the config's own machine or crop ids.
+        for needle in ("foundry pour", "foundry", "simulating mob kills for loot"):
+            self.assertIn(needle, self.flat_lower)
+        # The bee chain's three pour descriptions are the pack's words, in order.
+        positions = [self.flat.index(bee) for bee in
+                     ("Allthemodium Bee", "Vibranium Bee", "Unobtainium Bee")]
+        self.assertEqual(positions, sorted(positions),
+                         "the bee chain must stay in the pack's Diamond -> Ancient -> "
+                         "Allthemodium -> Vibranium -> Unobtainium order")
+        allthemodium_bee = self.flat.index("Allthemodium Bee")
+        for earlier in ("Ancient Bee", "Diamond Bee"):
+            self.assertLess(self.flat.index(earlier), allthemodium_bee,
+                            f"{earlier} comes before Allthemodium Bee in the chain")
+
+    def test_guide_keeps_the_where_hedges(self) -> None:
+        # The pack's own distribution words, kept verbatim in the guide.
+        for hedge in ("rarely", "very rarely", "approximate"):
+            self.assertIn(hedge, self.lowered, f"missing hedge: {hedge}")
+        for place in ("Ancient Cities", "Deep Dark Biome", "End Highlands"):
+            self.assertIn(place, self.guide, f"missing quoted location: {place}")
+
+    def test_guide_marks_untitled_quests_in_place(self) -> None:
+        marked = self.flat.count("(no title in the config)")
+        self.assertGreaterEqual(marked, 4,
+                                "every untitled quest the guide relies on must be marked")
+        self.assertIn("47 of `allthemodium`'s 54 quests", self.flat)
+        self.assertIn("only five quests carry an explicit title", self.flat)
+
+    def test_guide_refuses_recipes_coordinates_and_ore_levels(self) -> None:
+        self.assertIn("No recipes, no coordinates, no ore levels.", self.guide)
+        self.assertIn("never invent", self.lowered)
+        self.assertIn("check the quest entry / jei", self.lowered)
+        self.assertIn("treat every distribution detail here as approximate", self.flat_lower)
+
+    def test_guide_cross_references_the_sibling_docs(self) -> None:
+        for sibling in ("atm-star-checklist.md", "boss-checklist.md",
+                        "creative-checklist.md", "progression.md"):
+            self.assertIn(sibling, self.guide, f"the guide must point at {sibling}")
+
+    def test_guide_maps_stages_to_the_skill_s_progression_model(self) -> None:
+        for stage in ("early-game", "tech", "endgame"):
+            self.assertIn(stage, self.lowered,
+                          f"the guide must use the skill's {stage!r} stage")
+        self.assertIn("references/progression.md", self.guide)
+        self.assertIn("quests are optional", self.lowered)
+
+    def test_skill_md_points_at_the_guide(self) -> None:
+        skill = SKILL_MD.read_text(encoding="utf-8")
+        self.assertIn("references/resource-farming-guide.md", skill,
+                      "SKILL.md must point at the new reference doc")
+        self.assertIn("four researched docs", skill,
+                      "SKILL.md must describe the four researched docs together")
+        self.assertIn("no title in the config", skill,
+                      "SKILL.md must repeat the untitled-quest marking rule")
 
 
 # --------------------------------------------------------------------------------------
