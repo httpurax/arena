@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -25,6 +25,10 @@ a local record of which chapters are finished.
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+- The user asks what to farm or what to set up farming first: Mystical Agriculture's
+  essence and seed tiers, mob farms (spawners, Industrial Foregoing, Hostile Neural
+  Networks), Productive Bees and Trees, crops and food — or resource chickens, which pack
+  8.2 does not have.
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -67,6 +71,14 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
+- **So does the farming guide.** `references/farming-guide.md` was read from the same
+  files at the same commit (`e5e3d1d83e`, pack 8.2) for the eight farming chapters —
+  Mystical Agriculture, Apothic Spawners, Hostile Neural Networks, Productive Bees,
+  Productive Trees, Food and Farming, Industrial Foregoing, Pylons. Its quest titles,
+  quest ids, tier subtitles, and seed tiers are that snapshot's; its "what to set up
+  first" order is marked as judgement, because the config does not order the farming
+  chapters against each other. It also records what the config does *not* have — no
+  resource-chicken mod, no growth-acceleration pylon — so never invent one.
 
 ## Setup — first run only
 
@@ -159,6 +171,16 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Farming questions go to `references/farming-guide.md`.** "What should I set up farming
+  first?" → its short answer: food, then Mystical Agriculture's Inferium (the pack's own
+  *Inferium Farmland* quest says to start it as soon as you can), a crop harvester, one
+  mob-drop route, then bees before trees — present that order as the judgement it is.
+  "Which tier is this seed?" → its table of all 125 seed quests by `Tier:` subtitle.
+  "How do I farm mobs?" → its three routes: Apothic Spawners (and the upgrade-rune
+  ladder), Industrial Foregoing's machines, Hostile Neural Networks. "Where are the
+  resource chickens?" → not in pack 8.2: say so, point at what does that job here
+  (Mystical Agriculture seeds, Productive Bees, Hostile Neural Networks), and never name
+  a chicken mod.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -376,6 +398,10 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Farming answers quoted verified titles, ids, and tiers from
+  `references/farming-guide.md`, labelled its "what to set up first" order as judgement,
+  and claimed no farm, seed, or mod the config does not have (no resource chickens in
+  pack 8.2).
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.

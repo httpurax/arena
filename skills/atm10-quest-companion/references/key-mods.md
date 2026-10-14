@@ -46,7 +46,7 @@ approximate.
 |---|---|---|---|
 | **Integrated Dynamics** | Logic/energy/item cables with programmable connectors; dynamic tank/crystal menagerie. | When you need smarter item routing than pipes. | Automation glue for farms and machines. |
 | **Modular Routers** | One-block item/fluid/energy routing with upgrade modules. | Early-mid; cheap and everywhere useful. | Compact automation without full networks. |
-| **Pylons** | Utility pylons: harvesting, growth acceleration, chunk-ish helpers (exact pylon roster — check the chapter, it is short at 13 quests). | Early-mid, especially the harvest pylon for Mystical Agriculture. | Farm automation. |
+| **Pylons** | Utility pylons. The 13-quest chapter (pack 8.2 config) covers five: Harvester (a crop auto-farm), Infusion (potion effects), Expulsion, Interdiction (blocks mob spawns), and Protection — no growth-acceleration pylon. | Early-mid, once a crop plot needs automating. Which crops the Harvester Pylon accepts (Mystical Agriculture's included) is not in the config — check in-game. | Farm automation; see `farming-guide.md`. |
 | **Silent Gear** | Modular tools/armor built from material parts (blueprint + parts system). | First hours — it replaces vanilla tool progression. | Better-than-diamond gear before Netherite/Allthemodium tiers. |
 | **Apotheosis (Gear / Spawners / Apothic Enchanting)** | Enchanting overhaul: gem sockets on gear ("Apotheosis Gear"), spawner capture/modification ("Apothic Spawners"), and the enchanting table rework ("Apothic Enchanting"). | Gear sockets early; spawners when you want mob farms; enchanting chapter after gear chapter (the book marks it as requiring Apotheosis Gear). | Enchant cap raising, mob farming, endgame gear. |
 | **Hostile Neural Networks** | Data-model mob simulation: kill mobs virtually for their drops. | Mid — pairs with spawners/loot. | Drop farms for star components (e.g. Ender Dragon Data Model is a Chapter 3 title). |
@@ -59,6 +59,11 @@ approximate.
 | **Productive Bees** | Bees that produce resources; huge chapter (252 quests). | Mid, after basic farms. | Resource bees (Soul Lava Bee Spawn Egg etc. appear in star quests). |
 | **Productive Trees** | Resource-bearing trees; large chapter (167 quests). | Mid, alongside bees. | Tree-based resource lines for the star. |
 | **Food and Farming** | Vanilla+ farming, cooking mods, and food QoL grouped in one chapter. | Any time — start early for buff food. | Sustainable food for boss fights. |
+
+The verified farming detail — Mystical Agriculture's full tier ladder (through Insanium,
+Tier 6, via Mystical Agradditions) and which tier every seed is, the three mob-farm
+routes, what the pack has instead of resource chickens, and what to set up first — is in
+`farming-guide.md`.
 
 ## Magic line
 
@@ -111,8 +116,10 @@ Do not claim these are in ATM10 without checking in-game first:
   quest chapter. The verified magic lineup is the Magic group in `progression.md` (Ars
   Nouveau, Occultism, EvilCraft, ...) plus Roots Classic and Reliquary-style mods. Treat
   Botania as absent unless JEI says otherwise.
-- **Thermal series, Laserio, Super Factory Manager, Botany Pots** — staples of *other*
-  kitchen sinks and often mentioned in generic advice; not verified for ATM10 here.
+- **Thermal series** — a staple of *other* kitchen sinks and often mentioned in generic
+  advice; it is **not** in pack 8.2's `config/crash_assistant/modlist.json`. (LaserIO,
+  Super Factory Manager, and Botany Pots, often lumped in with it, *are* in that modlist;
+  Botany Pots has no quests — see `farming-guide.md`.)
 
 The safe move for any mod: search its signature item in JEI in-game — if the item
 resolves, the mod is there; then let JEI and the quest book supply every detail.

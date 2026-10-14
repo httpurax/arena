@@ -68,8 +68,12 @@ JEI override everything written here.**
   Netherite → the Nether → the End → Wither → Deep Dark/Warden (verified quest titles).
   Community players who "did the FULL quests in order" report it as the smoothest route.
 - **Start Mystical Agriculture early-ish** (Resources group): inferium farming scales into
-  ore seeds and is the highest-leverage farm in the pack; a harvest/growth pylon (Pylons
-  mod) automates it.
+  ore seeds and is the highest-leverage farm in the pack — its own *Inferium Farmland*
+  quest says *"You'll want to start growing Inferium as soon as you can!"* A crop
+  harvester the book teaches (the Harvester Pylon, Mystical Agriculture's Harvester, or
+  Industrial Foregoing's Plant Gatherer) automates the harvest; which crops each accepts
+  is not in the config, so check in-game. What to farm, and what to set up first:
+  `references/farming-guide.md`.
 - **Choose your storage network** (AE2 vs Refined Storage) once chests stop scaling —
   this is a mid-tech-stage decision; both have full chapters, and Extended & Advanced AE
   / MEGA-style addons extend AE2 (addon availability approximate; check the mod list).

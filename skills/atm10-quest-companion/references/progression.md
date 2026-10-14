@@ -104,12 +104,13 @@ Dynamics, Modular Routers, Pylons), and scalable power (Powah, Extreme Reactors,
 Mekanism reactors). Resource mods belong here because they *are* tech progression in a
 kitchen-sink: Mystical Agriculture grows ores, Productive Bees and Hostile Neural
 Networks automate mob/loot drops, and everything feeds the endgame's enormous material
-costs.
+costs. The farming chapters' verified tiers, mob-farm routes, and a "what to set up
+first" answer are in `references/farming-guide.md`.
 
 **What it unlocks.** Near-infinite base resources, a real storage network, flight-capable
 gear and big power plants — the prerequisites for the Main Questline's late chapters.
 Community guides converge on the same advice: a full AE2 network, Mystical Agriculture
-farms (with growth pylons/accelerators), and one serious power setup carry almost
+farms (with growth accelerators), and one serious power setup carry almost
 everything else.
 
 **Where players get stuck:** choosing between overlapping mods. The standard answer —
