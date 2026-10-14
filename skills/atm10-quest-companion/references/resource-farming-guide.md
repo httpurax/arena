@@ -79,6 +79,12 @@ The chapter hub quest is simply titled **Allthemodium**, and its task is a
 `minecraft:netherite_ingot` — the book's way of saying Chapter 2 starts after vanilla is
 finished. Everything below hangs off it in the order the dependency links give.
 
+**For the mining detail — which dimension each of the three ores is in, where in it
+they spawn, and what pickaxe / harvest tier each needs — see the companion page
+`references/allthemodium-mining-guide.md`.** This page says *where a material comes
+from*; that one says *how to go get the ore out of the ground*, quoting the pack's own
+in-game ore tooltips and the Basic Tools chapter's Harvest Tier ladder.
+
 - **Where.** *Ancient City* is a `structure minecraft:ancient_city` task whose description
   says: *"You can find the Ore in the walls of Caves around the Ancient Cities, it's
   Glowing so it'll be easy to spot just very rare!"* and *"You will also be able to locate
