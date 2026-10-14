@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -58,13 +58,15 @@ They do **not** capture exact requirements, and this skill must never pretend ot
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
-- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
+- **The researched docs date themselves.** `references/atm-star-checklist.md`,
+  `references/boss-checklist.md`, `references/creative-checklist.md`, and
+  `references/mob-farm-progression.md` were read from the
   pack repository's `config/ftbquests/quests/chapters/*.snbt` and
   `lang/en_us/chapters/*.snbt` (mod names and versions from
   `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
-  `examples/progress.example.json`; the creative checklist pins the exact commit
-  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
+  `examples/progress.example.json`; the creative checklist and the mob-farm progression
+  doc pin the exact commit (`e5e3d1d83e`). The item ids, quest titles, and quoted counts
+  there are that snapshot's;
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
 
@@ -140,6 +142,15 @@ Stages overlap by design; use them to orient, not to gate.
 - Work from `references/progression.md` (stages, quest-book order) and
   `references/key-mods.md` (what each mod does, when to start it, what it leads to).
   First-hour and setup questions go to `references/getting-started.md`.
+- **Mob-farm questions go to `references/mob-farm-progression.md`.** "How do I farm mob
+  drops?" ("is there a mob grinder?", "how do spawners work here?", "where do spawn eggs
+  come from?") → the dark-room-to-Data-Center ladder: the Bounty Board kill tiers, the
+  Apothic Spawners chapter's silk-touch spawners, runes, and upgrade runes, the seven
+  cross-mod spawners, the egg routes, the Industrial Foregoing / EvilCraft kill machines,
+  Hostile Neural Networks' simulated kills, and the loot-routing quests. Quote them as
+  what the book tracked in pack 8.2, keep the doc's hedges (the dark-room grinder is
+  general knowledge, not quest content; no soul-shard quests exist), and still send the
+  player to the in-game quest book and JEI for current counts and recipes.
 - Give the next steps **in quest-book order** within the relevant chapters — a short,
   ordered list ("1. finish the X chapter up to Y; 2. start Z; 3. ..."), not a lecture.
 - For each step, name the chapter/mod it belongs to and *why* it is next (what it
@@ -376,6 +387,9 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Mob-farm answers quoted verified titles or ids from `references/mob-farm-progression.md`,
+  marked the vanilla dark-room grinder as general knowledge rather than pack content, and
+  still pointed at the in-game quest book and JEI for current recipes and rates.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
