@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -14,8 +14,9 @@ metadata:
 A progression companion for **All the Mods 10** (ATM10), the ~500-mod kitchen-sink pack
 for Minecraft 1.21.1 (NeoForge) whose FTB Quests book holds 66 chapters and roughly
 4,790 quests. The skill knows the pack's main stages — early game → tech → magic →
-endgame (the ATM Star) — tells the player what to do next from wherever he is, and keeps
-a local record of which chapters are finished.
+endgame (the ATM Star) — tells the player what to do next from wherever he is, keeps
+a local record of which chapters are finished, and answers "the game is lagging" from the
+pack's own shipped config rather than from generic advice.
 
 ## When to Use
 
@@ -27,6 +28,9 @@ a local record of which chapters are finished.
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
+- The user reports lag — low FPS, stuttering, a slowly ticking server — and asks how to fix
+  it ("how do I fix lag?"): which of the pack's own settings and machines to look at, in
+  what order, per `references/lag-fix-guide.md`.
 
 ## When Not to Use
 
@@ -35,7 +39,9 @@ a local record of which chapters are finished.
 - The user wants exact quest requirements, item ids, or recipes recited — this skill must
   not invent them (see Research Grounding below); point at the quest book and JEI.
 - The user wants game-installation troubleshooting beyond the setup notes in
-  `references/getting-started.md`.
+  `references/getting-started.md`, or hardware-level help (drivers, OS settings, GPU
+  choices) — `references/lag-fix-guide.md` covers what the *pack* ships and deliberately
+  stops at the machine.
 
 ## Research Grounding (read before advising)
 
@@ -58,15 +64,25 @@ They do **not** capture exact requirements, and this skill must never pretend ot
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
-- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
+- **The three endgame docs and the lag guide date themselves.**
+  `references/atm-star-checklist.md`, `references/boss-checklist.md`,
+  `references/creative-checklist.md`, and `references/lag-fix-guide.md` were read from the
   pack repository's `config/ftbquests/quests/chapters/*.snbt` and
   `lang/en_us/chapters/*.snbt` (mod names and versions from
   `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
-  `examples/progress.example.json`; the creative checklist pins the exact commit
-  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
-  the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
-  and still defer to the in-game quest book and JEI.
+  `examples/progress.example.json`; the creative checklist and the lag guide pin the exact
+  commit (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that
+  snapshot's; the pack changes them between versions. Quote them as *what the book asked
+  for in 8.2*, and still defer to the in-game quest book and JEI.
+- **The lag guide quotes config, and the player's own config wins.** Every setting in
+  `references/lag-fix-guide.md` is a value shipped in the pack repository at that commit
+  (`config/memorysettings.json`, `config/modernfix-mixins.properties`,
+  `config/alltheleaks.json`, the per-mod `*-client.toml` / `*-server.toml` files, and the
+  rest named in its provenance table). It is a snapshot of *defaults*, not of the user's
+  install: never recite a value as what his file says, never name a config key that is not
+  in that table, and never state a frame-rate gain — nothing here can measure his machine.
+  Which of the two problems he has (client FPS vs server TPS), the order of the steps, and
+  anything about his hardware are judgement, and the doc labels them as such.
 
 ## Setup — first run only
 
@@ -159,6 +175,17 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **"How do I fix lag?" goes to `references/lag-fix-guide.md`.** Work it in its own
+  order, and answer both halves of the question: first *which* lag it is (client FPS vs
+  server TPS — the pack's quest text uses both words), then the ladder — memory against the
+  pack's own table in `config/memorysettings.json`, shaders, the video settings that
+  actually exist, the machines and farms the quest book itself calls laggy (*Pipez*,
+  *Mekanism*, *Bio-Generator*, the Harvester Pylon, *Sea Prism*'s mass breeder warning),
+  item and entity spam, chunk loaders, and finally measuring with the spark and Observable
+  that already ship with the pack. Quote the guide's config values as *what the pack ships
+  by default*, keep its judgement labels, never name a setting that is not in its
+  provenance table, and never promise a frame-rate gain. Tell him nothing needs installing:
+  the performance mods are already in the pack.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -379,4 +406,8 @@ Before saying the companion is up to date, confirm:
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
+- Any lag answer named the kind of lag first, quoted only settings that
+  `references/lag-fix-guide.md` verifies from the pack config, kept its
+  approximate/judgement hedges, promised no frame-rate number, and told the user his own
+  `config/` folder and the in-game quest book win over the guide's 8.2 snapshot.
 - `data/progress.json` is still untracked by git.

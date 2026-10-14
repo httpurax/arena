@@ -28,9 +28,11 @@ JEI override everything written here.**
   official server files ship `-Xms4G -Xmx8G` in `user_jvm_args.txt` which hosts raise to
   fit. A 16 GB *machine* cannot host a 10–12 GB server and a 8 GB client at once — run
   the server elsewhere or lower expectations.
-- Performance mods are already in the pack (ModernFix, Embeddium, FerriteCore, spark...).
-  If FPS is low, drop render distance and shader load before blaming RAM (approximate —
-  system-dependent).
+- Performance mods are already in the pack — the 8.2 modlist names **ModernFix, Sodium,
+  Sodium Extra, ImmediatelyFast, FerriteCore, All The Leaks, memorysettings, spark** and
+  more (`references/lag-fix-guide.md` lists them with versions). There is nothing to
+  install: if FPS is low, drop render distance and shader load before blaming RAM
+  (approximate — system-dependent).
 
 ## First hour checklist
 
@@ -83,9 +85,10 @@ JEI override everything written here.**
   number in this skill's docs) over the live quest entry.
 - Stuck on *what to do next*: look at the Main Questline group; its four chapters are the
   intended spine (Chapter 1 → Allthemodium → The ATM Star → Creative).
-- Stuck on *performance*: check RAM per above, lower render distance, use `/spark` (the
-  profiler mod ships with the pack) or Observable to find lag sources (approximate —
-  read their docs).
+- Stuck on *performance*: work through `references/lag-fix-guide.md` — FPS or TPS, the
+  pack's own memory table, shaders, the video settings the pack ships translations for, the
+  machines and farms the quest book calls laggy, and the profilers (spark and Observable
+  both ship with the pack; read their own docs for the commands).
 - Stuck on a *boss*: the Exploration chapters (Twilight Forest, Cataclysm, ...) and the
   mods' own in-game guide books (Patchouli/Modonomicon entries) carry the mechanics; the
   quest book lists the boss quests but not tactics.
