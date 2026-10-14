@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -25,6 +25,9 @@ a local record of which chapters are finished.
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+- The user asks the beginner automation question — *"what should I automate first?"*
+  (ore processing, power, item movement, farms, auto-crafting — what to build hands-free
+  first and in what order).
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -67,6 +70,16 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
+- **The first-automation doc dates itself the same way.**
+  `references/automation-first-steps.md` was read from the same pinned commit
+  (`e5e3d1d83e`, pack **8.2**): quest titles, subtitles, task items, and quoted quest
+  text from the Chapter 1, Mekanism, Create, Oritech, Modern Industrialization, Basic
+  Power, Generators N Furnaces, Basic Logistics, Pylons, Mystical Agriculture,
+  Productive Bees, Industrial Foregoing, AE2, Refined Storage, Hostile Neural Networks,
+  Occultism, and Chapter 2: Allthemodium quest configs. Its *ordering* of the five
+  automations is the skill's judgement, not pack data — say so when repeating it, keep
+  the hedges on quoted yields ("2 Dust from 1 Ore" and friends are quest text), and
+  still defer to the in-game quest book and JEI.
 
 ## Setup — first run only
 
@@ -147,6 +160,15 @@ Stages overlap by design; use them to orient, not to gate.
 - For any concrete requirement (item counts, ingredients, ore levels, boss mechanics),
   point at the quest entry and JEI instead of stating numbers — per Research Grounding
   above. Flag anything version-sensitive as approximate.
+- **Early-automation questions go to `references/automation-first-steps.md`.** "What
+  should I automate first?" → the five automations in impact order: ore doubling and
+  the first ore-processing line (Chapter 1's *Basic Ore Doubling*, Mekanism's *Enrich
+  then Smelt*), power (generate/transfer/store), item movement (pipes, belts,
+  transporters), farms (the Pylons harvester, then Mystical Agriculture), and
+  storage-network auto-crafting (AE2 or Refined Storage) — each anchored to verified
+  quest titles with quoted quest text. Flag the ranking as judgement, keep the hedges
+  on quoted yields, present the tech-line routes as alternatives, and send counts,
+  recipes, and current numbers to the quest entry and JEI.
 - **Endgame questions go to the three endgame docs.** "What does the ATM Star need?" →
   `references/atm-star-checklist.md`: Chapter 3's components grouped by source mod, with
   the verified quest titles and item ids, the build order, and the parts the pack marks
@@ -376,6 +398,9 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Early-automation answers quoted verified quest titles from
+  `references/automation-first-steps.md`, said the five-item ranking is judgement, and
+  kept the hedges on quoted yields.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
