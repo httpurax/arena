@@ -151,6 +151,9 @@ walks it in three movements, all verified from the chapter quest titles:
   (Overworld deepslate levels; guides say Deep Dark, below roughly Y -40 — approximate,
   verify in-game), *Vibranium* (Nether), *Unobtainium* (End), plus their alloys, tools,
   armor sets, the Teleport Pad, the Mining Dimension, and the Piglich boss fight.
+  `references/resource-farming-guide.md` maps each of those materials — and the smithing
+  templates, Piglich Hearts, and farm systems around them — to the pack's own quest titles
+  and roughly which stage they belong to.
 - **Chapter 3: The ATM Star** — 128 quests in pack 8.2, one component per major mod
   system. Observed quest titles include items from Mekanism, AE2, Create, Ars Nouveau,
   Occultism, EvilCraft, Iron's Spells, Forbidden & Arcanus, Productive Bees/Trees,
@@ -183,9 +186,11 @@ roughly when in the progression it lands.
    any concrete requirement (counts, ingredients, boss mechanics) tell the player to read
    the quest entry / JEI — do not state numbers from memory or from this file. For
    endgame questions, work from `references/atm-star-checklist.md` (star components by
-   source mod), `references/boss-checklist.md` (boss, dimension, arena, roughly when), and
+   source mod), `references/boss-checklist.md` (boss, dimension, arena, roughly when),
    `references/creative-checklist.md` (what Chapter 4 asks for after the star, and what
-   each creative item does); all three quote verified quest titles and still defer to the
+   each creative item does), and `references/resource-farming-guide.md` (where the gated
+   materials — allthemodium, vibranium, unobtainium, templates, Piglich Hearts, alloys —
+   actually come from); all four quote verified quest titles and still defer to the
    in-game book.
 4. When a chapter is finished, record it in `data/progress.json` and run
    `scripts/progress.py` to show what is next.

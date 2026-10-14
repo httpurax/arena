@@ -31,6 +31,11 @@ Covered:
     Chapter 3 components, the boss lines, and Chapter 4's post-star quests — the multiblock
     automation line, the five star parts, and the eleven creative-tier items behind
     *Fully Automated ATM Star*;
+  * the resource-farming guide: it exists, is grounded the same way and at the same pinned
+    commit, maps allthemodium / vibranium / unobtainium (plus the smithing templates, the
+    Piglich Heart, the three alloy chains, and the farm systems the book points at) to the
+    pack's verified quest titles, keeps its hedges and its *(no title in the config)*
+    markings, and states no coordinate, ore level, or recipe of its own;
   * offline guarantee: the script imports no network module;
   * privacy: ``.gitignore`` excludes ``data/`` so real progress cannot be committed.
 """
@@ -59,6 +64,7 @@ GETTING_STARTED_MD = SKILL_ROOT / "references" / "getting-started.md"
 STAR_CHECKLIST_MD = SKILL_ROOT / "references" / "atm-star-checklist.md"
 BOSS_CHECKLIST_MD = SKILL_ROOT / "references" / "boss-checklist.md"
 CREATIVE_CHECKLIST_MD = SKILL_ROOT / "references" / "creative-checklist.md"
+RESOURCE_GUIDE_MD = SKILL_ROOT / "references" / "resource-farming-guide.md"
 SCRIPT_PATH = SKILL_ROOT / "scripts" / "progress.py"
 
 _spec = importlib.util.spec_from_file_location("progress", SCRIPT_PATH)
@@ -187,8 +193,8 @@ class TestSkillDocs(unittest.TestCase):
         self.assertIn("python scripts/progress.py", self.text)
 
     def test_reference_docs_exist_and_cover_the_stages(self) -> None:
-        for path in (PROGRESSION_MD, KEY_MODS_MD, GETTING_STARTED_MD,
-                     STAR_CHECKLIST_MD, BOSS_CHECKLIST_MD, CREATIVE_CHECKLIST_MD):
+        for path in (PROGRESSION_MD, KEY_MODS_MD, GETTING_STARTED_MD, STAR_CHECKLIST_MD,
+                     BOSS_CHECKLIST_MD, CREATIVE_CHECKLIST_MD, RESOURCE_GUIDE_MD):
             self.assertTrue(path.is_file(), f"missing reference doc: {path}")
             self.assertGreater(len(path.read_text(encoding="utf-8").strip()), 400,
                                f"{path.name} looks like a stub")
@@ -200,8 +206,9 @@ class TestSkillDocs(unittest.TestCase):
         self.assertIn("jei", progression)
         self.assertIn("approximate", progression)
         # progression.md is the orientation doc; the endgame detail lives in the three
-        # endgame docs, and it must point at them.
-        for link in ("atm-star-checklist.md", "boss-checklist.md", "creative-checklist.md"):
+        # endgame docs and the material map in the resource guide, and it must point at them.
+        for link in ("atm-star-checklist.md", "boss-checklist.md", "creative-checklist.md",
+                     "resource-farming-guide.md"):
             self.assertIn(link, progression, f"progression.md must link {link}")
         self.assertIn("128 quests", progression,
                       "the star chapter's verified quest count (pack 8.2) is 128, not ~160")
@@ -740,6 +747,99 @@ CREATIVE_TASK_ITEMS = (
     "railcraft:creative_locomotive",
     "evilcraft:blood",
 )  # 54 ids: every item task plus the one biome task the config states
+
+# The resource-farming guide's material map: the item, dimension, and structure ids the
+# pack's own config states for the gated materials (same pinned commit, e5e3d1d83e).
+RESOURCE_ITEM_IDS = (
+    "allthemodium:allthemodium_ingot",
+    "allthemodium:vibranium_ingot",
+    "allthemodium:unobtainium_ingot",
+    "allthemodium:piglich_heart",
+    "allthemodium:vibranium_allthemodium_alloy_ingot",
+    "allthemodium:unobtainium_allthemodium_alloy_ingot",
+    "allthemodium:unobtainium_vibranium_alloy_ingot",
+    "allthemodium:alloy_paxel",
+    "minecraft:netherite_ingot",
+    "kubejs:magical_soil",
+    "mysticalagradditions:creative_essence",
+    "mysticalagriculture:allthemodium_seeds",
+    "mysticalagriculture:vibranium_seeds",
+    "mysticalagriculture:unobtainium_seeds",
+    "hostilenetworks:sim_chamber",
+    "hostilenetworks:loot_fabricator",
+    "hostilenetworks:deep_learner",
+    "productivebees:configurable_honeycomb",
+    "powah:energizing_orb",
+    "ars_nouveau:enchanting_apparatus",
+    "industrialforegoing:dissolution_chamber",
+    "forbidden_arcanus:eternal_stella",
+)
+
+RESOURCE_DIMENSIONS = (
+    "allthemodium:mining",
+    "allthemodium:the_other",
+    "allthemodium:the_beyond",
+    "minecraft:ancient_city",
+    "allthemodium:ancient_pyramid",
+)
+
+# Verified quest titles (en_us lang at e5e3d1d83e) the guide must quote when it says where
+# the gated materials come from.
+RESOURCE_QUEST_TITLES = (
+    "Allthemodium",
+    "Teleport Pad",
+    "Mining Dimension",
+    "The Other",
+    "The Beyond",
+    "Ancient City",
+    "Allthemodium Ingot",
+    "Allthemodium Smithing Template",
+    "Vibranium Smithing Template",
+    "Vibranium Ingot",
+    "Unobtainium Smithing Template",
+    "Unobtainium Ingot",
+    "The Nether",
+    "The End",
+    "Overworld",
+    "Piglich Boss",
+    "Ancient Pyramid",
+    "Vibranium - Allthemodium Alloy Ingot",
+    "Unobtainium - Allthemodium Alloy Ingot",
+    "Unobtainium - Vibranium Alloy Ingot",
+    "Allthemodium Alloy Paxel",
+    "Basic Ore Doubling",
+    "Netherite Template",
+    "Netherite Tier",
+    "Ancient Metals",
+    "Visit The Deep Dark!",
+    "We've Struck Diamonds!",
+)
+
+# The farming systems the guide maps to their verified quest lines.
+RESOURCE_FARM_TITLES = (
+    "Mystical Agriculture",
+    "Infusion Altar",
+    "Insanium",
+    "Awakened Supremium",
+    "The Awakening",
+    "Cognizant Dust",
+    "Automating Awakened Supremium",
+    "Creative Essence",
+    "Allthemodium Bee",
+    "Vibranium Bee",
+    "Unobtainium Bee",
+    "Ancient Bee",
+    "Diamond Bee",
+    "Draconic Bee",
+    "Hostile Neural Networks",
+    "Modeling Mobs",
+    "Simulating Deaths",
+    "Creating Loot",
+    "The Data Center",
+    "Productive Trees",
+    "Sawing",
+    "Stripping",
+)
 
 
 def stamped_document(chapters: "list[dict[str, Any]]", **stamps: Any) -> "dict[str, Any]":
@@ -1569,6 +1669,114 @@ class TestEndgameReferenceDocs(unittest.TestCase):
             self.assertIn(behaviour, skill, f"SKILL.md must document {behaviour}")
         self.assertIn("two-space indentation", skill)
         self.assertIn("without `--yes`, it", skill)
+
+
+# --------------------------------------------------------------------------------------
+# the resource-farming guide
+# --------------------------------------------------------------------------------------
+
+class TestResourceFarmingGuide(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.guide = (RESOURCE_GUIDE_MD.read_text(encoding="utf-8")
+                     if RESOURCE_GUIDE_MD.is_file() else "")
+        cls.lowered = cls.guide.lower()
+        # Whitespace-insensitive copy: the page wraps mid-sentence and inside quotes.
+        cls.flat = re.sub(r"\s+", " ", cls.guide)
+        cls.flat_lower = cls.flat.lower()
+
+    def assert_grounded(self, text: str, lowered: str, name: str) -> None:
+        """The resource guide carries the same grounding rules as the endgame docs."""
+        self.assertGreater(len(text.strip()), 2000, f"{name} looks like a stub")
+        for needle in ("in-game quest book", "jei", "authoritative", "approximate"):
+            self.assertIn(needle, lowered, f"{name} must state the {needle!r} rule")
+        for source in SOURCE_FILES:
+            self.assertIn(source.lower(), lowered, f"{name} must name its source: {source}")
+        self.assertIn("8.2", text, f"{name} must date itself against the pack version read")
+        self.assertIn("8.x", text, f"{name} must tie that version to the skill's 8.x stamp")
+        self.assertRegex(lowered, r"never invented|not invented|never invent",
+                         f"{name} must say its details were read, not invented")
+
+    def test_guide_exists_and_is_grounded(self) -> None:
+        self.assertTrue(RESOURCE_GUIDE_MD.is_file(), f"missing {RESOURCE_GUIDE_MD}")
+        self.assert_grounded(self.guide, self.lowered, "resource-farming-guide.md")
+
+    def test_guide_dates_itself_to_the_pinned_commit(self) -> None:
+        self.assertIn("e5e3d1d83e", self.guide)
+        self.assertIn("pack 8.2", self.guide)
+        self.assertIn("2026-09-22", self.guide)
+        self.assertIn("493", self.guide,
+                      "the guide must quote the modlist's verified entry count")
+
+    def test_guide_maps_every_gated_material_to_its_source_ids(self) -> None:
+        # self.flat: the page wraps mid-sentence, so multi-word strings span lines.
+        for item in RESOURCE_ITEM_IDS:
+            self.assertIn(item, self.flat, f"the resource guide must cite {item}")
+        for where in RESOURCE_DIMENSIONS:
+            self.assertIn(where, self.flat, f"the resource guide must name {where}")
+
+    def test_guide_quotes_the_verified_quest_titles(self) -> None:
+        for title in RESOURCE_QUEST_TITLES:
+            self.assertIn(title, self.flat, f"missing verified quest title: {title}")
+
+    def test_guide_covers_the_farm_systems(self) -> None:
+        for title in RESOURCE_FARM_TITLES:
+            self.assertIn(title, self.flat, f"missing farm-system quest title: {title}")
+        # Each system is tied to the config's own machine or crop ids.
+        for needle in ("foundry pour", "foundry", "simulating mob kills for loot"):
+            self.assertIn(needle, self.flat_lower)
+        # The bee chain's three pour descriptions are the pack's words, in order.
+        positions = [self.flat.index(bee) for bee in
+                     ("Allthemodium Bee", "Vibranium Bee", "Unobtainium Bee")]
+        self.assertEqual(positions, sorted(positions),
+                         "the bee chain must stay in the pack's Diamond -> Ancient -> "
+                         "Allthemodium -> Vibranium -> Unobtainium order")
+        allthemodium_bee = self.flat.index("Allthemodium Bee")
+        for earlier in ("Ancient Bee", "Diamond Bee"):
+            self.assertLess(self.flat.index(earlier), allthemodium_bee,
+                            f"{earlier} comes before Allthemodium Bee in the chain")
+
+    def test_guide_keeps_the_where_hedges(self) -> None:
+        # The pack's own distribution words, kept verbatim in the guide.
+        for hedge in ("rarely", "very rarely", "approximate"):
+            self.assertIn(hedge, self.lowered, f"missing hedge: {hedge}")
+        for place in ("Ancient Cities", "Deep Dark Biome", "End Highlands"):
+            self.assertIn(place, self.guide, f"missing quoted location: {place}")
+
+    def test_guide_marks_untitled_quests_in_place(self) -> None:
+        marked = self.flat.count("(no title in the config)")
+        self.assertGreaterEqual(marked, 4,
+                                "every untitled quest the guide relies on must be marked")
+        self.assertIn("47 of `allthemodium`'s 54 quests", self.flat)
+        self.assertIn("only five quests carry an explicit title", self.flat)
+
+    def test_guide_refuses_recipes_coordinates_and_ore_levels(self) -> None:
+        self.assertIn("No recipes, no coordinates, no ore levels.", self.guide)
+        self.assertIn("never invent", self.lowered)
+        self.assertIn("check the quest entry / jei", self.lowered)
+        self.assertIn("treat every distribution detail here as approximate", self.flat_lower)
+
+    def test_guide_cross_references_the_sibling_docs(self) -> None:
+        for sibling in ("atm-star-checklist.md", "boss-checklist.md",
+                        "creative-checklist.md", "progression.md"):
+            self.assertIn(sibling, self.guide, f"the guide must point at {sibling}")
+
+    def test_guide_maps_stages_to_the_skill_s_progression_model(self) -> None:
+        for stage in ("early-game", "tech", "endgame"):
+            self.assertIn(stage, self.lowered,
+                          f"the guide must use the skill's {stage!r} stage")
+        self.assertIn("references/progression.md", self.guide)
+        self.assertIn("quests are optional", self.lowered)
+
+    def test_skill_md_points_at_the_guide(self) -> None:
+        skill = SKILL_MD.read_text(encoding="utf-8")
+        self.assertIn("references/resource-farming-guide.md", skill,
+                      "SKILL.md must point at the new reference doc")
+        self.assertIn("four researched docs", skill,
+                      "SKILL.md must describe the four researched docs together")
+        self.assertIn("no title in the config", skill,
+                      "SKILL.md must repeat the untitled-quest marking rule")
 
 
 # --------------------------------------------------------------------------------------
