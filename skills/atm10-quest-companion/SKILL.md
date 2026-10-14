@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.0.0
+version: 1.1.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -56,7 +56,8 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   mod availability, version-sensitive mechanics). When repeating such a detail, keep the
   hedge: "guides say roughly X — verify in-game".
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
-  chapters this skill does not know, trust his book and note the mismatch.
+  chapters this skill does not know, trust his book and note the mismatch — then refresh
+  the list with the pack-update workflow below.
 - **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
   `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
   pack repository's `config/ftbquests/quests/chapters/*.snbt` and
@@ -279,6 +280,75 @@ Relay the warning when it appears and say that the user's in-game quest book is
 authoritative. Never silently reconcile the file: `--sync` first prints every id and
 version change it would make, and `--sync --yes` is used only after the player explicitly
 approves that preview. The dry run does not write anything.
+
+### Pack updates: rebuilding the chapter list
+
+When the pack moves on, rebuild `examples/progress.example.json` from the new pack
+config instead of hand-editing it. `scripts/build_chapter_list.py` is the offline tool
+for this — stdlib-only Python 3.8+, no network ever: it reads a local checkout the user
+provides and rewrites one JSON file; it fetches nothing itself.
+
+1. **Clone the new pack config.** The user needs a local AllTheMods/ATM-10 clone at the
+   new release (the skill never bundles pack data; any checkout path works):
+
+   ```bash
+   git clone https://github.com/AllTheMods/ATM-10
+   git -C ATM-10 checkout <release tag or commit>   # already-cloned: git -C ATM-10 fetch --tags first
+   ```
+
+2. **Run the script**, naming the checkout and the commit it sits at:
+
+   ```bash
+   python3 scripts/build_chapter_list.py /path/to/ATM-10 --commit e5e3d1d83e
+   ```
+
+   ```powershell
+   python scripts/build_chapter_list.py C:\path\to\ATM-10 --commit e5e3d1d83e
+   ```
+
+   It parses the quest config with the bundled SNBT reader (`scripts/snbt.py`) —
+   `config/ftbquests/quests/chapters/*.snbt` for ids and quest counts,
+   `chapter_groups.snbt` for quest-book order, `lang/en_us/chapter.snbt` and
+   `chapter_group.snbt` for titles (Minecraft `&` formatting codes stripped) — stamps
+   the pack version from `config/bcc-common.toml` (pack `8.2` stamps `8.x`: the skill
+   tracks the chapter list per major line, and the exact version goes into
+   `pack_version_source`), then rewrites the example file. Before writing it prints the
+   semantic changes (new/removed/retitled chapters, order or stamp changes) so it is
+   easy to review the diff that lands; a second run with nothing moved reports
+   `unchanged` and writes nothing.
+
+   Stage assignments come from the script's `STAGE_ASSIGNMENTS` table, not from the
+   pack: the quest book has no stage notion. A chapter the table does not know (a pack
+   update added it) stops the build with a clear error naming it — never a traceback,
+   and never a guessed stage. Place it in `early-game`/`tech`/`magic`/`endgame` per
+   `references/progression.md`, then re-run.
+
+3. **Review the diff** like any other researched change:
+
+   ```bash
+   git diff -- examples/progress.example.json
+   ```
+
+   Check that new chapters landed in sensible groups and stages, and that a drop+add
+   pair is really a renamed chapter (its old completion history reconciles in the next
+   step). If the diff is wrong, fix the checkout or the stage table — not the output.
+
+4. **Reconcile the player's progress file** once the new list is approved: preview with
+   `python3 scripts/progress.py --sync`, then apply with `--sync --yes` only after the
+   player approves the preview (a dropped chapter's history is gone afterwards — say
+   so). The `pack drift` warning disappears once both files carry the new list.
+
+`--check` does the read-and-compare half without writing: exit 1 plus the change
+summary when the shipped file would differ, exit 0 when it is already current — useful
+before starting a review:
+
+```bash
+python3 scripts/build_chapter_list.py /path/to/ATM-10 --check
+```
+
+The shipped list is reproducible: rebuilding from pack 8.2 (main `e5e3d1d83e`)
+regenerates `examples/progress.example.json` chapter-for-chapter, and the skill's tests
+prove the pipeline against a small SNBT fixture rather than the full pack clone.
 
 ## Privacy
 
