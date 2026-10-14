@@ -37,6 +37,7 @@ tasks; the bosses below are the ones those tasks point at.
 - **No tactics, no gear lists, no drop tables.** The quest descriptions carry some of that
   and this page quotes only what identifies or locates the boss. For the fight itself: the
   quest entry, the mod's own in-game guide book (Patchouli/Modonomicon), and JEI for drops.
+  (For fight order and the gear the book itself expects, see `references/boss-guide.md`.)
 - **"Roughly when" is approximate by construction.** The pack does not gate anything behind
   bosses (its Welcome chapter says quests are optional and mods are not gated). The labels
   below combine the skill's four stages (`references/progression.md`) with the *order the
