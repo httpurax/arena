@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -21,6 +21,8 @@ a local record of which chapters are finished.
 
 - The user says where he is in ATM10 (a quest chapter, a base he has built, a boss or
   resource he is stuck on) and asks *what should I do next?*
+- The user asks "which quests are worth doing for their rewards?" or wants a short,
+  high-value reward pick list grounded in the pack config.
 - The user finishes a quest chapter and wants it recorded ("mark Mekanism done").
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
@@ -44,7 +46,9 @@ the official `AllTheMods/ATM-10` GitHub repository (chapter groups, order, and q
 titles), the published ATM10 mod list, and community guides. They capture the pack's
 **structure** — which chapters exist, in what order, and roughly when players reach them.
 
-They do **not** capture exact requirements, and this skill must never pretend otherwise:
+Most references map structure, not exact requirements. The pinned config checklists
+and reward guide below quote specific verified fields only; do not extrapolate beyond
+those fields or pretend the skill knows every requirement:
 
 - **The in-game quest book (FTB Quests) and JEI are authoritative** for what a quest
   needs, what a recipe contains, and what an item does. Always defer to them, and say so
@@ -67,6 +71,13 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
+
+- **The reward guide is also a pinned snapshot.** `references/best-reward-quests.md`
+  uses only quest config from pack **8.2**, `main` commit `e5e3d1d83e` (2026-09-22).
+  It quotes actual titles, quest ids, fixed item rewards and stored components; priorities
+  and value judgements are explicitly approximate. Do not confuse a reward with a task,
+  recipe or unlock, rename untitled quests, or promise specific loot-table outcomes.
+  The in-game quest book remains authoritative if the player's version differs.
 
 ## Setup — first run only
 
@@ -140,7 +151,14 @@ Stages overlap by design; use them to orient, not to gate.
 - Work from `references/progression.md` (stages, quest-book order) and
   `references/key-mods.md` (what each mod does, when to start it, what it leads to).
   First-hour and setup questions go to `references/getting-started.md`.
-- Give the next steps **in quest-book order** within the relevant chapters — a short,
+- **Reward-shopping questions** ("which quests are worth doing for their rewards?")
+  go to `references/best-reward-quests.md`. Offer a few picks matching the player's
+  current route, quote the verified title and fixed payoff, and label the priority as
+  judgement (approximate). This is advice order, not quest-book order. Check dependencies
+  and tasks in the book before suggesting a detour; treat table rewards as uncertain
+  and do not infer effects or technical bridges from item ids or components.
+- For progression advice (rather than reward shopping), give the next steps
+  **in quest-book order** within the relevant chapters — a short,
   ordered list ("1. finish the X chapter up to Y; 2. start Z; 3. ..."), not a lecture.
 - For each step, name the chapter/mod it belongs to and *why* it is next (what it
   unlocks), grounded in the references.
@@ -379,4 +397,6 @@ Before saying the companion is up to date, confirm:
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
+- Reward answers used `references/best-reward-quests.md` for verified titles/ids and
+  fixed payoffs, kept judgement/uncertainty labels, and deferred to the current book.
 - `data/progress.json` is still untracked by git.
