@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -25,6 +25,9 @@ a local record of which chapters are finished.
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+- The user asks how to make the game craft things for him ("how do I get autocrafting
+  running?", AE2 or Refined Storage patterns, crafting CPUs, Autocrafters) — see
+  `references/autocrafting-guide.md`.
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -67,6 +70,13 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
+- **The autocrafting guide dates itself the same way.** `references/autocrafting-guide.md`
+  was read from the same commit (`e5e3d1d83e`, pack 8.2) — the Storage chapters
+  `applied_energistics_2`, `refined_storage`, and `extended__advanced_ae` (quest files
+  plus their `lang/en_us/chapters/*.snbt` titles and descriptions, mod versions from
+  `config/crash_assistant/modlist.json`). Its quest titles, task item ids, and quoted
+  counts are that snapshot's; quote them as what the book asked for in 8.2, and still
+  defer to the in-game quest book and JEI.
 
 ## Setup — first run only
 
@@ -159,6 +169,15 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Autocrafting questions go to the autocrafting guide.** "How do I make the game craft
+  things for me?", "how do I get autocrafting running?", "AE2 or Refined Storage?",
+  "what is a Pattern / crafting CPU / Autocrafter?" → `references/autocrafting-guide.md`:
+  the two Storage autocrafting chains in dependency order (AE2 *Auto-Crafting* → *Patterns*
+  → Assemblers and the crafting CPU; Refined Storage *Autocrafting* → *Pattern Grid* →
+  *Autocrafter*), the network prerequisites before them, and the Extended & Advanced AE
+  scale-up behind them. Present AE2 and Refined Storage as alternatives, walk the chosen
+  chain in the guide's order, keep its hedges, and still send the player to the in-game
+  quest book and JEI for recipes and current counts.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -376,6 +395,9 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Autocrafting answers followed `references/autocrafting-guide.md` in dependency order,
+  quoted its verified titles or ids with their hedges, and still pointed at the in-game
+  quest book and JEI for recipes and current counts.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
