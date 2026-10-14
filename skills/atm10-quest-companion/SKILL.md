@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.3.0
+version: 1.4.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -47,6 +47,11 @@ pack's own shipped config rather than from generic advice.
 - The user asks which dimension to open next, what unlocks one (the Twilight Forest, the
   Aether, the Undergarden, Eternal Starlight, Allthemodium's The Other, ...), which
   chapter it belongs to, or what it is worth going there for.
+- The user asks which bosses this pack has, in what order to fight them, where the
+  arena is, what to bring to start the fight, or what gear the quest book expects him
+  to have first — answered from `references/boss-guide.md`, the order-and-tactics
+  companion to `references/boss-checklist.md`.
+
 - The user asks which Bounty Board bounties are open, what a bounty wants killed and
   how many, or which finished bounties still have rewards waiting to be claimed.
 - The user asks where a gated material comes from or how to farm it ("where do I find
@@ -305,6 +310,21 @@ those fields or pretend the skill knows every requirement:
   have no title in the config: mark them, never rename them. State no recipe,
   coordinate, or keybind the config does not, and still defer to the in-game quest book
   and JEI.
+- **The boss guide dates itself the same way.** `references/boss-guide.md` was read
+  from the same commit (`e5e3d1d83e`, pack 8.2): the boss chapters Chapter 1, Bounty
+  Board, Twilight Forest, Aether, Cataclysm, Deeper and Darker, Undergarden, Eternal
+  Starlight, Allthemodium, Draconic Evolution, Iron's Spells, Ars Nouveau, Ice and
+  Fire, Chapter 3 and Basic Armor, their `lang/en_us/chapters/*.snbt` titles and
+  descriptions, and `config/crash_assistant/modlist.json`. Its quest titles, quest
+  ids, task ids, and quoted "Hearts" figures are verified; its fight order is verified
+  only where a dependency link or quest sentence states it (the Twilight trophy line,
+  the summoning gates), and everywhere else is *(judgement)*; its gear column is
+  a config task, a tool tier quoted from quest text, or labelled judgement — never
+  a loadout. The fights the book tracks by trophy item, drop item, advancement,
+  structure, or dimension task are never restated as plain kill tasks, and The Final
+  Boss stays what its quest says it is (not implemented). Still defer to the in-game
+  quest book and JEI.
+
 - **The reward guide is also a pinned snapshot.** `references/best-reward-quests.md`
   uses only quest config from pack **8.2**, `main` commit `e5e3d1d83e` (2026-09-22).
   It quotes actual titles, quest ids, fixed item rewards and stored components; priorities
@@ -447,6 +467,19 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Boss-order, arena, and gear questions go to `references/boss-guide.md`.**
+  "Which boss, in what order, and with what gear?", "where is the boss arena?",
+  "what do I need to summon it?", "am I geared enough for Cataclysm / the Chaos
+  Guardian?" -> the recommended fight order built on the pack-8.2 config: vanilla
+  first, the Twilight Forest trophy line in its one strict (verified) order, the
+  Aether's three dungeons and Cataclysm's eight in any order, then the Chaos
+  Guardian — each fight with its verified tracking quest, arena (structure id or
+  the place quest text names), summoning gate, and the gear signal the book
+  itself states (a task, a quoted tool tier, or an expectation sentence), with
+  every readiness judgement labelled as such. Pair it with
+  `references/boss-checklist.md` for the full inventory. Never invent a tactic,
+  an enchantment, or a required armour tier the guide does not quote.
+
 - **Dimension questions go to `references/dimension-guide.md`.** "Which dimension should I
   open first?", "what unlocks the Aether / The Other?", "is the Undergarden worth it yet?"
   → the 13 destinations the config's 28 `dimension` tasks (plus the Twilight Forest's
@@ -794,6 +827,11 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Boss answers followed the fight order in `references/boss-guide.md` — the Twilight
+  line in its strict verified order, parallel lines left unordered, gear limited
+  to what the quests state or clearly-labelled judgement — and still pointed at
+  the in-game quest book and JEI.
+
 - Dimension answers named the verified unlock quest and dimension id from
   `references/dimension-guide.md`, kept its verified/approximate labels, and supplied no
   portal recipe or coordinates.
