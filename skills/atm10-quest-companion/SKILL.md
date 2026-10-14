@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -25,6 +25,9 @@ a local record of which chapters are finished.
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+- The user asks about **ore processing** — "am I wasting ores by smelting them raw?",
+  "how do I double/triple my ores?", "what is the Mekanism ore-processing chain, and when
+  do I start it?" (see `references/ore-processing-ladder.md`).
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -58,15 +61,17 @@ They do **not** capture exact requirements, and this skill must never pretend ot
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
-- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
-  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
-  pack repository's `config/ftbquests/quests/chapters/*.snbt` and
+- **The endgame and ore-processing docs date themselves.**
+  `references/atm-star-checklist.md`, `references/boss-checklist.md`,
+  `references/creative-checklist.md`, and `references/ore-processing-ladder.md` were read
+  from the pack repository's `config/ftbquests/quests/chapters/*.snbt` and
   `lang/en_us/chapters/*.snbt` (mod names and versions from
   `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
   `examples/progress.example.json`; the creative checklist pins the exact commit
-  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
-  the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
-  and still defer to the in-game quest book and JEI.
+  (`e5e3d1d83e`), and the ore ladder is read from that same commit. The item ids, quest
+  titles, and quoted counts there are that snapshot's; the pack changes them between
+  versions. Quote them as *what the book asked for in 8.2*, and still defer to the
+  in-game quest book and JEI.
 
 ## Setup — first run only
 
@@ -159,6 +164,20 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Ore-processing questions go to `references/ore-processing-ladder.md`.** "Am I wasting
+  ores by smelting them raw?" → the pack's own answer from Chapter 1's *Basic Ore
+  Doubling* (smelting raw is "necessary" early, but the Ore Hammer's 1 raw ore → 2 ore
+  dust is the book's own doubling), then the ladder it introduces: Mekanism's four tier
+  quests (*Enrich then Smelt* → *Making Oxygen for Purifier* / *Crush and Enrich our
+  Clumps* → *Making Chlorine* / *Injecting Hydrogen Chloride* / *Shard, to Clump, to
+  Dust, to Ingot* → *Creating Sulfuric Acid* / *Melting Ores with Acid and Crystallizing
+  them* / *Making more Hydrogen Chloride* / *Crystal, Shard, Clump, ETC*), plus the other
+  routes the book lists (Occultism's crusher demons, Industrial Foregoing's *Ore
+  Processing: Step 1/2/3*, Oritech, Create, Immersive Engineering, RailCraft, Modern
+  Industrialization). Quote the config's own numbers per step; the community
+  "doubling/tripling/quadrupling" names are **approximate shorthand** — the book's labels
+  are *Tier 1*–*Tier 4 Ore Processing* and Industrial Foregoing's 2x–5x lines. Never
+  invent a tier, machine, or per-ore total.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -376,6 +395,10 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Ore-processing answers came from `references/ore-processing-ladder.md`, quoted the
+  config's own per-step numbers instead of a computed per-ore total, flagged the
+  community "doubling/tripling/quadrupling" names as approximate, marked untitled quests
+  as untitled, and still pointed at the quest entry and JEI.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.

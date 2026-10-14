@@ -59,6 +59,7 @@ GETTING_STARTED_MD = SKILL_ROOT / "references" / "getting-started.md"
 STAR_CHECKLIST_MD = SKILL_ROOT / "references" / "atm-star-checklist.md"
 BOSS_CHECKLIST_MD = SKILL_ROOT / "references" / "boss-checklist.md"
 CREATIVE_CHECKLIST_MD = SKILL_ROOT / "references" / "creative-checklist.md"
+ORE_LADDER_MD = SKILL_ROOT / "references" / "ore-processing-ladder.md"
 SCRIPT_PATH = SKILL_ROOT / "scripts" / "progress.py"
 
 _spec = importlib.util.spec_from_file_location("progress", SCRIPT_PATH)
@@ -188,7 +189,8 @@ class TestSkillDocs(unittest.TestCase):
 
     def test_reference_docs_exist_and_cover_the_stages(self) -> None:
         for path in (PROGRESSION_MD, KEY_MODS_MD, GETTING_STARTED_MD,
-                     STAR_CHECKLIST_MD, BOSS_CHECKLIST_MD, CREATIVE_CHECKLIST_MD):
+                     STAR_CHECKLIST_MD, BOSS_CHECKLIST_MD, CREATIVE_CHECKLIST_MD,
+                     ORE_LADDER_MD):
             self.assertTrue(path.is_file(), f"missing reference doc: {path}")
             self.assertGreater(len(path.read_text(encoding="utf-8").strip()), 400,
                                f"{path.name} looks like a stub")
@@ -1562,7 +1564,8 @@ class TestEndgameReferenceDocs(unittest.TestCase):
     def test_skill_md_documents_the_new_reference_docs(self) -> None:
         skill = SKILL_MD.read_text(encoding="utf-8")
         for name in ("references/atm-star-checklist.md", "references/boss-checklist.md",
-                     "references/creative-checklist.md"):
+                     "references/creative-checklist.md",
+                     "references/ore-processing-ladder.md"):
             self.assertIn(name, skill, f"SKILL.md must point at {name}")
         for behaviour in ("--set", "--stage", "--list", "--json", "--sync", "--yes",
                           "pack_version", "drift"):
