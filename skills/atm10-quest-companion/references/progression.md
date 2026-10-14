@@ -110,7 +110,9 @@ costs.
 gear and big power plants — the prerequisites for the Main Questline's late chapters.
 Community guides converge on the same advice: a full AE2 network, Mystical Agriculture
 farms (with growth pylons/accelerators), and one serious power setup carry almost
-everything else.
+everything else. Which power setup, at which stage, is `references/power-guide.md`:
+the Basic Power chapter's own Early/Mid/End hubs expanded with the Powah, Extreme
+Reactors, Mekanism, and endgame lines behind them.
 
 **Where players get stuck:** choosing between overlapping mods. The standard answer —
 they are alternatives, not sequence: AE2 *or* Refined Storage; Mekanism *or* Create *or*

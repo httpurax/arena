@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -15,7 +15,9 @@ A progression companion for **All the Mods 10** (ATM10), the ~500-mod kitchen-si
 for Minecraft 1.21.1 (NeoForge) whose FTB Quests book holds 66 chapters and roughly
 4,790 quests. The skill knows the pack's main stages — early game → tech → magic →
 endgame (the ATM Star) — tells the player what to do next from wherever he is, and keeps
-a local record of which chapters are finished.
+a local record of which chapters are finished. It also maps power: which
+generation and storage to build at each stage, how the mods' power systems relate,
+and when to upgrade.
 
 ## When to Use
 
@@ -25,6 +27,9 @@ a local record of which chapters are finished.
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
   magic line, storage network), what the ATM Star endgame needs at a high level, or what
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+- The user asks which power system to build (Powah or Mekanism or reactors or …),
+  which power generation or storage fits his stage, whether two mods' power connects,
+  or when to upgrade the setup he has.
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -67,6 +72,13 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
+- **The power guide shares that snapshot.** `references/power-guide.md` was read from
+  the same pack repository at the same commit (`e5e3d1d83e`, pack 8.2): the Power
+  group's four chapters (`basic_power`, `extreme_reactors`, `generators`, `powah`),
+  Chapter 1's first-power quests, and the power lines inside the tech chapters, with
+  mod names and versions from the same `modlist.json`. Its quest titles, task items,
+  and quoted output figures are that snapshot's, and every bridge it does not verify
+  (rotation↔FE, EU↔FE, OP↔FE) is flagged approximate rather than assumed.
 
 ## Setup — first run only
 
@@ -159,10 +171,21 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Power questions go to the power guide.** "Which power should I build?", "Powah or
+  Mekanism or a reactor?", "does Create power run my machines?", "when to upgrade
+  power?" → `references/power-guide.md`: the pack's own Early/Mid/End Power hubs
+  expanded per stage (which generation and storage to build, in the order the Basic
+  Power chapter routes them), the FE core versus the separate systems the quests
+  verify (Create rotation, MI steam→EU electricity, PneumaticCraft pressure, AE2's
+  AE, Draconic OP — and the only bridges between them the book names), and the
+  upgrade triggers, flagged approximate where the book gives no figure. Quote its
+  verified titles and ids, keep its hedges, and never convert an unquoted FE/t,
+  EU/t, or OP figure from memory.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
-  Modern Industrialization), present them as alternatives with their trade-offs and let
-  the user pick; never invent a "required" path — the pack itself says quests are
-  optional and mods are not gated.
+  Modern Industrialization, Powah vs Mekanism vs Extreme Reactors for power), present
+  them as alternatives with their trade-offs and let the user pick; never invent a
+  "required" path — the pack itself says quests are optional and mods are not gated,
+  and its power quests accept either/or alternatives at every stage.
 
 ### 3. Record completion and report progress
 
@@ -376,6 +399,9 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Power answers quoted verified titles or ids from `references/power-guide.md`, kept
+  its approximate flags (including every unconverted output figure and every
+  unverified cross-system bridge), and still pointed at the quest entry and JEI.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.
