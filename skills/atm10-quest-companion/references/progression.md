@@ -125,7 +125,9 @@ Theurgy) plus Mahou Tsukai (booked under Tools and Gear but a magic mod).
 
 **What it covers.** Spellcasting and enchanting (Ars Nouveau's glyph system, Iron's
 Spells' spellbooks), summoning and dimensional storage (Occultism), blood/void mechanics
-(EvilCraft), ritual enchanting (Apothic Enchanting), and the smaller magic lines
+(EvilCraft), the enchanting-table overhaul and its Infusion recipes (Apothic Enchanting —
+`references/enchanting-guide.md` answers "how do I get the best enchants?" from the
+chapter's verified quests and the pack's enchantment config), and the smaller magic lines
 (Nature's Aura, Theurgy, Neo Vitae, Forbidden & Arcanus, Mahou Tsukai). Magic runs in
 parallel with tech — the guides treat "one tech mod + one magic mod" as the sane pairing,
 and the ATM Star chapter wants outputs from several magic mods.

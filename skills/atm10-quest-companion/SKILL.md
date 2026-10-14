@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -27,6 +27,9 @@ a local record of which chapters are finished.
   comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
+- The user asks about enchanting — "how do I get the best enchants?", why his Eterna is
+  stuck at 30, what Infusion or a given shelf is for, or how high an enchantment like
+  Sharpness can go in this pack → `references/enchanting-guide.md`.
 
 ## When Not to Use
 
@@ -67,6 +70,13 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
+- **The enchanting guide dates itself the same way.** `references/enchanting-guide.md`
+  was read from the same pinned commit (`e5e3d1d83e`, pack **8.2**): the Apothic
+  Enchanting and Apotheosis Gear chapters' `*.snbt` and `lang/en_us/chapters/*.snbt` files,
+  plus `config/apotheosis/enchantments.cfg` for every enchantment's configured
+  `Max Level` and `Max Loot Level`. Its Eterna / Quanta / Arcana figures and shelf set-ups
+  are quest text, not formulas — repeat them as quoted and approximate, and send exact
+  infusion windows to JEI and the enchanting table's own pool view.
 
 ## Setup — first run only
 
@@ -159,6 +169,16 @@ Stages overlap by design; use them to orient, not to gate.
   terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
+- **Enchanting questions go to `references/enchanting-guide.md`.** "How do I get the best
+  enchants?", "why is my Eterna capped at 30?", "what does a Hellshelf / Seashelf /
+  Sculkshelf do?", "how high can Sharpness go?" → the Apothic Enchanting chapter's 58
+  quests in dependency order: the three table stats (Eterna, Quanta, Arcana) in the quest
+  text's words, the two Eterna ceilings (the Apotheosis World Tier and each shelf's own
+  maximum), the shelf ladder up to the *Best Enchanting set-up* quest and the *Enchanting
+  Table of the Raven*, the shelves that steer the pool, and every vanilla enchantment's
+  configured `Max Level`. Lead with its short answer, quote titles and ids as written
+  there, and keep its hedges: stat windows are quest text — JEI and the table's pool
+  view are authoritative.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -376,6 +396,9 @@ Before saying the companion is up to date, confirm:
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
   `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
   and still pointed at the in-game quest book and JEI for current counts.
+- Enchanting answers quoted verified titles, ids, and configured levels from
+  `references/enchanting-guide.md`, kept every Eterna / Quanta / Arcana figure attributed
+  to the quest text, and pointed at JEI and the table's pool view for exact windows.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.

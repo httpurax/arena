@@ -48,7 +48,7 @@ approximate.
 | **Modular Routers** | One-block item/fluid/energy routing with upgrade modules. | Early-mid; cheap and everywhere useful. | Compact automation without full networks. |
 | **Pylons** | Utility pylons: harvesting, growth acceleration, chunk-ish helpers (exact pylon roster — check the chapter, it is short at 13 quests). | Early-mid, especially the harvest pylon for Mystical Agriculture. | Farm automation. |
 | **Silent Gear** | Modular tools/armor built from material parts (blueprint + parts system). | First hours — it replaces vanilla tool progression. | Better-than-diamond gear before Netherite/Allthemodium tiers. |
-| **Apotheosis (Gear / Spawners / Apothic Enchanting)** | Enchanting overhaul: gem sockets on gear ("Apotheosis Gear"), spawner capture/modification ("Apothic Spawners"), and the enchanting table rework ("Apothic Enchanting"). | Gear sockets early; spawners when you want mob farms; enchanting chapter after gear chapter (the book marks it as requiring Apotheosis Gear). | Enchant cap raising, mob farming, endgame gear. |
+| **Apotheosis (Gear / Spawners / Apothic Enchanting)** | Enchanting overhaul: gem sockets on gear ("Apotheosis Gear"), spawner capture/modification ("Apothic Spawners"), and the enchanting table rework ("Apothic Enchanting"). | Gear sockets early; spawners when you want mob farms; the enchanting chapter alongside the gear chapter — its first quests need nothing from Apotheosis Gear, but its World Tier gate quests require the Gear chapter's World Tier quests (verified, pack 8.2: `references/enchanting-guide.md`). | Enchant cap raising, mob farming, endgame gear. |
 | **Hostile Neural Networks** | Data-model mob simulation: kill mobs virtually for their drops. | Mid — pairs with spawners/loot. | Drop farms for star components (e.g. Ender Dragon Data Model is a Chapter 3 title). |
 
 ## Resource farming
@@ -73,7 +73,7 @@ approximate.
 | **Theurgy** | Summoning/knowledge magic (small chapter, 45 quests; mechanics approximated — read its in-game guide). | Mid magic, optional. | Niche components. |
 | **Neo Vitae** | Newer magic mod with its own chapter (49 quests) and a Dungeon-dimension tie-in per quest metadata; details are version-fresh, so treat everything beyond "it has a chapter" as approximate. | Mid-late magic, optional. | Chapter rewards. |
 | **Mahou Tsukai** | Anime-flavored magic: large spell repertoire, reality-marble-style powers. | Optional magic side-path (booked under Tools and Gear). | Utility spells. |
-| **Apothic Enchanting** | The enchanting-table overhaul chapter (requires Apotheosis Gear first per the book). | After gear sockets exist. | High-tier enchants. |
+| **Apothic Enchanting** | The enchanting-table overhaul chapter: shelves set three table stats (Eterna, Quanta, Arcana), and your Apotheosis World Tier caps Eterna (verified walkthrough: `references/enchanting-guide.md`). | From your first enchanting table (the chapter's first task); its tier gates follow the Apotheosis Gear World Tier quests. | High-tier enchants, up to each enchantment's configured max level. |
 
 ## Exploration and dimensions
 
