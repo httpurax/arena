@@ -471,7 +471,8 @@ have to be read together (`references/boss-checklist.md`):
 - **Machine tiers, energy rates, farm layouts, automation.** The chapter's own quests cover
   them; Chapter 4 (`achapter_2r_6the_atm_star`, "Chapter 4: Creative") is where the pack
   puts the post-star automation, including quests titled *Fully Automated ATM Star*, *Runic
-  Star Altar*, *Creative Energy Cube*, *Creative Jetpack*, and *Creative Spellbook*.
+  Star Altar*, *Creative Energy Cube*, *Creative Jetpack*, and *Creative Spellbook* —
+  `references/creative-checklist.md` maps that chapter quest by quest.
 - **Order.** The book does not require one between components; the dependency links only
   say a component needs its mod lines finished first.
 - **Anything not in the config.** If a player asks about a component, mod, or count that is

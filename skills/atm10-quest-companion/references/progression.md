@@ -159,10 +159,12 @@ walks it in three movements, all verified from the chapter quest titles:
   and Darker and more. This chapter is the pack's "checklist of everything you built" —
   `references/atm-star-checklist.md` breaks it down by source mod, with the build order and
   the parts the pack marks optional.
-- **Chapter 4: Creative** — post-star flex content: creative-tier items (Creative
-  Energy Cube, Creative Jetpack, Creative Spellbook, ...) via things like the Runic Star
-  Altar and a "Fully Automated ATM Star" line. Requirements here are version-sensitive;
-  treat every number as approximate and read the quests.
+- **Chapter 4: Creative** — post-star content: 38 quests in pack 8.2 that automate the
+  star (the Runic Star Altar and its sibling multiblocks, the bees/Star Shards, the five
+  star parts) and then spend it on creative-tier items (Creative Energy Cube, Creative
+  Jetpack, Creative Spellbook, ...) behind the chapter's *Fully Automated ATM Star* quest.
+  Requirements here are version-sensitive; treat every number as approximate and read the
+  quests. `references/creative-checklist.md` maps the whole chapter, in dependency order.
 
 The **Exploration** chapters are tracked in this stage because the dimensions and their
 bosses (Twilight Forest's progression bosses, L'Ender's Cataclysm fights, Aether,
@@ -181,7 +183,9 @@ roughly when in the progression it lands.
    any concrete requirement (counts, ingredients, boss mechanics) tell the player to read
    the quest entry / JEI — do not state numbers from memory or from this file. For
    endgame questions, work from `references/atm-star-checklist.md` (star components by
-   source mod) and `references/boss-checklist.md` (boss, dimension, arena, roughly when);
-   both quote verified quest titles and still defer to the in-game book.
+   source mod), `references/boss-checklist.md` (boss, dimension, arena, roughly when), and
+   `references/creative-checklist.md` (what Chapter 4 asks for after the star, and what
+   each creative item does); all three quote verified quest titles and still defer to the
+   in-game book.
 4. When a chapter is finished, record it in `data/progress.json` and run
    `scripts/progress.py` to show what is next.

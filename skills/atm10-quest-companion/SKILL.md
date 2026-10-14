@@ -23,7 +23,8 @@ a local record of which chapters are finished.
   resource he is stuck on) and asks *what should I do next?*
 - The user finishes a quest chapter and wants it recorded ("mark Mekanism done").
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
-  magic line, storage network), or what the ATM Star endgame needs at a high level.
+  magic line, storage network), what the ATM Star endgame needs at a high level, or what
+  comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -56,13 +57,15 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   hedge: "guides say roughly X — verify in-game".
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch.
-- **The two endgame docs date themselves.** `references/atm-star-checklist.md` and
-  `references/boss-checklist.md` were read from the pack repository's
-  `config/ftbquests/quests/chapters/*.snbt` and `lang/en_us/chapters/*.snbt` (mod names and
-  versions from `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp
-  in `examples/progress.example.json`. The item ids, quest titles, and quoted counts there
-  are that snapshot's; the pack changes them between versions. Quote them as *what the book
-  asked for in 8.2*, and still defer to the in-game quest book and JEI.
+- **The three endgame docs date themselves.** `references/atm-star-checklist.md`,
+  `references/boss-checklist.md`, and `references/creative-checklist.md` were read from the
+  pack repository's `config/ftbquests/quests/chapters/*.snbt` and
+  `lang/en_us/chapters/*.snbt` (mod names and versions from
+  `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
+  `examples/progress.example.json`; the creative checklist pins the exact commit
+  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
+  the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
+  and still defer to the in-game quest book and JEI.
 
 ## Setup — first run only
 
@@ -139,11 +142,16 @@ Stages overlap by design; use them to orient, not to gate.
 - For any concrete requirement (item counts, ingredients, ore levels, boss mechanics),
   point at the quest entry and JEI instead of stating numbers — per Research Grounding
   above. Flag anything version-sensitive as approximate.
-- **Endgame questions go to the two endgame docs.** "What does the ATM Star need?" →
+- **Endgame questions go to the three endgame docs.** "What does the ATM Star need?" →
   `references/atm-star-checklist.md`: Chapter 3's components grouped by source mod, with
   the verified quest titles and item ids, the build order, and the parts the pack marks
   optional. "Which boss, where, and when?" → `references/boss-checklist.md`: boss →
   dimension → arena → roughly when, from verified kill, structure, and dimension tasks.
+  "I have the star — now what?" ("what is Chapter 4: Creative?", "how do I automate the
+  star?", "what does the Creative Jetpack do?") → `references/creative-checklist.md`:
+  Chapter 4's 38 quests in dependency order — the four automation multiblocks, the bees
+  and Star Shards, the five prisms and star parts, the dusts and the lens chain, the
+  terminal *Fully Automated ATM Star* quest, and the eleven creative-tier items it gates.
   Quote them as what the book asks for, keep their hedges, and still send the player to
   the in-game quest book and JEI for current counts and drops.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
@@ -277,8 +285,8 @@ Before saying the companion is up to date, confirm:
 - The advice given names the next steps in quest-book order and grounds each in a
   chapter/mod from the references.
 - Endgame answers quoted verified titles or ids from `references/atm-star-checklist.md` /
-  `references/boss-checklist.md`, kept their hedges, and still pointed at the in-game quest
-  book and JEI for current counts.
+  `references/boss-checklist.md` / `references/creative-checklist.md`, kept their hedges,
+  and still pointed at the in-game quest book and JEI for current counts.
 - No concrete requirement, item id, or recipe was stated from memory; specifics were
   pointed at the in-game quest book and JEI, with version-sensitive details flagged
   as approximate.

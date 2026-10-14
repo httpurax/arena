@@ -26,9 +26,11 @@ Covered:
   * the pack-version stamp and the drift check: the known list is loaded from the shipped
     example, unknown/missing chapter ids and a differing or absent stamp produce warnings
     on stdout with exit status 0, and a clean file produces no drift section at all;
-  * the two endgame reference docs: they exist, are grounded in the named pack repository
-    files, carry the same grounding rules as SKILL.md, and list the verified Chapter 3
-    components and boss lines;
+  * the three endgame reference docs: they exist, are grounded in the named pack
+    repository files, carry the same grounding rules as SKILL.md, and list the verified
+    Chapter 3 components, the boss lines, and Chapter 4's post-star quests — the multiblock
+    automation line, the five star parts, and the eleven creative-tier items behind
+    *Fully Automated ATM Star*;
   * offline guarantee: the script imports no network module;
   * privacy: ``.gitignore`` excludes ``data/`` so real progress cannot be committed.
 """
@@ -56,6 +58,7 @@ KEY_MODS_MD = SKILL_ROOT / "references" / "key-mods.md"
 GETTING_STARTED_MD = SKILL_ROOT / "references" / "getting-started.md"
 STAR_CHECKLIST_MD = SKILL_ROOT / "references" / "atm-star-checklist.md"
 BOSS_CHECKLIST_MD = SKILL_ROOT / "references" / "boss-checklist.md"
+CREATIVE_CHECKLIST_MD = SKILL_ROOT / "references" / "creative-checklist.md"
 SCRIPT_PATH = SKILL_ROOT / "scripts" / "progress.py"
 
 _spec = importlib.util.spec_from_file_location("progress", SCRIPT_PATH)
@@ -185,7 +188,7 @@ class TestSkillDocs(unittest.TestCase):
 
     def test_reference_docs_exist_and_cover_the_stages(self) -> None:
         for path in (PROGRESSION_MD, KEY_MODS_MD, GETTING_STARTED_MD,
-                     STAR_CHECKLIST_MD, BOSS_CHECKLIST_MD):
+                     STAR_CHECKLIST_MD, BOSS_CHECKLIST_MD, CREATIVE_CHECKLIST_MD):
             self.assertTrue(path.is_file(), f"missing reference doc: {path}")
             self.assertGreater(len(path.read_text(encoding="utf-8").strip()), 400,
                                f"{path.name} looks like a stub")
@@ -196,9 +199,9 @@ class TestSkillDocs(unittest.TestCase):
         self.assertIn("quest book", progression)
         self.assertIn("jei", progression)
         self.assertIn("approximate", progression)
-        # progression.md is the orientation doc; the endgame detail lives in the two
+        # progression.md is the orientation doc; the endgame detail lives in the three
         # endgame docs, and it must point at them.
-        for link in ("atm-star-checklist.md", "boss-checklist.md"):
+        for link in ("atm-star-checklist.md", "boss-checklist.md", "creative-checklist.md"):
             self.assertIn(link, progression, f"progression.md must link {link}")
         self.assertIn("128 quests", progression,
                       "the star chapter's verified quest count (pack 8.2) is 128, not ~160")
@@ -617,6 +620,126 @@ SOURCE_FILES = (
     "lang/en_us/chapters",
     "config/crash_assistant/modlist.json",
 )
+
+# Chapter 4: Creative -- the 38 quests of achapter_2r_6the_atm_star, by the titles its
+# en_us lang file gives them at the same pinned commit (e5e3d1d83e, pack 8.2). Two quests
+# carry no title in the config; the page must mark those, never derive a name for them.
+CREATIVE_CHAPTER_ID = "achapter_2r_6the_atm_star"
+CREATIVE_COMMIT = "e5e3d1d83e"
+CREATIVE_TITLED_QUESTS = (
+    "Fully Automated ATM Star",
+    "Runic Crucible",
+    "Automatic Hepheastus Forge",
+    "Runic Star Altar",
+    "Runic Enchanter",
+    "Energy Cell (Creative)",
+    "Creative Energy Cube",
+    "Creative Jetpack",
+    "Creative Compressed Iron Blocks",
+    "Creative Compressor",
+    "Creative Spellbook",
+    "Creative Source Jar",
+    "Creative Energy Battery",
+    "Creative Energy Cell",
+    "Creative Locomotive",
+    "Creative Blood Drop",
+    "Patrick Star... Bee?",
+    "Starry Bee!",
+    "Star Shards",
+    "Sea Prism",
+    "Terrastomp Prism",
+    "Whirlwind Prism",
+    "Smelter Prism",
+    "Soul Binding Crystal",
+    "Top ATM Star part",
+    "Right ATM Star part",
+    "Left ATM Star part",
+    "Bottom Left ATM Star part",
+    "Bottom Right ATM Star part",
+    "But why?",
+    "Lens of Certain Death",
+    "Lens of the Killer",
+    "Infused Patrick Star",
+    "Mundabitur Dust",
+    "Corrupti Dust",
+    "Arcane Crystals",
+)  # 36 titled quests; the other two are the untitled ones the page marks
+
+# The eleven creative-tier quests, in the order the config lists them; every one of them
+# depends on Fully Automated ATM Star and nothing else.
+CREATIVE_ITEMS = (
+    "Energy Cell (Creative)",
+    "Creative Energy Cube",
+    "Creative Jetpack",
+    "Creative Compressed Iron Blocks",
+    "Creative Compressor",
+    "Creative Spellbook",
+    "Creative Source Jar",
+    "Creative Energy Battery",
+    "Creative Energy Cell",
+    "Creative Locomotive",
+    "Creative Blood Drop",
+)
+
+# Every task item id the chapter's config states -- the multiblock kits, the bee chain,
+# the five KubeJS star parts, the prisms, the dusts, the lens chain, and the two generic
+# ids whose exact variant lives in the quest entry (ironjetpacks:jetpack, evilcraft:blood).
+CREATIVE_TASK_ITEMS = (
+    "allthetweaks:atm_star",
+    "allthetweaks:atm_star_shard",
+    "allthetweaks:atm_star_block",
+    "allthetweaks:patrick_star",
+    "kubejs:atm_star_shard_1",
+    "kubejs:atm_star_shard_2",
+    "kubejs:atm_star_shard_3",
+    "kubejs:atm_star_shard_4",
+    "kubejs:atm_star_shard_5",
+    "modern_industrialization:star_altar",
+    "modern_industrialization:runic_crucible",
+    "modern_industrialization:runic_enchanter",
+    "modern_industrialization:auto_forge",
+    "forbidden_arcanus:hephaestus_forge_tier_5",
+    "forbidden_arcanus:quantum_injector",
+    "forbidden_arcanus:rune_block",
+    "forbidden_arcanus:arcane_crystal",
+    "forbidden_arcanus:arcane_crystal_block",
+    "forbidden_arcanus:arcane_crystal_obelisk",
+    "forbidden_arcanus:arcane_polished_darkstone",
+    "forbidden_arcanus:arcane_polished_darkstone_pillar",
+    "forbidden_arcanus:chiseled_arcane_polished_darkstone",
+    "forbidden_arcanus:gilded_chiseled_polished_darkstone",
+    "forbidden_arcanus:darkstone_pedestal",
+    "forbidden_arcanus:polished_darkstone",
+    "forbidden_arcanus:polished_darkstone_slab",
+    "forbidden_arcanus:polished_darkstone_stairs",
+    "forbidden_arcanus:mundabitur_dust",
+    "forbidden_arcanus:corrupti_dust",
+    "forbidden_arcanus:soul_binding_crystal",
+    "forbidden_arcanus:sea_prism",
+    "forbidden_arcanus:terrastomp_prism",
+    "forbidden_arcanus:whirlwind_prism",
+    "forbidden_arcanus:smelter_prism",
+    "actuallyadditions:atomic_reconstructor",
+    "actuallyadditions:lens_of_certain_death",
+    "actuallyadditions:lens_of_the_killer",
+    "apothic_enchanting:infused_breath",
+    "minecraft:enchanted_book",
+    "minecraft:enchanting_table",
+    "minecraft:soul_lantern",
+    "minecraft:warm_ocean",
+    "mekanism:crusher",
+    "mekanism:creative_energy_cube",
+    "powah:energy_cell_creative",
+    "ironjetpacks:jetpack",
+    "pneumaticcraft:creative_compressed_iron_block",
+    "pneumaticcraft:creative_compressor",
+    "allthearcanistgear:creative_spell_book",
+    "ars_nouveau:creative_source_jar",
+    "integrateddynamics:energy_battery_creative",
+    "ae2:creative_energy_cell",
+    "railcraft:creative_locomotive",
+    "evilcraft:blood",
+)  # 54 ids: every item task plus the one biome task the config states
 
 
 def stamped_document(chapters: "list[dict[str, Any]]", **stamps: Any) -> "dict[str, Any]":
@@ -1053,7 +1176,7 @@ class TestPackVersionDrift(TempFileTestCase):
 
 
 # --------------------------------------------------------------------------------------
-# the two endgame reference docs
+# the three endgame reference docs
 # --------------------------------------------------------------------------------------
 
 class TestEndgameReferenceDocs(unittest.TestCase):
@@ -1062,8 +1185,11 @@ class TestEndgameReferenceDocs(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.star = STAR_CHECKLIST_MD.read_text(encoding="utf-8") if STAR_CHECKLIST_MD.is_file() else ""
         cls.boss = BOSS_CHECKLIST_MD.read_text(encoding="utf-8") if BOSS_CHECKLIST_MD.is_file() else ""
+        cls.creative = (CREATIVE_CHECKLIST_MD.read_text(encoding="utf-8")
+                        if CREATIVE_CHECKLIST_MD.is_file() else "")
         cls.star_lower = cls.star.lower()
         cls.boss_lower = cls.boss.lower()
+        cls.creative_lower = cls.creative.lower()
 
     def assert_grounded(self, text: str, lowered: str, name: str) -> None:
         """Both endgame docs must carry the skill's grounding rules and their provenance."""
@@ -1147,9 +1273,105 @@ class TestEndgameReferenceDocs(unittest.TestCase):
         self.assertIn("atm-star-checklist.md", self.boss)
         self.assertIn("progression.md", self.boss)
 
+    def test_creative_checklist_exists_and_is_grounded(self) -> None:
+        self.assertTrue(CREATIVE_CHECKLIST_MD.is_file(), f"missing {CREATIVE_CHECKLIST_MD}")
+        self.assert_grounded(self.creative, self.creative_lower, "creative-checklist.md")
+
+    def test_creative_checklist_lists_every_verified_quest_title(self) -> None:
+        self.assertEqual(len(CREATIVE_TITLED_QUESTS), 36)
+        for title in CREATIVE_TITLED_QUESTS:
+            self.assertIn(title, self.creative,
+                          f"the creative checklist is missing a verified title: {title}")
+        # Two of the 38 quests carry no title in the config; the page must mark each one
+        # in place rather than derive a name for it.
+        flat = re.sub(r"\s+", " ", self.creative)
+        self.assertGreaterEqual(flat.count("(no title in the config)"), 2,
+                                "both untitled quests must be marked")
+        self.assertIn("(no title in the config)* \u2192 **Lens of Certain Death**", flat,
+                      "the untitled Atomic Reconstructor quest must stay untitled")
+        self.assertIn("| 2 | *(no title in the config)* | `apothic_enchanting:infused_breath`", flat,
+                      "the untitled Infused Breath quest must stay untitled")
+        self.assertIn("36 of the 38 quests carry an explicit title", flat)
+
+    def test_creative_checklist_quotes_every_config_task_item(self) -> None:
+        for item in CREATIVE_TASK_ITEMS:
+            self.assertIn(item, self.creative,
+                          f"the creative checklist must cite the config's task item {item}")
+
+    def test_creative_checklist_covers_the_star_automation_line(self) -> None:
+        self.assertRegex(self.creative, r"Quests in the chapter.*?38")
+        self.assertIn("Fully Automated ATM Star", self.creative)
+        self.assertIn("10 direct dependencies", self.creative)
+        for multiblock in ("Runic Star Altar", "Runic Crucible",
+                           "Automatic Hepheastus Forge", "Runic Enchanter"):
+            self.assertIn(multiblock, self.creative)
+        # The five parts, in the pack's own 1/5 ... 5/5 order, each next to its prism.
+        parts = ("Top ATM Star part", "Right ATM Star part", "Bottom Right ATM Star part",
+                 "Bottom Left ATM Star part", "Left ATM Star part")
+        positions = [self.creative.index(part) for part in parts]
+        self.assertEqual(positions, sorted(positions),
+                         "the five star parts must stay in the pack's 1/5 ... 5/5 order")
+        for number, (part, prism) in enumerate(zip(parts, ("Soul Binding Crystal",
+                                                           "Whirlwind Prism", "Smelter Prism",
+                                                           "Sea Prism", "Terrastomp Prism")),
+                                                   start=1):
+            self.assertIn(f"kubejs:atm_star_shard_{number}", self.creative)
+            self.assertIn(prism, self.creative)
+        # The bee chain and the terminal quest's other dependencies are named too.
+        for title in ("Patrick Star... Bee?", "Starry Bee!", "Star Shards", "But why?",
+                      "Arcane Crystals", "Mundabitur Dust", "Corrupti Dust",
+                      "Lens of Certain Death", "Lens of the Killer", "Infused Patrick Star"):
+            self.assertIn(title, self.creative)
+
+    def test_creative_checklist_lists_the_eleven_items_in_config_order(self) -> None:
+        self.assertEqual(len(CREATIVE_ITEMS), 11)
+        positions = [self.creative.index(title) for title in CREATIVE_ITEMS]
+        self.assertEqual(positions, sorted(positions),
+                         "the eleven creative quests must be in the order the config lists them")
+        flat = re.sub(r"\s+", " ", self.creative_lower)
+        self.assertIn("eleven creative", flat)
+        self.assertIn("by a single dependency", flat)
+        self.assertIn("Unlimited Powah!", self.creative)
+        self.assertIn("Get this first!", self.creative)
+
+    def test_creative_checklist_dates_itself_to_the_pinned_commit(self) -> None:
+        self.assertIn(CREATIVE_COMMIT, self.creative)
+        self.assertIn("CHANGELOG.md", self.creative)
+        self.assertIn("pack 8.2", self.creative)
+        self.assertIn(CREATIVE_CHAPTER_ID, self.creative)
+        self.assertIn("Chapter 4: Creative", self.creative)
+        self.assertIn("Plus Star Automation!", self.creative)
+        self.assertIn("Main Questline", self.creative)
+        self.assertIn("Modular Routers", self.creative)
+        self.assertIn("endgame", self.creative)
+
+    def test_creative_checklist_says_the_book_is_a_canvas_not_a_numbered_list(self) -> None:
+        flat = re.sub(r"\s+", " ", self.creative_lower)
+        self.assertIn("canvas, not as a numbered list", flat)
+        self.assertIn("in dependency order", flat)
+
+    def test_creative_checklist_keeps_the_hedges(self) -> None:
+        flat = re.sub(r"\s+", " ", self.creative_lower)
+        for needle in ("no recipes", "does not tell you", "approximate", "quest text",
+                       "never a guess"):
+            self.assertIn(needle, flat, f"missing hedge: {needle}")
+        self.assertIn("generic on purpose", flat,
+                      "the two generic task ids must be flagged, not presented as exact")
+        self.assertIn("no boss tasks", flat)
+        self.assertIn("85mfe is the quest author's own figure", flat,
+                      "quoted numbers must stay attributed to the quest text")
+
+    def test_the_creative_doc_cross_references_its_siblings(self) -> None:
+        for sibling in ("atm-star-checklist.md", "boss-checklist.md", "progression.md"):
+            self.assertIn(sibling, self.creative,
+                          f"creative-checklist.md must point at {sibling}")
+        # ...and the star checklist, which stops where this one starts, points back.
+        self.assertIn("creative-checklist.md", self.star)
+
     def test_skill_md_documents_the_new_reference_docs(self) -> None:
         skill = SKILL_MD.read_text(encoding="utf-8")
-        for name in ("references/atm-star-checklist.md", "references/boss-checklist.md"):
+        for name in ("references/atm-star-checklist.md", "references/boss-checklist.md",
+                     "references/creative-checklist.md"):
             self.assertIn(name, skill, f"SKILL.md must point at {name}")
         for behaviour in ("--set", "--stage", "pack_version", "drift"):
             self.assertIn(behaviour, skill, f"SKILL.md must document {behaviour}")
