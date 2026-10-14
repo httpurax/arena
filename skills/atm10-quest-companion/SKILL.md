@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.1.0
+version: 1.2.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -23,8 +23,9 @@ a local record of which chapters are finished.
   resource he is stuck on) and asks *what should I do next?*
 - The user finishes a quest chapter and wants it recorded ("mark Mekanism done").
 - The user asks what a stage of the pack involves, which mod to commit to (tech line,
-  magic line, storage network), what the ATM Star endgame needs at a high level, or what
-  comes *after* the star (Chapter 4: Creative, star automation, creative-tier items).
+  magic line, storage network), where to build a base (Overworld vs Mining Dimension vs
+  compact interiors), what the ATM Star endgame needs at a high level, or what comes
+  *after* the star (Chapter 4: Creative, star automation, creative-tier items).
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 
@@ -64,9 +65,12 @@ They do **not** capture exact requirements, and this skill must never pretend ot
   `lang/en_us/chapters/*.snbt` (mod names and versions from
   `config/crash_assistant/modlist.json`) at pack **8.2** — the `"8.x"` stamp in
   `examples/progress.example.json`; the creative checklist pins the exact commit
-  (`e5e3d1d83e`). The item ids, quest titles, and quoted counts there are that snapshot's;
-  the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
-  and still defer to the in-game quest book and JEI.
+  (`e5e3d1d83e`). `references/base-spots-guide.md` also pins that commit, drawing on
+  the Welcome, Building Tips, Allthemodium, and AE2 quest config plus the Hyperbox config;
+  its base recommendation is labelled judgement rather than a quest requirement. The item
+  ids, quest titles, and quoted counts in these snapshots can change between versions.
+  Quote them as *what the book asked for in 8.2*, and still defer to the in-game quest
+  book and JEI.
 
 ## Setup — first run only
 
@@ -139,7 +143,11 @@ Stages overlap by design; use them to orient, not to gate.
 
 - Work from `references/progression.md` (stages, quest-book order) and
   `references/key-mods.md` (what each mod does, when to start it, what it leads to).
-  First-hour and setup questions go to `references/getting-started.md`.
+  First-hour and setup questions go to `references/getting-started.md`. For "where
+  should I build my base?", use `references/base-spots-guide.md`: distinguish the
+  Overworld default (judgement) from the Mining Dimension's verified mining role and
+  Building Tips' Compact Machines quest; do not promise cross-dimensional connections or
+  automatic chunk loading.
 - Give the next steps **in quest-book order** within the relevant chapters — a short,
   ordered list ("1. finish the X chapter up to Y; 2. start Z; 3. ..."), not a lecture.
 - For each step, name the chapter/mod it belongs to and *why* it is next (what it
