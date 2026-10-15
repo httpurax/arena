@@ -15,7 +15,7 @@ Agent-Mode sessions.
 | [`job-application-kit`](skills/job-application-kit/) | Tailors a CV and cover letter to each posting using only real base-CV experience, with offline keyword suggestions and mandatory user review. Private inputs and drafts stay gitignored. |
 | [`job-application-tracker`](skills/job-application-tracker/) | Keeps one structured job-hunt pipeline — every application, its status, the next step, and its deadline — and nudges when a next step is overdue or due within 3 days. Real data stays in an ignored `data/` file; the repo ships fictional examples only. |
 | [`moodle-course-management`](skills/moodle-course-management/) | Audits Moodle materials, validates downloads, organizes local course files, and keeps manifests and wikilinks in sync. |
-| [`study-flashcards`](skills/study-flashcards/) | Creates source-grounded flashcards and quizzes, with an interactive offline HTML study guide. |
+| [`stalker-gamma-ultimate`](skills/stalker-gamma-ultimate/) | Complete S.T.A.L.K.E.R. G.A.M.M.A. field manual for the 0.9.5 modpack: installation and updates, modding/DLTX and load order, weapons and GROBBS ballistics, armour, artefacts, crafting and repairs, mutants, anomalies, quests and storylines, factions, trading, survival, keybinds/settings, performance, and troubleshooting. Every number is quoted from the pack's own configs, patch notes and the official wiki, and the reader's own install always wins. |
 | [`test-engineering`](skills/test-engineering/) | Designs reliable test strategies, local fixtures, boundary mocks, and flaky-test fixes. |
 
 ## Install the skills into Hermes
@@ -35,6 +35,7 @@ category its `SKILL.md` declares, which is the layout Hermes loads:
 
 ```
 <skills root>/gaming/atm10-quest-companion/
+<skills root>/gaming/stalker-gamma-ultimate/
 <skills root>/research/course-material-ingestion/
 <skills root>/productivity/arena-pr-watcher/
 <skills root>/productivity/job-application-kit/
