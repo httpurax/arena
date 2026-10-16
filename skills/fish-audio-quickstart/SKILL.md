@@ -1,60 +1,105 @@
 ---
 name: fish-audio-quickstart
-description: Generate first Fish Audio TTS audio quickly.
+description: Generate speech with Fish Audio API and SDK.
 version: 1.0.0
+author: httpurax
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    category: productivity
-    tags: [fish-audio, tts, voice, audio]
+    category: development
 ---
 
-# Fish Audio Quickstart
+## Overview
 
-Use this skill to get a first working Fish Audio text-to-speech request in a few
-minutes. It covers the API key, the three common client paths, the default voice,
-and the first troubleshooting checks.
+Fish Audio turns text into speech through `POST /v1/tts` or the official Python/JavaScript SDKs. This skill gets a first working request running, then points to [references/fish-audio-quickstart.md](references/fish-audio-quickstart.md) for streaming, cloning, ASR, and production details.
 
 ## When to Use
 
-- The user wants to turn text into speech with Fish Audio.
-- The user needs a minimal curl, Python, or JavaScript example.
-- The user asks which model, endpoint, or environment variable to use first.
+- The user wants to generate speech/audio with Fish Audio.
+- Setting up an API key, SDK, first TTS request, voice, or model.
+- Debugging a first Fish Audio request (`401`, `402`, `400`, `429`).
 
-## When Not to Use
+## When NOT to Use
 
-- The user needs voice cloning, voice design, streaming, or transcription details.
-  Use the Fish Audio docs or SDK references for those.
-- The user needs production billing, account, or deployment guidance.
+- Deep voice-cloning, production tuning, or self-hosting; use the Fish Audio docs directly.
+- Non-Fish-Audio TTS providers.
 
-## Quick Path
+## Prerequisites
 
-1. Create an API key at `https://fish.audio/app/api-keys`.
-2. Export it as `FISH_API_KEY`; never hardcode it.
-3. Use base URL `https://api.fish.audio` and endpoint `POST /v1/tts`.
-4. Start with model `s2.1-pro-free`; use `s2.1-pro` for production.
-5. Save the streamed response as `welcome.mp3`.
+1. Create an account and API key at `fish.audio/app/api-keys`.
+2. Store the key in the environment; never commit it:
 
-See [references/fish-audio-quickstart.md](references/fish-audio-quickstart.md) for
-copy-paste examples and error checks.
+```bash
+export FISH_API_KEY=your_api_key_here
+```
 
-## Defaults
+## Quick Start (Python)
 
-- Auth header: `Authorization: Bearer $FISH_API_KEY`
-- Content type: `application/json`
-- Model header: `s2.1-pro-free` for evaluation, `s2.1-pro` for production
-- Output format: `mp3`
-- Voice: Fish Audio default unless `reference_id` is set
+```bash
+pip install fish-audio-sdk
+# optional local playback helpers (needs ffmpeg)
+pip install "fish-audio-sdk[utils]"
+```
 
-## Custom Voice
+```python
+from fishaudio import FishAudio
+from fishaudio.utils import save
 
-Find a voice ID in a `https://fish.audio/m/<id>` URL, then pass it as
-`reference_id`. The same ID works in curl, Python, and JavaScript.
+client = FishAudio()  # reads FISH_API_KEY
+audio = client.tts.convert(text="Hello from Fish Audio!")
+save(audio, "output.mp3")  # or welcome.mp3
+```
 
-## First Failure Checks
+Async variant:
 
-- `401`: check `FISH_API_KEY`
-- `402`: add API credit
-- `400`: verify `reference_id` and request fields
-- `429`: retry with backoff
+```python
+import asyncio
+from fishaudio import AsyncFishAudio
+
+async def main():
+    async with AsyncFishAudio() as client:
+        audio = await client.tts.convert(text="Hello from Fish Audio!")
+        from fishaudio.utils import save
+        save(audio, "output.mp3")
+
+asyncio.run(main())
+```
+
+## Quick Start (cURL)
+
+```bash
+curl --request POST https://api.fish.audio/v1/tts \
+  --header "Authorization: Bearer $FISH_API_KEY" \
+  --header "Content-Type: application/json" \
+  --header "model: s2.1-pro" \
+  --data '{"text":"Hello from Fish Audio!","format":"mp3"}' \
+  --output output.mp3
+```
+
+## Voice and Model Selection
+
+- Default voice is used when `reference_id` is omitted.
+- Copy a model ID from a voice URL such as `https://fish.audio/m/<id>` and pass it as `reference_id`.
+- Use `s2.1-pro` for production; `s2.1-pro-free` for development and testing.
+- `s1` is deprecated and retires on 2026-12-31.
+- S2 models support natural-language cues in brackets, e.g. `[whisper]`, `[laugh]`.
+
+## Common Errors
+
+| Status | Cause | Fix |
+|---|---|---|
+| `401` | Missing/invalid key | Check `FISH_API_KEY` and the key page. |
+| `402` | Out of credits | Top up billing. |
+| `400` | Bad `reference_id` or parameters | Verify the voice ID and request body. |
+| `429` | Rate limit | Retry with exponential backoff. |
+
+## Guardrails
+
+- Never echo, log, commit, or write the API key to artifacts.
+- Use `s2.1-pro-free` for experiments to avoid charges.
+- Confirm voice IDs from Fish Audio URLs rather than guessing.
+
+## Next Steps
+
+- Streaming, cloning, ASR, realtime WebSocket, prosody, and rate limits: [references/fish-audio-quickstart.md](references/fish-audio-quickstart.md).
