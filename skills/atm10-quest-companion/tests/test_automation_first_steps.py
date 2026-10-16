@@ -28,7 +28,7 @@ Covered:
     judgement, and the short answer wired to its verified anchors;
   * representative quest-text quotes verified against the config are present,
     attributed as quest text;
-  * SKILL.md wiring: version 1.5.0, the doc linked from When to Use / Research
+  * SKILL.md wiring: version 1.6.0, the doc linked from When to Use / Research
 
     Grounding / Behaviors / Completion Checklist, the beginner question named;
   * offline guarantee: this suite imports no network module.
@@ -336,6 +336,8 @@ CROSS_REFERENCES = (
     "references/getting-started.md",
     "references/key-mods.md",
     "references/creative-checklist.md",
+    # the logistics doc (guide #21) expands this page's #3 and must be linked back
+    "references/logistics-guide.md",
 )
 
 
@@ -612,8 +614,8 @@ class TestSkillWiring(unittest.TestCase):
         match = re.search(r"^version:\s*(\S+)\s*$", self.skill, re.MULTILINE)
         self.assertIsNotNone(match, "SKILL.md frontmatter has no version")
         assert match is not None
-        self.assertEqual(match.group(1), "1.5.0",
-                         "adding a reference doc bumps the skill (1.5.0 as of the allthemodium mining doc)")
+        self.assertEqual(match.group(1), "1.6.0",
+                         "adding a reference doc bumps the skill (1.6.0 as of the logistics doc)")
 
 
     def test_doc_is_linked_from_the_skill(self) -> None:
