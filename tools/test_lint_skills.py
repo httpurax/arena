@@ -234,6 +234,22 @@ class RuleTest(unittest.TestCase):
         self.assertIn("no tests/ directory", output)
         self.assertIn("1 skill checked: 1 ok, 0 failed", output)
 
+    def test_description_over_60_chars_is_rejected(self):
+        long_description = "A" * 61
+        write_skill(self.root, "long-desc-skill", textwrap.dedent(f"""\
+            ---
+            name: long-desc-skill
+            description: {long_description}
+            version: 0.1.0
+            license: MIT
+            platforms: [linux]
+            ---
+            # long-desc-skill
+            """))
+        returncode, output = run_linter(self.root)
+        self.assertNotEqual(returncode, 0, output)
+        self.assertEqual(rules_in(output), {"frontmatter.description"}, output)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
