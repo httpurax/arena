@@ -191,6 +191,21 @@ class RuleTest(unittest.TestCase):
             "frontmatter.platforms",    # solaris is not an allowed platform
         }, output)
 
+    def test_description_over_60_characters_is_rejected(self):
+        write_skill(self.root, "long-description-skill", textwrap.dedent(f"""\
+            ---
+            name: long-description-skill
+            description: {"x" * 61}
+            version: 0.1.0
+            license: MIT
+            platforms: [linux]
+            ---
+            """))
+        returncode, output = run_linter(self.root)
+        self.assertNotEqual(returncode, 0, output)
+        self.assertEqual(rules_in(output), {"frontmatter.description"}, output)
+        self.assertIn("description exceeds 60 characters", output)
+
     def test_missing_required_keys_are_reported(self):
         write_skill(self.root, "bare-skill", "---\nname: bare-skill\n---\n")
         returncode, output = run_linter(self.root)
