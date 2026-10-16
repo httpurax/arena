@@ -400,8 +400,8 @@ class TestAutocraftingGuide(unittest.TestCase):
         skill = SKILL_MD.read_text(encoding="utf-8")
         self.assertIn("references/autocrafting-guide.md", skill,
                       "SKILL.md must point at the new guide")
-        self.assertRegex(skill, re.compile(r"^version:\s*1\.6\.0\s*$", re.MULTILINE),
-                         "SKILL.md version must be bumped to 1.6.0 for the new docs")
+        self.assertRegex(skill, re.compile(r"^version:\s*1\.7\.0\s*$", re.MULTILINE),
+                         "SKILL.md version must be bumped to 1.7.0 for the new docs")
 
         self.assertIn("autocrafting", skill.lower())
 

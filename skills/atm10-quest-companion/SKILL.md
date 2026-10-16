@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.6.0
+version: 1.7.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -38,6 +38,11 @@ pack's own shipped config rather than from generic advice.
 - The user asks the beginner automation question — *what should I automate first?* —
   about ore processing, power, item transport, storage, or the first resource/food farm
   (answered from `references/automation-first-steps.md`).
+- The user asks how to **move** things — "how do I get items from my farm to my chest?",
+  "which pipe mod should I use?", "Pipez or Mekanism or LaserIO?", "how do I move fluids,
+  energy, heat, or gases?", "do I need a Modular Router?", "what are Pylons doing in the
+  Logistics chapter?" — answered from `references/logistics-guide.md`, which covers the pack's
+  whole Logistics group (40 + 28 + 55 + 13 quests) and the transport quests of *Mekanism*.
 - The user asks "which quests are worth doing for their rewards?" or wants a short,
   high-value reward pick list grounded in the pack config.
 - The user finishes a quest chapter and wants it recorded ("mark Mekanism done").
@@ -364,6 +369,23 @@ those fields or pretend the skill knows every requirement:
   recipe or unlock, rename untitled quests, or promise specific loot-table outcomes.
   The in-game quest book remains authoritative if the player's version differs.
 
+- **The logistics guide dates itself the same way.** `references/logistics-guide.md` was
+  read from the same commit (`e5e3d1d83e`, pack 8.2): the four chapters of the pack's
+  **Logistics** group — `basic_logistics` (40 quests), `integrated_dynamics` (28),
+  `modular_router` (55), `pylons` (13) — their `lang/en_us/chapters/*.snbt` titles, subtitles,
+  and descriptions, the *Mekanism* chapter's transport quests, `chapter_groups.snbt` and
+  `lang/en_us/chapter_group.snbt`, the pack's shipped `config/integrateddynamics-common.toml`,
+  `config/integratedtunnels-common.toml`, `config/integratedterminals-common.toml`,
+  `config/integratedcrafting-common.toml`, and `config/pylons-server.toml`, and
+  `config/crash_assistant/modlist.json`. Its quest titles, ids, task and reward items,
+  dependency links, and quoted sentences are verified; the *"(Least laggy pipe solution, these
+  are recommended)."* parentheticals are the **only** ranking the config states, so its
+  "which one should I build" table is *(judgement)* and must be repeated as such. 105 of the
+  group's 136 quests carry no title in the lang files: mark them, never rename them. Its
+  config numbers are what pack 8.2 ships, not what the player's own `config/` folder says
+  today — and the page names the mods it checked and found unquested (EnderIO, Logistics
+  Networks, Mekanistic Routers, Integrated Scripting) rather than filling the gap from memory.
+
 ## Setup — first run only
 
 Real progress lives in `data/progress.json`, which is **never committed**: the skill
@@ -664,6 +686,17 @@ Stages overlap by design; use them to orient, not to gate.
   state no recipe, duration, or amplifier the config does not, and send everything else
   to the quest entry and JEI. Pair with `references/allthemodium-mining-guide.md` for
   the ore-finding context and `references/boss-guide.md` for the combat-potion signal.
+- **Transport questions go to `references/logistics-guide.md`.** "How do I get items from here
+  to there?", "which pipe should I build?", "Pipez or Mekanism?", "how do I move fluids /
+  energy / heat / gases?", "do I need a Modular Router?", "what are Pylons for?" → the pack's
+  Logistics group: **Pipez** first (*"Pipez is the simplest Logistics Mod."*, five one-quest
+  pipes), Mekanism's transport (whose five quests in *Basic Logistics* are untitled, task a
+  Smart Filter, and reward **Advanced** tier), **LaserIO**'s node-and-card model, **Integrated
+  Dynamics**' importer/interface trio, **Modular Routers**' pipe-free module ladder, and
+  **Pylons** — which the group contains and which moves nothing. Name the option by its
+  verified hub quest, quote the three lag parentheticals as the pack's prose rather than as a
+  measurement, keep the doc's *(judgement)* labels, and send recipes, rates, and exact
+  requirements to the in-game quest book and JEI.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -944,6 +977,12 @@ Before saying the companion is up to date, confirm:
 - Autocrafting answers followed `references/autocrafting-guide.md` in dependency order,
   quoted its verified titles or ids with their hedges, and still pointed at the in-game
   quest book and JEI for recipes and current counts.
+- Logistics/transport answers came from `references/logistics-guide.md`: they named the option
+  by its verified hub quest, quoted the pack's own lag parentheticals instead of inventing a
+  benchmark, kept the *(judgement)* label on any "which should I build" advice, marked untitled
+  quests as untitled, said plainly that Pylons sits in the group but moves nothing, and deferred
+  recipes, rates, and current config values to the in-game quest book, JEI, and the player's own
+  `config/` folder.
 - Ore-processing answers came from `references/ore-processing-ladder.md`, quoted the
   config's own per-step numbers instead of a computed per-ore total, flagged the
   community "doubling/tripling/quadrupling" names as approximate, marked untitled quests

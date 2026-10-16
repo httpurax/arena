@@ -24,7 +24,7 @@ Covered:
   * absences: no Angel Ring, flight totem, or vanilla-Elytra quest is presented as part
     of the 8.2 book, and the Ritual of Flight's undescribed effect is not filled in;
   * hedges: timing is labelled *(judgement)*, recipes and numbers go to JEI;
-  * wiring: SKILL.md is bumped to 1.6.0 and routes flight questions to the page, and
+  * wiring: SKILL.md is bumped to 1.7.0 and routes flight questions to the page, and
 
     ``progression.md`` points at it;
   * offline guarantee: this suite imports no network or process module.
@@ -41,7 +41,7 @@ SKILL_MD = SKILL_ROOT / "SKILL.md"
 FLIGHT_MD = SKILL_ROOT / "references" / "flight-guide.md"
 PROGRESSION_MD = SKILL_ROOT / "references" / "progression.md"
 
-SKILL_VERSION = "1.6.0"
+SKILL_VERSION = "1.7.0"
 
 FLIGHT_COMMIT = "e5e3d1d83e"
 FLIGHT_COMMIT_FULL = "e5e3d1d83ec6885bb9a5e9fb309fb8e9730db025"

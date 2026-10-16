@@ -217,6 +217,12 @@ Pipez vs Laser IO vs Integrated Dynamics vs Mekanism transporters is an
 *approximate/judgement* trade-off (simplicity vs control vs cross-mod polish); present
 them as alternatives and let the player pick.
 
+That trade-off is the short version. The pack's whole Logistics group — the four chapters
+*Basic Logistics*, *Integrated Dynamics*, *Modular Router* and *Pylons*, plus the transport
+quests of *Mekanism* — is walked quest by quest in `references/logistics-guide.md`, including
+the shipped config values that decide tunnel throughput and harvester pace, and the
+pipe-free *Modular Routers* route this page does not rank.
+
 ## 4. Storage — make the influx work for you *(capture the output; judgement)*
 
 **Why this rank (judgement).** The first three steps produce more items than wooden
@@ -347,6 +353,9 @@ in-game quest book — which is authoritative — settle anything concrete.
   the farm mods each do, when to start them, what they lead to.
 - `references/creative-checklist.md` — the endgame version of this question: automating
   the star.
+- `references/logistics-guide.md` — #3 expanded into the whole Logistics group: every
+  transport option, its hub quest, the tier its starter is rewarded at, the pack's own lag
+  parentheticals, and the shipped config numbers.
 
 ## What this page deliberately does not tell you
 
