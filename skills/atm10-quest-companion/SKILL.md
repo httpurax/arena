@@ -97,6 +97,9 @@ pack's own shipped config rather than from generic advice.
 - The user reports lag — low FPS, stuttering, a slowly ticking server — and asks how to fix
   it ("how do I fix lag?"): which of the pack's own settings and machines to look at, in
   what order, per `references/lag-fix-guide.md`.
+- The user asks how to move items or fluids, choose pipes, filter outputs, or fix a
+  stalled transfer ("why aren't my pipes moving anything?") — use
+  `references/logistics-guide.md`.
 
 ## When Not to Use
 
@@ -341,6 +344,12 @@ those fields or pretend the skill knows every requirement:
   recipe or unlock, rename untitled quests, or promise specific loot-table outcomes.
   The in-game quest book remains authoritative if the player's version differs.
 
+- **The logistics guide is a pinned snapshot too.** `references/logistics-guide.md`
+  uses Basic Logistics and Mekanism quest config at pack **8.2**, commit `e5e3d1d83e`
+  (2026-09-22). It distinguishes task labels from explicit titles, documents the
+  contradictory Pipez filter-tier descriptions, and never turns quest prose into a
+  compatibility or throughput guarantee. Trust the installed GUI, quest book and JEI.
+
 ## Setup — first run only
 
 Real progress lives in `data/progress.json`, which is **never committed**: the skill
@@ -464,6 +473,12 @@ Stages overlap by design; use them to orient, not to gate.
   titles, ids, and quest text from the pack 8.2 config, with the ranking itself marked as
   judgement and the in-game quest book and JEI still authoritative for requirements and
   recipes.
+- **Item and fluid transport questions go to `references/logistics-guide.md`.**
+  Choose between Pipez, Mekanism, LaserIO and Integrated Dynamics from the player's
+  current setup, not as a mandatory mod ladder. Follow the source-to-destination
+  checklist for stalled transfers; keep the Pipez filter-tier conflict explicit.
+  Do not confuse fluids with chemicals or promise cross-dimensional connections,
+  measured rates, or automatic chunk loading. Recipes belong in JEI.
 - **Endgame questions go to the three endgame docs.** "What does the ATM Star need?" →
   `references/atm-star-checklist.md`: Chapter 3's components grouped by source mod, with
   the verified quest titles and item ids, the build order, and the parts the pack marks
@@ -920,4 +935,7 @@ Before saying the companion is up to date, confirm:
   `config/` folder and the in-game quest book win over the guide's 8.2 snapshot.
 - Reward answers used `references/best-reward-quests.md` for verified titles/ids and
   fixed payoffs, kept judgement/uncertainty labels, and deferred to the current book.
+- Logistics answers used `references/logistics-guide.md`, kept its judgement labels
+  and Pipez filtering conflict, and checked extraction, resource type, destination
+  acceptance and loading without inventing rates or machine-specific side rules.
 - `data/progress.json` is still untracked by git.

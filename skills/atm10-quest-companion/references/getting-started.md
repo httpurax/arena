@@ -102,6 +102,8 @@ JEI override everything written here.**
 - Stuck on a *boss*: the Exploration chapters (Twilight Forest, Cataclysm, ...) and the
   mods' own in-game guide books (Patchouli/Modonomicon entries) carry the mechanics; the
   quest book lists the boss quests but not tactics.
+- Stuck on *pipes or a stalled item/fluid transfer*: `references/logistics-guide.md`
+  maps the verified transport choices and a source-to-destination checklist.
 
 ## Multiplayer notes (approximate, from hosting guides)
 

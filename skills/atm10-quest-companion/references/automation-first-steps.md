@@ -217,6 +217,10 @@ Pipez vs Laser IO vs Integrated Dynamics vs Mekanism transporters is an
 *approximate/judgement* trade-off (simplicity vs control vs cross-mod polish); present
 them as alternatives and let the player pick.
 
+For the dedicated item/fluid transport map and stalled-transfer checklist, use
+`references/logistics-guide.md`. It expands step 3 and flags the Pipez quests'
+conflicting filter-upgrade advice instead of guessing a minimum tier.
+
 ## 4. Storage — make the influx work for you *(capture the output; judgement)*
 
 **Why this rank (judgement).** The first three steps produce more items than wooden

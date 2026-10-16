@@ -128,3 +128,7 @@ Do not claim these are in ATM10 without checking in-game first:
 
 The safe move for any mod: search its signature item in JEI in-game — if the item
 resolves, the mod is there; then let JEI and the quest book supply every detail.
+
+For choosing item/fluid transport or diagnosing a stalled link, see
+`references/logistics-guide.md`: Pipez, Mekanism, LaserIO and Integrated Dynamics,
+with the snapshot's conflicting Pipez filtering advice kept explicit.

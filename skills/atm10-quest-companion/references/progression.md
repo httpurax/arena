@@ -211,3 +211,7 @@ before the endgame: Chapter 1 itself says diamonds let you visit the Twilight Fo
    from the first jetpack to the Creative Jetpack.
 4. When a chapter is finished, record it in `data/progress.json` and run
    `scripts/progress.py` to show what is next.
+
+Item/fluid transport is a cross-stage infrastructure question, not another mandatory
+mod ladder. `references/logistics-guide.md` maps the Basic Logistics and Mekanism
+branches and a stalled-transfer checklist; pick a route matching the current base.
