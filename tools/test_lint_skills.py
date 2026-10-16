@@ -234,6 +234,24 @@ class RuleTest(unittest.TestCase):
         self.assertIn("no tests/ directory", output)
         self.assertIn("1 skill checked: 1 ok, 0 failed", output)
 
+    def test_description_over_60_characters_is_rejected(self):
+        long_description = "This description is intentionally longer than sixty characters."
+        self.assertGreater(len(long_description), 60)
+        frontmatter = textwrap.dedent("""\
+            ---
+            name: long-description-skill
+            description: {description}
+            version: 0.1.0
+            license: MIT
+            platforms: [linux, macos, windows]
+            ---
+            # long-description-skill
+            """).format(description=long_description)
+        write_skill(self.root, "long-description-skill", frontmatter)
+        returncode, output = run_linter(self.root)
+        self.assertNotEqual(returncode, 0, output)
+        self.assertEqual(rules_in(output), {"frontmatter.description"}, output)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -450,6 +450,11 @@ def _check_frontmatter(data: "dict[str, Any]", skill_name: str) -> "list[tuple[s
             "frontmatter.description",
             f"description must be a scalar string, got {type(description).__name__}",
         ))
+    elif isinstance(description, str) and len(description) > 60:
+        problems.append((
+            "frontmatter.description",
+            "description exceeds 60 characters",
+        ))
 
     version = data.get("version")
     if version is not None and not isinstance(version, str):
