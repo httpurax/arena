@@ -200,6 +200,22 @@ class RuleTest(unittest.TestCase):
             "frontmatter.license", "frontmatter.platforms",
         }, output)
 
+    def test_description_longer_than_sixty_characters_is_rejected(self):
+        write_skill(self.root, "long-description-skill", textwrap.dedent("""\
+            ---
+            name: long-description-skill
+            description: A throwaway skill with a description that is longer than sixty characters.
+            version: 0.1.0
+            author: nobody
+            license: MIT
+            platforms: [linux, macos, windows]
+            ---
+            # long-description-skill
+            """))
+        returncode, output = run_linter(self.root)
+        self.assertNotEqual(returncode, 0, output)
+        self.assertEqual(rules_in(output), {"frontmatter.description"}, output)
+
     def test_invalid_yaml_frontmatter_is_rejected(self):
         write_skill(self.root, "tabbed-skill", "---\nname: tabbed-skill\nmetadata:\n\ttags: [x]\n---\n")
         returncode, output = run_linter(self.root)
