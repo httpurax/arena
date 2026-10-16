@@ -74,6 +74,11 @@ pack's own shipped config rather than from generic advice.
   essence and seed tiers, mob farms (spawners, Industrial Foregoing, Hostile Neural
   Networks), Productive Bees and Trees, crops and food — or resource chickens, which pack
   8.2 does not have.
+- The user asks a **Mystical Agriculture** progression question — which essence tier comes
+  next, which `Tier:` a seed sits in, what Insanium or Creative Essence unlock, where the
+  essence armor, tool, and weapon sets fit, or how to get more essence — answered from
+  `references/mystical-agriculture-guide.md`; the chapter's full quest inventory stays in
+  `references/farming-guide.md`.
   magic line, storage network), where to build a base (Overworld vs Mining Dimension vs
   compact interiors), what the ATM Star endgame needs at a high level, or what comes
   *after* the star (Chapter 4: Creative, star automation, creative-tier items).
@@ -230,6 +235,17 @@ those fields or pretend the skill knows every requirement:
   first" order is marked as judgement, because the config does not order the farming
   chapters against each other. It also records what the config does *not* have — no
   resource-chicken mod, no growth-acceleration pylon — so never invent one.
+- **So does the Mystical Agriculture guide.** `references/mystical-agriculture-guide.md`
+  is a re-reading of the same commit (`e5e3d1d83e`, pack 8.2), limited to the Mystical
+  Agriculture chapter (`elmystical_agriculturerr`) and the Chapter 3 entries it feeds; its
+  mod versions (Mystical Agriculture 8.0.28, Mystical Agradditions 8.0.14) are the
+  modlist's. Its tier ladder, quoted sentences, and quest ids are that snapshot's and are
+  the same facts `references/farming-guide.md` prints in full; its tier advice, plot
+  advice, and gear advice are marked *judgement*. It deliberately states no recipe, growth
+  rate, drop chance, or energy cost, and it quotes no essence armor or tool *set*, because
+  the snapshot verifies only the Essence Weapon named in the Cognizant Dust quote — never
+  invent a set, a tier for one, or a requirement for one. Still defer to the in-game quest
+  book and JEI.
   (`e5e3d1d83e`). `references/base-spots-guide.md` also pins that commit, drawing on
   the Welcome, Building Tips, Allthemodium, and AE2 quest config plus the Hyperbox config;
   its base recommendation is labelled judgement rather than a quest requirement. The item
@@ -564,6 +580,18 @@ Stages overlap by design; use them to orient, not to gate.
   resource chickens?" → not in pack 8.2: say so, point at what does that job here
   (Mystical Agriculture seeds, Productive Bees, Hostile Neural Networks), and never name
   a chicken mod.
+- **Mystical Agriculture progression questions go to
+  `references/mystical-agriculture-guide.md`.** "Which essence tier do I need next?",
+  "what tier is this seed?", "how do I get Insanium / Creative Essence?", "where do the
+  essence armor and tool essences fit?", "how do I get more essence faster?" → its tier
+  ladder (Inferium → Prudentium → Tertium → Imperium → Supremium → Awakened Supremium →
+  Insanium → Creative Essence) with each tier's verified quote, id, and dependency, and its
+  get-more table (Infusion Altar, Seed Reprocessor, Growth Accelerators, tiered farmland,
+  Soulium and mob seeds, Harvester, bees). Quote its titles and ids as written there, keep
+  its *judgement* labels, send gear questions to JEI and
+  `references/armor-tools-ladder.md`, and the full 125-seed inventory to
+  `references/farming-guide.md`. Never state a recipe, a growth rate, or an essence-armor
+  requirement.
 - **Enchanting questions go to `references/enchanting-guide.md`.** "How do I get the best
   enchants?", "why is my Eterna capped at 30?", "what does a Hellshelf / Seashelf /
   Sculkshelf do?", "how high can Sharpness go?" → the Apothic Enchanting chapter's 58
