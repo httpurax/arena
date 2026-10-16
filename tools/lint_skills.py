@@ -6,8 +6,8 @@ Rules applied to each directory directly under the skills root:
     skill_md     SKILL.md exists
     frontmatter  the frontmatter block is valid YAML in the subset this checker accepts and
                  the required keys exist, are non-empty, and are well-formed: `name` equals
-                 the directory name, `version` is X.Y.Z, every `platforms` entry is one of
-                 linux / macos / windows
+                 the directory name, `description` is at most 60 characters, `version` is
+                 X.Y.Z, every `platforms` entry is one of linux / macos / windows
     python       every .py file under the skill compiles (py_compile, no bytecode left behind)
     secrets      no text file contains an embedded credential: a credential-named literal
                  (api_key = "...", password = "...", ...), a PEM private key block, a
@@ -449,6 +449,11 @@ def _check_frontmatter(data: "dict[str, Any]", skill_name: str) -> "list[tuple[s
         problems.append((
             "frontmatter.description",
             f"description must be a scalar string, got {type(description).__name__}",
+        ))
+    elif isinstance(description, str) and len(description) > 60:
+        problems.append((
+            "frontmatter.description",
+            "description exceeds 60 characters",
         ))
 
     version = data.get("version")

@@ -8,8 +8,8 @@ The linter is only useful if it has teeth, so this proves both directions:
     and without the fake secret values being echoed into the report;
   * this repository's own skills/ tree is accepted;
   * a few throwaway trees in a temp directory exercise the remaining rules (missing
-    SKILL.md, name/version/platform mismatches, invalid YAML, a failing tests/ suite, a
-    minimal conforming skill).
+    SKILL.md, name/version/platform mismatches, an over-long description, invalid YAML,
+    a failing tests/ suite, a minimal conforming skill).
 
 Run it with:
     python tools/test_lint_skills.py
@@ -190,6 +190,24 @@ class RuleTest(unittest.TestCase):
             "frontmatter.version",      # not X.Y.Z
             "frontmatter.platforms",    # solaris is not an allowed platform
         }, output)
+
+    def test_overlong_description_is_rejected(self):
+        description = ("A throwaway skill whose frontmatter description is far too long "
+                       "for the linter to accept.")
+        self.assertGreater(len(description), 60)  # the rule under test needs > 60 chars
+        write_skill(self.root, "windy-skill", textwrap.dedent(f"""\
+            ---
+            name: windy-skill
+            description: {description}
+            version: 0.1.0
+            license: MIT
+            platforms: [linux]
+            ---
+            # windy-skill
+            """))
+        returncode, output = run_linter(self.root)
+        self.assertNotEqual(returncode, 0, output)
+        self.assertEqual(rules_in(output), {"frontmatter.description"}, output)
 
     def test_missing_required_keys_are_reported(self):
         write_skill(self.root, "bare-skill", "---\nname: bare-skill\n---\n")
