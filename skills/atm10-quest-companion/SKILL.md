@@ -73,7 +73,8 @@ pack's own shipped config rather than from generic advice.
 - The user asks what to farm or what to set up farming first: Mystical Agriculture's
   essence and seed tiers, mob farms (spawners, Industrial Foregoing, Hostile Neural
   Networks), Productive Bees and Trees, crops and food — or resource chickens, which pack
-  8.2 does not have.
+  8.2 does not have. The essence-and-seed ladder on its own (which tier, which seed, what
+  gates it) goes to `references/mystical-agriculture-guide.md`.
   magic line, storage network), where to build a base (Overworld vs Mining Dimension vs
   compact interiors), what the ATM Star endgame needs at a high level, or what comes
   *after* the star (Chapter 4: Creative, star automation, creative-tier items).
@@ -242,6 +243,14 @@ those fields or pretend the skill knows every requirement:
   ids, quest titles, and quoted counts in these snapshots can change between versions.
   Quote them as *what the book asked for in 8.2*, and still defer to the in-game quest
   book and JEI.
+- **The Mystical Agriculture guide re-quotes that snapshot, and says so.**
+  `references/mystical-agriculture-guide.md` was not read from the pack repository: it
+  reproduces the verified Mystical Agriculture material already carried in
+  `references/farming-guide.md` — the tier titles and ids, the `Tier:` subtitles, the
+  crux and Soul Jar quotes — at the same commit (`e5e3d1d83e`, pack 8.2), and adds no
+  new quest facts. Its ladder counts, untitled-quest markings, and judgement labels come
+  from that snapshot; it quotes no gear, recipe, growth rate, drop chance, or stat. Keep
+  it that way: answer gear and recipe questions from the in-game quest book and JEI.
 - **The endgame docs and the automation doc date themselves.**
   `references/atm-star-checklist.md`,
   `references/boss-checklist.md`, `references/creative-checklist.md`, and
@@ -577,7 +586,10 @@ Stages overlap by design; use them to orient, not to gate.
   ladder), Industrial Foregoing's machines, Hostile Neural Networks. "Where are the
   resource chickens?" → not in pack 8.2: say so, point at what does that job here
   (Mystical Agriculture seeds, Productive Bees, Hostile Neural Networks), and never name
-  a chicken mod.
+  a chicken mod. Mystical Agriculture itself has its own page,
+  `references/mystical-agriculture-guide.md`: quote the same tier titles and ids, keep
+  every *(no title in the config)* marking, and present its "what to do first" list as
+  the judgement it is.
 - **Enchanting questions go to `references/enchanting-guide.md`.** "How do I get the best
   enchants?", "why is my Eterna capped at 30?", "what does a Hellshelf / Seashelf /
   Sculkshelf do?", "how high can Sharpness go?" → the Apothic Enchanting chapter's 58
@@ -908,6 +920,10 @@ Before saying the companion is up to date, confirm:
   `references/farming-guide.md`, labelled its "what to set up first" order as judgement,
   and claimed no farm, seed, or mod the config does not have (no resource chickens in
   pack 8.2).
+- Mystical Agriculture ladder answers came from `references/mystical-agriculture-guide.md`:
+  the eight essence rungs in the chapter's own dependency order, the seed tiers by
+  `Tier:` subtitle with their farmland/crux gates, the untitled helper quests marked as
+  untitled, and no gear, recipe, or growth figure claimed anywhere.
 - Automation answers quoted verified quest titles from
   `references/automation-first-steps.md`, kept the 1–5 ranking marked as judgement, and
   still pointed at the in-game quest book and JEI for requirements and recipes.
