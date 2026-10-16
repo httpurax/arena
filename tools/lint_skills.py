@@ -6,7 +6,8 @@ Rules applied to each directory directly under the skills root:
     skill_md     SKILL.md exists
     frontmatter  the frontmatter block is valid YAML in the subset this checker accepts and
                  the required keys exist, are non-empty, and are well-formed: `name` equals
-                 the directory name, `version` is X.Y.Z, every `platforms` entry is one of
+                 the directory name, `description` is at most 60 characters (listings truncate
+                 longer ones), `version` is X.Y.Z, every `platforms` entry is one of
                  linux / macos / windows
     python       every .py file under the skill compiles (py_compile, no bytecode left behind)
     secrets      no text file contains an embedded credential: a credential-named literal
@@ -53,6 +54,10 @@ DEFAULT_ROOT = REPO_ROOT / "skills"
 REQUIRED_KEYS = ("name", "description", "version", "license", "platforms")
 ALLOWED_PLATFORMS = ("linux", "macos", "windows")
 VERSION_RE = re.compile(r"^\d+\.\d+\.\d+$")
+
+# The README states this as a convention: Hermes truncates long descriptions in listings, so
+# a skill whose description is longer than this loses it exactly where a reader would look.
+MAX_DESCRIPTION_LENGTH = 60
 
 # Directories that are never part of a skill's source: build caches, VCS metadata, virtualenvs.
 SKIP_DIR_NAMES = frozenset(
@@ -449,6 +454,11 @@ def _check_frontmatter(data: "dict[str, Any]", skill_name: str) -> "list[tuple[s
         problems.append((
             "frontmatter.description",
             f"description must be a scalar string, got {type(description).__name__}",
+        ))
+    elif isinstance(description, str) and len(description) > MAX_DESCRIPTION_LENGTH:
+        problems.append((
+            "frontmatter.description",
+            "description exceeds 60 characters",
         ))
 
     version = data.get("version")

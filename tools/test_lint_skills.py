@@ -8,8 +8,8 @@ The linter is only useful if it has teeth, so this proves both directions:
     and without the fake secret values being echoed into the report;
   * this repository's own skills/ tree is accepted;
   * a few throwaway trees in a temp directory exercise the remaining rules (missing
-    SKILL.md, name/version/platform mismatches, invalid YAML, a failing tests/ suite, a
-    minimal conforming skill).
+    SKILL.md, name/version/platform mismatches, an over-long description, invalid YAML, a
+    failing tests/ suite, a minimal conforming skill).
 
 Run it with:
     python tools/test_lint_skills.py
@@ -190,6 +190,30 @@ class RuleTest(unittest.TestCase):
             "frontmatter.version",      # not X.Y.Z
             "frontmatter.platforms",    # solaris is not an allowed platform
         }, output)
+
+    def test_overlong_description_is_rejected(self):
+        """The README convention - `description` under 60 characters - is enforced."""
+        long_description = "A throwaway description that is comfortably longer than sixty characters."
+        self.assertGreater(
+            len(long_description), 60, "this fixture must exercise the length rule"
+        )
+        write_skill(self.root, "verbose-description-skill", textwrap.dedent(f"""\
+            ---
+            name: verbose-description-skill
+            description: {long_description}
+            version: 0.1.0
+            license: MIT
+            platforms: [linux, macos, windows]
+            ---
+            # verbose
+            """))
+        returncode, output = run_linter(self.root)
+        self.assertNotEqual(returncode, 0, output)
+        self.assertEqual(
+            rules_in(output), {"frontmatter.description"},
+            f"only the description is out of bounds here:\n{output}",
+        )
+        self.assertIn("description exceeds 60 characters", output)
 
     def test_missing_required_keys_are_reported(self):
         write_skill(self.root, "bare-skill", "---\nname: bare-skill\n---\n")
