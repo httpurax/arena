@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.5.0
+version: 1.6.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -94,6 +94,12 @@ pack's own shipped config rather than from generic advice.
 - The user asks about enchanting — "how do I get the best enchants?", why his Eterna is
   stuck at 30, what Infusion or a given shelf is for, or how high an enchantment like
   Sharpness can go in this pack → `references/enchanting-guide.md`.
+- The user asks about potions or brewing — "how do potions work in this pack?", "what
+  should I brew?", "how do I find ores with potions?", "how do I get persistent buffs?",
+  "what potions for bosses?" — the brewing stand is vanilla but the pack adds Ore Sight
+  potions (PotionsMaster), the Infusion Pylon for area effects, the Potion Generator, and
+  buff food as a low-effort alternative; answered from
+  `references/potions-brewing-guide.md`.
 - The user reports lag — low FPS, stuttering, a slowly ticking server — and asks how to fix
   it ("how do I fix lag?"): which of the pack's own settings and machines to look at, in
   what order, per `references/lag-fix-guide.md`.
@@ -304,6 +310,14 @@ those fields or pretend the skill knows every requirement:
   read off dependency chains, so repeat them as judgement. Its absent list (no Angel Ring,
   no flight totem, no quest for the vanilla Elytra) is what the 8.2 book and modlist lack;
   never fill those gaps from memory.
+- **The potions and brewing guide dates itself the same way.**
+  `references/potions-brewing-guide.md` was read from the same commit (`e5e3d1d83e`,
+  pack 8.2): the **Pylons** chapter (`pylons.snbt`), the **Tips and Tricks** quest
+  (`790EC3EDC2DB1FB0`), the **Food and Farming** chapter (35 quests), PotionsMaster's
+  config entries (`config/potionsmaster/{allthemodium,vibranium,unobtainium}.json`), and
+  `config/pylons-server.toml`. Its quest ids, task items, config keys, and quoted quest
+  text are that snapshot's; quote them as *what the book asked for in 8.2*, and still
+  defer to the in-game quest book and JEI for recipes, durations, and amplifiers.
 
 - **The first-hour doc dates itself the same way.**
   `references/first-hour-walkthrough.md` was read from the same commit (`e5e3d1d83e`,
@@ -625,6 +639,19 @@ Stages overlap by design; use them to orient, not to gate.
   Creative Jetpack — each with its verified quest, task item, and dependency chain. Lead
   with the cheapest reliable path, keep the doc's *(judgement)* labels on timing, say
   plainly what the 8.2 book does not have, and send recipes and energy numbers to JEI.
+- **Potions and brewing questions go to `references/potions-brewing-guide.md`.** "How do
+  potions work in this pack?", "what should I brew?", "how do I find ATM ores with
+  potions?", "how do I get persistent buffs without a beacon?" → the brewing stand
+  (vanilla, as the pack ships it), PotionsMaster's Ore Sight potions for allthemodium /
+  vibranium / unobtainium (verified quest `18FAD56CDE05646A`, config entries at
+  `config/potionsmaster/*.json`), the Pylons Infusion Pylon for beacon-like area effects
+  (verified quest `18246A48C20B29D8`, `config/pylons-server.toml` limits), the Generators
+  Galore Potion Generator (verified quest `790EC3EDC2DB1FB0`), and the buff-food line
+  from Food and Farming as the low-effort alternative. Quote the verified quest text,
+  keep the doc's *(judgement)* labels on timing and on the buff-food-vs-potions pick,
+  state no recipe, duration, or amplifier the config does not, and send everything else
+  to the quest entry and JEI. Pair with `references/allthemodium-mining-guide.md` for
+  the ore-finding context and `references/boss-guide.md` for the combat-potion signal.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
