@@ -204,6 +204,7 @@ class CategoryMappingTest(TempTree):
             "job-application-tracker": "productivity/job-application-tracker",
             "moodle-course-management": "productivity/moodle-course-management",
             "study-flashcards": "productivity/study-flashcards",
+            "tarkov-spt-companion": "gaming/tarkov-spt-companion",
             "test-engineering": "development/test-engineering",
         })
 
