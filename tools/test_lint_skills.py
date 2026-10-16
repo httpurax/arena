@@ -226,6 +226,23 @@ class RuleTest(unittest.TestCase):
         self.assertIn("tests.failed", output)
         self.assertIn("AssertionError", output)  # the suite's own output is shown
 
+    def test_overlong_description_is_rejected(self):
+        name = "long-description-skill"
+        description = "x" * 61
+        frontmatter = (
+            "---\n"
+            f"name: {name}\n"
+            f"description: {description}\n"
+            "version: 0.1.0\n"
+            "license: MIT\n"
+            "platforms: [linux, macos, windows]\n"
+            "---\n"
+        )
+        write_skill(self.root, name, frontmatter)
+        returncode, output = run_linter(self.root)
+        self.assertNotEqual(returncode, 0, output)
+        self.assertEqual(rules_in(output), {"frontmatter.description"}, output)
+
     def test_minimal_conforming_skill_is_accepted(self):
         write_skill(self.root, "minimal-skill")
         returncode, output = run_linter(self.root)
