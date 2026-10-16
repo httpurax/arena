@@ -47,6 +47,9 @@ pack's own shipped config rather than from generic advice.
 - The user asks which dimension to open next, what unlocks one (the Twilight Forest, the
   Aether, the Undergarden, Eternal Starlight, Allthemodium's The Other, ...), which
   chapter it belongs to, or what it is worth going there for.
+- The user asks how to get home or fast-travel between places already found: `/sethome`
+  and `/home`, Waystones, the Teleport Pad, Mekanism's powered Teleporters, or a Just Dire
+  Things travel tool — answer from `references/teleportation-guide.md`.
 - The user asks which bosses this pack has, in what order to fight them, where the
   arena is, what to bring to start the fight, or what gear the quest book expects him
   to have first — answered from `references/boss-guide.md`, the order-and-tactics
@@ -304,6 +307,13 @@ those fields or pretend the skill knows every requirement:
   read off dependency chains, so repeat them as judgement. Its absent list (no Angel Ring,
   no flight totem, no quest for the vanilla Elytra) is what the 8.2 book and modlist lack;
   never fill those gaps from memory.
+- **The teleportation guide is a pinned snapshot too.** `references/teleportation-guide.md`
+  reads the Welcome, Allthemodium, Mekanism, and Just Dire Things quest and English lang
+  files, `config/waystones-common.toml`, and the modlist at `e5e3d1d83e` (pack 8.2).
+  Waystones' world generation, costs, and pet switches are *config* values, not quests;
+  the Welcome chapter's FTB Essentials limits live in a per-world serverconfig that the
+  pack repo does not ship. Keep the guide's *(judgement)* on route choice, never invent
+  command limits, and defer recipes and current settings to JEI and the player's world.
 
 - **The first-hour doc dates itself the same way.**
   `references/first-hour-walkthrough.md` was read from the same commit (`e5e3d1d83e`,
@@ -499,6 +509,14 @@ Stages overlap by design; use them to orient, not to gate.
   approximate judgement. The book gates nothing, so present the order as a
   recommendation. Portal recipes and coordinates are deliberately not on that page — send
   the player to the quest entry and JEI for those.
+- **Home and fast-travel questions go to `references/teleportation-guide.md`.** Start
+  with the Welcome chapter's named `/sethome` → `/home`, distinguish `/spawn` and `/rtp`,
+  then choose Waystones for discovered stops, the Teleport Pad for its three ATM
+  dimensions, or Mekanism's powered Teleporter and Portable Teleporter for a built
+  network. Just Dire Things' travel quests are optional alternatives, not generic
+  commands. Keep Waystones *config* separate from quest text, label route choice as
+  judgement, never promise a Waystone in every village or a server-wide command limit,
+  and send current recipes and settings to JEI and the player's world/server.
 - **Bounty questions go to the bounty doc.** "Which bounties are open, what do they
   want, and what haven't I claimed?" → `references/bounty-board-checklist.md`: the
   standalone Bounty Board chapter's 50 quests (49 playable — the 50th is a hidden,
@@ -853,6 +871,11 @@ Before saying the companion is up to date, confirm:
 - Dimension answers named the verified unlock quest and dimension id from
   `references/dimension-guide.md`, kept its verified/approximate labels, and supplied no
   portal recipe or coordinates.
+- Home/teleportation answers came from `references/teleportation-guide.md`: they kept
+  Welcome's task title distinct from a quest title, quoted Waystones' actual 8.2
+  settings rather than promising village spawns or XP costs, distinguished the Pad's
+  three destinations from a named home, required a powered destination for Mekanism's
+  portable item, and invented no `/back`, FTB Essentials limits, recipe, or chunk loading.
 - Bounty answers quoted verified titles, entity ids, and counts from
   `references/bounty-board-checklist.md`, never rephrased a kill bounty as a collect
   quest, reminded the player that the chapter's random rewards are excluded from

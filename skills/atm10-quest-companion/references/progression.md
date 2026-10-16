@@ -79,11 +79,13 @@ first power/ore-doubling setups.
 **What it unlocks.** Decent tools and armor (Silent Gear is the pack's modular tool
 system), first machines and power gen, first storage upgrade past wooden chests, and the
 habit of following the quest book for rewards. Guides consistently highlight early
-quality-of-life wins here — vein-mining keybind, Waystones from village loot, an
-Osmium Paxel from Mekanism, a Time in a Bottle (exact availability varies by version;
-check JEI). Flight starts here too: Tips and Tricks' *Iron Jetpacks* quest has no
-dependencies and asks for the Wood jetpack — `references/flight-guide.md` maps every flight
-item the book tracks, cheapest first, and roughly when each one arrives.
+quality-of-life wins here — vein-mining keybind, Waystones that can generate in some
+villages (not guaranteed loot), an Osmium Paxel from Mekanism, a Time in a Bottle
+(exact availability varies by version; check JEI). Set a home before travelling:
+`references/teleportation-guide.md` separates `/home`, Waystones, and later portals.
+Flight starts here too: Tips and Tricks' *Iron Jetpacks* quest has no dependencies and
+asks for the Wood jetpack — `references/flight-guide.md` maps every flight item the book
+tracks, cheapest first, and roughly when each one arrives.
 
 **Player's typical "what next" question here:** "I have iron/diamonds and a few machines —
 which big mod do I commit to?" Answer: pick **one** tech path and **one** magic path (see

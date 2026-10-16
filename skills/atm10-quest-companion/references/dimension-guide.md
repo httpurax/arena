@@ -458,6 +458,8 @@ not this page's.
 
 ## Related pages
 
+- `references/teleportation-guide.md` — returning home or travelling between known places;
+  the Teleport Pad's three routes are not a general home teleport.
 - `references/boss-checklist.md` — every boss named here, with its arena and roughly when.
 - `references/atm-star-checklist.md` — Chapter 3's components by source mod.
 - `references/creative-checklist.md` — Chapter 4, after the star.

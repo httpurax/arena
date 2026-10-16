@@ -47,8 +47,10 @@ JEI override everything written here.**
    QoL mod in the pack.
 3. **Learn the vein-mine keybind** (FTB Ultimine, commonly `~`). Holding it while mining
    ore or chopping trees is the single biggest early time-saver.
-4. **Loot a village** before building anything big: guides highlight grabbing **Waystones**
-   (cheap fast travel), loot, and checking for Artifacts/Relics trinkets.
+4. **Visit a village** before building anything big: look for a **Waystone** and check
+   for loot and Artifacts/Relics trinkets. The pack's Waystones config allows regular
+   generation in *some* supported villages — not guaranteed loot in every village.
+   `references/teleportation-guide.md` separates this from `/home` and portal travel.
 5. **Set up Basic Power** (the chapter): wind/solar/lava generators and a first furnace
    line — Chapter 1 quests *Wind Power, Solar Power, Lava Power, Generators Galore* walk
    through it. Mekanism's basic generator + wind generator are the commonly recommended
