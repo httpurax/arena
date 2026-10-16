@@ -20,7 +20,7 @@ check that the guide still says that, and nothing invented:
   * no invented names: every backticked id in the guide is in a frozen allowlist read
     from the config, every bold name in its tables is a verified title, no
     resource-chicken mod is named, and no growth-acceleration pylon is claimed;
-  * wiring: SKILL.md (version 1.5.0) points at the guide and routes farming questions to
+  * wiring: SKILL.md (version >= 1.5.0) points at the guide and routes farming questions to
 
     it, and the sibling reference docs link it and no longer claim a growth pylon;
   * offline guarantee: this suite imports no network or process module.
@@ -691,8 +691,10 @@ class TestSkillWiring(FarmingGuideTestCase):
         cls.skill = read(SKILL_MD)
 
     def test_skill_version_is_bumped(self) -> None:
-        self.assertRegex(self.skill, re.compile(rf"^version: {re.escape(SKILL_VERSION)}$",
-                                                re.MULTILINE))
+        match = re.search(r"^version:\s*(\d+)\.(\d+)\.(\d+)$", self.skill, re.MULTILINE)
+        self.assertIsNotNone(match)
+        self.assertGreaterEqual(tuple(map(int, match.groups())),
+                                tuple(map(int, SKILL_VERSION.split("."))))
 
     def test_skill_md_routes_farming_questions_to_the_guide(self) -> None:
         self.assertIn("references/farming-guide.md", self.skill)

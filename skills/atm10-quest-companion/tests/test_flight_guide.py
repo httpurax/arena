@@ -24,7 +24,7 @@ Covered:
   * absences: no Angel Ring, flight totem, or vanilla-Elytra quest is presented as part
     of the 8.2 book, and the Ritual of Flight's undescribed effect is not filled in;
   * hedges: timing is labelled *(judgement)*, recipes and numbers go to JEI;
-  * wiring: SKILL.md is bumped to 1.5.0 and routes flight questions to the page, and
+  * wiring: SKILL.md is at least version 1.5.0 and routes flight questions to the page, and
 
     ``progression.md`` points at it;
   * offline guarantee: this suite imports no network or process module.
@@ -601,7 +601,10 @@ class TestFlightGuideWiring(unittest.TestCase):
 
     def test_skill_version_is_bumped(self) -> None:
         frontmatter = self.skill.split("---")[1]
-        self.assertRegex(frontmatter, rf"(?m)^version: {re.escape(SKILL_VERSION)}$")
+        match = re.search(r"^version:\s*(\d+)\.(\d+)\.(\d+)$", frontmatter, re.MULTILINE)
+        self.assertIsNotNone(match)
+        self.assertGreaterEqual(tuple(map(int, match.groups())),
+                                tuple(map(int, SKILL_VERSION.split("."))))
 
     def test_skill_md_routes_flight_questions_to_the_page(self) -> None:
         self.assertIn("references/flight-guide.md", self.skill)

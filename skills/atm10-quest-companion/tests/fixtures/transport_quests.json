@@ -1,0 +1,309 @@
+{
+  "repository": "AllTheMods/ATM-10",
+  "commit": "e5e3d1d83ec6885bb9a5e9fb309fb8e9730db025",
+  "pack_version": "8.2",
+  "date": "2026-09-22",
+  "quests": [
+    {
+      "chapter": "basic_logistics",
+      "id": "2329AA0AFBEF1E13",
+      "title": "Pipez",
+      "task_items": [
+        "pipez:wrench"
+      ],
+      "dependencies": [],
+      "task_components": [
+        {}
+      ],
+      "quote": "Attach the specific Pipe to where you want to move items and use the Pipe Wrench to configure what side Pulls, Pushes, or doesn't connect."
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "36836AD948F96B9F",
+      "title": "Item Pipez",
+      "task_items": [
+        "pipez:item_pipe"
+      ],
+      "dependencies": [
+        "2329AA0AFBEF1E13"
+      ],
+      "task_components": [
+        {}
+      ],
+      "quote": "It will move Items from one Inventory to another."
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "33433A443B65D252",
+      "title": "Fluid Pipez",
+      "task_items": [
+        "pipez:fluid_pipe"
+      ],
+      "dependencies": [
+        "2329AA0AFBEF1E13"
+      ],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "2F4458E9921DEB86",
+      "title": "Gas Pipez",
+      "task_items": [
+        "pipez:gas_pipe"
+      ],
+      "dependencies": [
+        "2329AA0AFBEF1E13"
+      ],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "2A976D41F79C34B1",
+      "title": null,
+      "task_items": [
+        "pipez:filter_destination_tool"
+      ],
+      "dependencies": [
+        "2329AA0AFBEF1E13"
+      ],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "5F1218CF8EFC607B",
+      "title": "Laser IO",
+      "task_items": [
+        "laserio:logic_chip"
+      ],
+      "dependencies": [],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "7BC8F50A89A3BE1A",
+      "title": null,
+      "task_items": [
+        "laserio:laser_wrench"
+      ],
+      "dependencies": [
+        "5F1218CF8EFC607B"
+      ],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "5C0F6B1C93A52113",
+      "title": null,
+      "task_items": [
+        "laserio:laser_node"
+      ],
+      "dependencies": [
+        "5F1218CF8EFC607B"
+      ],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "4C41FD926F31180B",
+      "title": "Item Card",
+      "task_items": [
+        "laserio:card_item"
+      ],
+      "dependencies": [
+        "5F1218CF8EFC607B"
+      ],
+      "task_components": [
+        {}
+      ],
+      "quote": "Set one to Extract and put it on the side of the Laser Node you want to Import from. Then set the other to Insert and put it to the side you want the Items to Export to."
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "1C70D739CE464E25",
+      "title": "Fluid Card",
+      "task_items": [
+        "laserio:card_fluid"
+      ],
+      "dependencies": [
+        "5F1218CF8EFC607B"
+      ],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "47A2BEFB11F4D581",
+      "title": null,
+      "task_items": [
+        "laserio:filter_basic"
+      ],
+      "dependencies": [
+        "5F1218CF8EFC607B"
+      ],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "6E05B62A40D5A891",
+      "title": "Integrated Dynamics",
+      "task_items": [
+        "integrateddynamics:wrench"
+      ],
+      "dependencies": [],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "6112956E19017D2D",
+      "title": null,
+      "task_items": [
+        "integrateddynamics:cable"
+      ],
+      "dependencies": [
+        "6E05B62A40D5A891"
+      ],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "03C40D6A5D722543",
+      "title": null,
+      "task_items": [
+        "integrateddynamics:variable"
+      ],
+      "dependencies": [
+        "6E05B62A40D5A891"
+      ],
+      "task_components": [
+        {}
+      ]
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "6F152402756DA35E",
+      "title": "Item Importing",
+      "task_items": [
+        "integratedtunnels:part_importer_item",
+        "integratedtunnels:part_interface_item"
+      ],
+      "dependencies": [
+        "6112956E19017D2D",
+        "03C40D6A5D722543"
+      ],
+      "task_components": [
+        {},
+        {}
+      ],
+      "quote": "To get this working put the Item Importer onto the Inventory you want Items pulled from."
+    },
+    {
+      "chapter": "basic_logistics",
+      "id": "034F2CDF0830254B",
+      "title": "Fluid Importing",
+      "task_items": [
+        "integratedtunnels:part_importer_fluid",
+        "integratedtunnels:part_interface_fluid"
+      ],
+      "dependencies": [
+        "6112956E19017D2D",
+        "03C40D6A5D722543"
+      ],
+      "task_components": [
+        {},
+        {}
+      ],
+      "quote": "Does not place or take Fluid Sources from in the world, it only moves Fluids from one Tank to another."
+    },
+    {
+      "chapter": "mekanism",
+      "id": "5E116409DC7D30BB",
+      "title": "Mekanism Logistics",
+      "task_items": [
+        "mekanism:configurator"
+      ],
+      "dependencies": [
+        "4B35C01F5D0AAC58"
+      ],
+      "task_components": [
+        {}
+      ],
+      "quote": "If you use it on Pipes it will change if they Push, Pull, or Both."
+    },
+    {
+      "chapter": "mekanism",
+      "id": "60ECCCAB66AAC05D",
+      "title": "Logistical Transporters",
+      "task_items": [
+        "ftbfiltersystem:smart_filter"
+      ],
+      "dependencies": [
+        "5E116409DC7D30BB"
+      ],
+      "task_components": [
+        {
+          "ftbfiltersystem:filter": "or(item(mekanism:basic_logistical_transporter)item(mekanism:advanced_logistical_transporter)item(mekanism:elite_logistical_transporter)item(mekanism:ultimate_logistical_transporter))"
+        }
+      ],
+      "quote": "Logistical Transporters will move Items and Blocks from one Inventory to another!"
+    },
+    {
+      "chapter": "mekanism",
+      "id": "33C69B5934BE4D64",
+      "title": "Mechanical Pipes",
+      "task_items": [
+        "ftbfiltersystem:smart_filter"
+      ],
+      "dependencies": [
+        "5E116409DC7D30BB"
+      ],
+      "task_components": [
+        {
+          "ftbfiltersystem:filter": "or(item(mekanism:basic_mechanical_pipe)item(mekanism:advanced_mechanical_pipe)item(mekanism:elite_mechanical_pipe)item(mekanism:ultimate_mechanical_pipe))"
+        }
+      ],
+      "quote": "Mechanical Pipes will move Fluids."
+    },
+    {
+      "chapter": "mekanism",
+      "id": "3AF1DC02E9A0010C",
+      "title": "Pressurized Tubes",
+      "task_items": [
+        "ftbfiltersystem:smart_filter"
+      ],
+      "dependencies": [
+        "5E116409DC7D30BB"
+      ],
+      "task_components": [
+        {
+          "ftbfiltersystem:filter": "or(item(mekanism:basic_pressurized_tube)item(mekanism:advanced_pressurized_tube)item(mekanism:elite_pressurized_tube)item(mekanism:ultimate_pressurized_tube))"
+        }
+      ]
+    }
+  ],
+  "source_files": [
+    "config/ftbquests/quests/chapters/basic_logistics.snbt",
+    "config/ftbquests/quests/lang/en_us/chapters/basic_logistics.snbt",
+    "config/ftbquests/quests/chapters/mekanism.snbt",
+    "config/ftbquests/quests/lang/en_us/chapters/mekanism.snbt",
+    "CHANGELOG.md"
+  ]
+}

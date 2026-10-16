@@ -64,7 +64,9 @@ class TestBaseSpotsGuide(unittest.TestCase):
                        "No recipe", "no verified best coordinate"):
             self.assertIn(needle, self.text)
         self.assertIn("references/base-spots-guide.md", self.skill)
-        self.assertIn("version: 1.5.0", self.skill)
+        match = re.search(r"^version:\s*(\d+)\.(\d+)\.(\d+)$", self.skill, re.MULTILINE)
+        self.assertIsNotNone(match)
+        self.assertGreaterEqual(tuple(map(int, match.groups())), (1, 5, 0))
 
 
 

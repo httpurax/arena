@@ -339,6 +339,9 @@ in-game quest book — which is authoritative — settle anything concrete.
 
 ## Cross-references
 
+- `references/item-fluid-transport-guide.md` — the dedicated follow-up to #3: choosing
+  item/fluid transport, extraction, filters, and diagnosing a stalled connection.
+
 - `references/progression.md` — the four stages and quest-book order this ranking sits
   inside.
 - `references/getting-started.md` — first hours and setup (the quests before #1 even

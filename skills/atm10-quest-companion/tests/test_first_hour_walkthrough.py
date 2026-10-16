@@ -28,7 +28,7 @@ Covered:
     token in the doc must be in the snapshot; every bold run must be a verified
     title or an allow-listed phrase; no coordinates, y-levels, or placeholder
     markers;
-  * SKILL.md wiring: version 1.5.0, the doc linked from When to Use / Research
+  * SKILL.md wiring: version >= 1.5.0, the doc linked from When to Use / Research
 
     Grounding / Behaviors / Completion Checklist, the beginner question named;
   * offline guarantee: this suite imports no network module.
@@ -667,8 +667,9 @@ class TestSkillWiring(unittest.TestCase):
         match = re.search(r"^version:\s*(\S+)\s*$", self.skill, re.MULTILINE)
         self.assertIsNotNone(match, "SKILL.md frontmatter has no version")
         assert match is not None
-        self.assertEqual(match.group(1), SKILL_VERSION,
-                         f"adding the first-hour doc bumps the skill to {SKILL_VERSION}")
+        self.assertGreaterEqual(tuple(map(int, match.group(1).split("."))),
+                                tuple(map(int, SKILL_VERSION.split("."))),
+                                f"the first-hour doc requires at least version {SKILL_VERSION}")
 
     def test_doc_is_linked_from_the_skill(self) -> None:
         self.assertGreaterEqual(

@@ -819,11 +819,11 @@ class BossGuideGuardrailsTest(unittest.TestCase):
         ):
             self.assertIn(needle, self.skill_flat)
 
-    def test_skill_version_is_150(self):
+    def test_skill_version_is_at_least_150(self):
         match = re.search(r"^version:\s*(\d+)\.(\d+)\.(\d+)\s*$",
                           self.skill, re.MULTILINE)
         self.assertIsNotNone(match)
-        self.assertEqual(tuple(int(p) for p in match.groups()), (1, 5, 0))
+        self.assertGreaterEqual(tuple(int(p) for p in match.groups()), (1, 5, 0))
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.5.0
+version: 1.6.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -97,6 +97,10 @@ pack's own shipped config rather than from generic advice.
 - The user reports lag — low FPS, stuttering, a slowly ticking server — and asks how to fix
   it ("how do I fix lag?"): which of the pack's own settings and machines to look at, in
   what order, per `references/lag-fix-guide.md`.
+
+- The user asks how to move items or fluids between machines, which pipes to use,
+  how to filter outputs, or why a connected pipe moves nothing — answered from
+  `references/item-fluid-transport-guide.md`.
 
 ## When Not to Use
 
@@ -340,6 +344,15 @@ those fields or pretend the skill knows every requirement:
   and value judgements are explicitly approximate. Do not confuse a reward with a task,
   recipe or unlock, rename untitled quests, or promise specific loot-table outcomes.
   The in-game quest book remains authoritative if the player's version differs.
+
+- **The item/fluid transport guide shares the pinned snapshot.**
+  `references/item-fluid-transport-guide.md` uses pack 8.2 commit `e5e3d1d83e`
+  (2026-09-22): `config/ftbquests/quests/chapters/basic_logistics.snbt` and
+  `mekanism.snbt`, with their `lang/en_us/chapters/` files. Its titles, task items,
+  quotes, and dependencies are verified; branch choice and diagnostic order are
+  judgement. Untitled entries remain untitled, smart-filter tasks are not recipes,
+  fluids are not chemicals, and no transfer rate or performance gain is promised.
+  The player's in-game quest book and JEI remain authoritative.
 
 ## Setup — first run only
 
@@ -594,6 +607,14 @@ Stages overlap by design; use them to orient, not to gate.
   quote its verified quest titles and config values, keep its `judgement` and
   `translation` flags, and **never state a claim or force-load limit** — the pack ships no
   FTB Chunks config, so any number would be invented.
+- **Item/fluid transport questions go to `references/item-fluid-transport-guide.md`.**
+  "Which pipes should I use?", "how do I filter outputs?", "why does nothing move?" →
+  the Pipez, Mekanism, Laser IO, or Integrated Dynamics branch that fits the player.
+  These are alternatives, not a mandatory ladder. Distinguish items, fluids, and
+  chemicals; check extraction, machine sides, destination capacity, and filters.
+  Follow the guide's judgement-labelled diagnostic order; use the chunk-loading guide
+  if it fails only while away, and the lag guide for performance symptoms. Never invent
+  recipes, universal side colors, rates, or cross-dimensional guarantees.
 - **Autocrafting questions go to the autocrafting guide.** "How do I make the game craft
   things for me?", "how do I get autocrafting running?", "AE2 or Refined Storage?",
   "what is a Pattern / crafting CPU / Autocrafter?" → `references/autocrafting-guide.md`:
@@ -920,4 +941,8 @@ Before saying the companion is up to date, confirm:
   `config/` folder and the in-game quest book win over the guide's 8.2 snapshot.
 - Reward answers used `references/best-reward-quests.md` for verified titles/ids and
   fixed payoffs, kept judgement/uncertainty labels, and deferred to the current book.
+- Item/fluid transport answers used `references/item-fluid-transport-guide.md`, kept
+  branch choice and diagnosis labelled judgement, preserved untitled quests and
+  smart-filter semantics, distinguished fluids from chemicals, and promised no rate
+  or performance gain. Current quest entries and JEI settled specifics.
 - `data/progress.json` is still untracked by git.

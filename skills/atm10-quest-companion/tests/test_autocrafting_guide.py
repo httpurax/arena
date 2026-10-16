@@ -400,8 +400,9 @@ class TestAutocraftingGuide(unittest.TestCase):
         skill = SKILL_MD.read_text(encoding="utf-8")
         self.assertIn("references/autocrafting-guide.md", skill,
                       "SKILL.md must point at the new guide")
-        self.assertRegex(skill, re.compile(r"^version:\s*1\.5\.0\s*$", re.MULTILINE),
-                         "SKILL.md version must be bumped to 1.5.0 for the new docs")
+        match = re.search(r"^version:\s*(\d+)\.(\d+)\.(\d+)\s*$", skill, re.MULTILINE)
+        self.assertIsNotNone(match)
+        self.assertGreaterEqual(tuple(map(int, match.groups())), (1, 5, 0))
 
         self.assertIn("autocrafting", skill.lower())
 
