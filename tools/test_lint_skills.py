@@ -200,6 +200,18 @@ class RuleTest(unittest.TestCase):
             "frontmatter.license", "frontmatter.platforms",
         }, output)
 
+    def test_description_over_60_characters_is_rejected(self):
+        name = "long-description-skill"
+        description = "x" * 61
+        frontmatter = (
+            f"---\nname: {name}\ndescription: {description}\nversion: 1.0.0\n"
+            "license: MIT\nplatforms: [linux, macos, windows]\n---\n"
+        )
+        write_skill(self.root, name, frontmatter)
+        returncode, output = run_linter(self.root)
+        self.assertNotEqual(returncode, 0, output)
+        self.assertEqual(rules_in(output), {"frontmatter.description"}, output)
+
     def test_invalid_yaml_frontmatter_is_rejected(self):
         write_skill(self.root, "tabbed-skill", "---\nname: tabbed-skill\nmetadata:\n\ttags: [x]\n---\n")
         returncode, output = run_linter(self.root)
