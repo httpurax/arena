@@ -463,6 +463,9 @@ def _check_frontmatter(data: "dict[str, Any]", skill_name: str) -> "list[tuple[s
             f"version {version!r} is not X.Y.Z (three dot-separated integers, e.g. 1.2.2)",
         ))
 
+    if isinstance(description, str) and len(description) > 60:
+        problems.append(("frontmatter.description", "description exceeds 60 characters"))
+
     license_value = data.get("license")
     if license_value is not None and not isinstance(license_value, str):
         problems.append((
