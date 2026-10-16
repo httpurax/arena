@@ -18,6 +18,7 @@ Agent-Mode sessions.
 | [`study-flashcards`](skills/study-flashcards/) | Creates source-grounded flashcards and quizzes, with an interactive offline HTML study guide. |
 | [`tarkov-spt-companion`](skills/tarkov-spt-companion/) | Maintenance companion for one single-player Tarkov (SPT 3.10.5, ~120 mods) install: the mod inventory and load order, the `/client/locations` hang and `TypeError` triage, 16 GB RAM tuning, backup/restore, and a server-side-only gate for new mods. |
 | [`test-engineering`](skills/test-engineering/) | Designs reliable test strategies, local fixtures, boundary mocks, and flaky-test fixes. |
+| [`fish-audio-quickstart`](skills/fish-audio-quickstart/) | Quick start for Fish Audio text-to-speech: API key, Python SDK or cURL, voice and model selection, common errors. |
 
 ## Install the skills into Hermes
 
@@ -45,6 +46,7 @@ category its `SKILL.md` declares, which is the layout Hermes loads:
 <skills root>/productivity/study-flashcards/
 <skills root>/software-development/application-security-engineering/
 <skills root>/development/test-engineering/
+<skills root>/development/fish-audio-quickstart/
 ```
 
 The category is the `category` key under `metadata.hermes` in each skill's frontmatter. A skill
