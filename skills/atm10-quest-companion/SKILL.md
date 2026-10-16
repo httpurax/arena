@@ -89,6 +89,15 @@ pack's own shipped config rather than from generic advice.
   do I start it?" (see `references/ore-processing-ladder.md`).
 - The user asks *when can I fly?* — which flight item comes first, whether the pack has an
   Angel Ring or a flight totem, or when creative flight becomes possible.
+
+- **Transport questions go to `references/logistics-guide.md`.** "which pipe?", "how do I move items/fluids/energy/gas?" and the pack's own lag ranking — four Logistics-group chapters compared by quest text, with concrete ids, and a "what it does not cover" list. Keep its hedges (layout, recipes, throughput maths are not in the doc).
+- **Mystical Agriculture / Mystical Agradditions questions** (essence tiers, seeds, which
+  crop, where the crux goes, whether the chapter has a title) →
+  `references/mystical-agriculture-guide.md`: its snapshot-backed tier ladder with verified
+  titles and ids, and the same "verify in-game" caveats.
+- **"How do I brew potions?", "which reagent, modifier, or brewery machine?", or
+  "how do I scale a potion?" → `references/potions-brewing-guide.md`: the book's
+  brewing path in chapter/quest order with its verified ids and pack-specific caveats.
 - The user asks for a progress report: overall completion, per-stage completion, or the
   next unfinished chapters in quest-book order.
 - The user asks about enchanting — "how do I get the best enchants?", why his Eterna is
@@ -207,6 +216,7 @@ those fields or pretend the skill knows every requirement:
   the pack changes them between versions. Quote them as *what the book asked for in 8.2*,
   and still defer to the in-game quest book and JEI.
 - **The power guide shares that snapshot.** `references/power-guide.md` was read from
+- **The logistics guide was read from the same snapshot.** `references/logistics-guide.md` is also pegged to commit `e5e3d1d83e` (pack 8.2); quote its provenance and dates as its own file states. Keep its hedges.
   the same pack repository at the same commit (`e5e3d1d83e`, pack 8.2): the Power
   group's four chapters (`basic_power`, `extreme_reactors`, `generators`, `powah`),
   Chapter 1's first-power quests, and the power lines inside the tech chapters, with
@@ -830,6 +840,7 @@ This repository is public; the user's playthrough data is not part of it.
   usernames, server addresses, or anything else identifying.
 
 ## Completion Checklist
+- references/logistics-guide.md (`references/logistics-guide.md`) updated in this batch; keep its hedges and pending list.
 
 Before saying the companion is up to date, confirm:
 
