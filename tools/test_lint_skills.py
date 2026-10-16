@@ -226,6 +226,17 @@ class RuleTest(unittest.TestCase):
         self.assertIn("tests.failed", output)
         self.assertIn("AssertionError", output)  # the suite's own output is shown
 
+    def test_description_over_60_characters_is_rejected(self):
+        description = "This description deliberately contains more than sixty characters."
+        frontmatter = GOOD_FRONTMATTER.format(name="long-description-skill").replace(
+            "description: A throwaway skill that exists only inside a temp directory.",
+            f"description: {description}",
+        )
+        write_skill(self.root, "long-description-skill", frontmatter)
+        returncode, output = run_linter(self.root)
+        self.assertNotEqual(returncode, 0, output)
+        self.assertEqual(rules_in(output), {"frontmatter.description"}, output)
+
     def test_minimal_conforming_skill_is_accepted(self):
         write_skill(self.root, "minimal-skill")
         returncode, output = run_linter(self.root)
