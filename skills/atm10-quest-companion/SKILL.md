@@ -94,6 +94,11 @@ pack's own shipped config rather than from generic advice.
 - The user asks about enchanting — "how do I get the best enchants?", why his Eterna is
   stuck at 30, what Infusion or a given shelf is for, or how high an enchantment like
   Sharpness can go in this pack → `references/enchanting-guide.md`.
+- The user asks about **logistics and item/fluid/gas/energy routing** — "how do I move
+  items, fluids, gases, or power between machines and chests?", "Pipez vs LaserIO vs
+  Mekanism transporters vs Integrated Dynamics vs Modular Routers — which should I use?",
+  "why won't my Mekanism machine output into a pipe?", or "how do Pipez upgrades, LaserIO
+  cards, or Modular Router modules work?" → `references/logistics-guide.md`.
 - The user reports lag — low FPS, stuttering, a slowly ticking server — and asks how to fix
   it ("how do I fix lag?"): which of the pack's own settings and machines to look at, in
   what order, per `references/lag-fix-guide.md`.
@@ -340,6 +345,15 @@ those fields or pretend the skill knows every requirement:
   and value judgements are explicitly approximate. Do not confuse a reward with a task,
   recipe or unlock, rename untitled quests, or promise specific loot-table outcomes.
   The in-game quest book remains authoritative if the player's version differs.
+- **The logistics guide dates itself the same way.** `references/logistics-guide.md`
+  was read from the same pinned commit (`e5e3d1d83e`, pack **8.2**): the four
+  Logistics-group chapters (`basic_logistics`, `integrated_dynamics`, `modular_router`,
+  `pylons`), the logistics chains in `mekanism` and `basic_power`, the Chapter 3
+  cross-check in `chapter_2_the_star.snbt`, their `lang/en_us/chapters/*.snbt` files,
+  `chapter_groups.snbt`, and `config/crash_assistant/modlist.json`. Its 31 titled quests,
+  105 untitled quests (marked *(no title in the config)*), item ids, and quoted rates are
+  that snapshot's; quote them as *what the book asked for in 8.2*, keep its *(judgement)*
+  labels on which logistics mod to pick, and still defer to the in-game quest book and JEI.
 
 ## Setup — first run only
 
@@ -625,6 +639,19 @@ Stages overlap by design; use them to orient, not to gate.
   Creative Jetpack — each with its verified quest, task item, and dependency chain. Lead
   with the cheapest reliable path, keep the doc's *(judgement)* labels on timing, say
   plainly what the 8.2 book does not have, and send recipes and energy numbers to JEI.
+- **Logistics and item/fluid/gas/energy transport questions go to
+  `references/logistics-guide.md`.** "How do I move items, fluids, gases, or power between
+  machines and chests?", "Pipez vs LaserIO vs Mekanism transporters vs Integrated Dynamics
+  vs Modular Routers — which should I use?", "why won't my Mekanism machine output into a
+  pipe?" → the Logistics group's four chapters (**Basic Logistics**, **Integrated
+  Dynamics**, **Modular Routers**, **Pylons**) plus the Mekanism and Basic Power transport
+  lines in dependency order: Pipez's wrench-configured pipes and upgrades, Mekanism's five
+  pipe families and Side Configs + Auto-Eject rule, LaserIO's directional cards, filters,
+  and overclockers, Transfer Labels, Integrated Dynamics' Logic Cables and Variable Cards,
+  and Modular Routers' wireless single-block modules. Present the overlapping mods as
+  alternatives (none gates the ATM Star in Chapter 3), keep the *(judgement)* labels on
+  recommendations, mark untitled quests *(no title in the config)*, and send recipes and
+  unquoted rates to the quest entry and JEI.
 - When the choice is between alternatives (AE2 vs Refined Storage, Mekanism vs Create vs
   Modern Industrialization), present them as alternatives with their trade-offs and let
   the user pick; never invent a "required" path — the pack itself says quests are
@@ -908,6 +935,12 @@ Before saying the companion is up to date, confirm:
 - Flight answers quoted verified titles or ids from `references/flight-guide.md`, kept its
   *(judgement)* labels on timing, and promised nothing the 8.2 book lacks — no Angel Ring,
   no flight totem, no elytra location.
+- Logistics answers quoted verified titles or ids from `references/logistics-guide.md`,
+  presented Pipez, LaserIO, Mekanism pipes, Integrated Dynamics, Modular Routers, and
+  Transfer Labels as alternatives (noting none gates Chapter 3's ATM Star), marked untitled
+  quests *(no title in the config)*, printed both sides where two Pipez quests in the
+  config disagree on filter upgrade tier, and pointed at the in-game quest book and JEI
+  for recipes and unquoted rates.
 - Mob-farm answers quoted verified titles or ids from `references/mob-farm-progression.md`,
   marked the vanilla dark-room grinder as general knowledge rather than pack content, and
   still pointed at the in-game quest book and JEI for current recipes and rates.

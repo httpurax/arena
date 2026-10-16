@@ -345,6 +345,9 @@ in-game quest book — which is authoritative — settle anything concrete.
   start).
 - `references/key-mods.md` — what Mekanism, Pipez-adjacent logistics mods, AE2/RS, and
   the farm mods each do, when to start them, what they lead to.
+- `references/logistics-guide.md` — the full map of the Logistics group (*Basic
+  Logistics*, *Integrated Dynamics*, *Modular Routers*, *Pylons*) and the Mekanism
+  transport line behind #3 above.
 - `references/creative-checklist.md` — the endgame version of this question: automating
   the star.
 
