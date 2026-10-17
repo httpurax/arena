@@ -200,6 +200,8 @@ class CategoryMappingTest(TempTree):
             "arena-pr-watcher": "productivity/arena-pr-watcher",
             "atm10-quest-companion": "gaming/atm10-quest-companion",
             "course-material-ingestion": "research/course-material-ingestion",
+            "fish-audio-quickstart": "development/fish-audio-quickstart",
+            "hyperframes-quickstart": "development/hyperframes-quickstart",
             "job-application-kit": "productivity/job-application-kit",
             "job-application-tracker": "productivity/job-application-tracker",
             "moodle-course-management": "productivity/moodle-course-management",
