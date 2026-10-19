@@ -978,7 +978,7 @@ class TestSkillWiring(DocTestCase):
         self.assertIsNotNone(match, "SKILL.md must keep an X.Y.Z version")
         assert match is not None
         # We deliberately do NOT assert a skill version bump here — this cherry-pick
-        # lands only the new guide, leaving SKILL.md at 1.5.0.
+        # lands only the new guide, leaving SKILL.md at 1.6.0.
         self.assertRegex(match.group(1), r"^\d+\.\d+\.\d+$")
 
     def test_frontmatter_description_stays_short(self) -> None:
