@@ -1,7 +1,7 @@
 ---
 name: atm10-quest-companion
 description: Guide for All the Mods 10 progression and quests.
-version: 1.5.0
+version: 1.6.0
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -106,6 +106,12 @@ pack's own shipped config rather than from generic advice.
 - The user reports lag — low FPS, stuttering, a slowly ticking server — and asks how to fix
   it ("how do I fix lag?"): which of the pack's own settings and machines to look at, in
   what order, per `references/lag-fix-guide.md`.
+- The user reports a **crash or a launch that never finishes** — "ATM10 won't start", "it
+  closes on the loading screen", "there is no crash report", a `latest.log` that stops
+  mid-loading, a launcher exit code such as `-1073740791` / `0xC0000409`, an
+  `hs_err_pid*.log`, or a Crash Assistant "Piracy Warning" / "Too Many Changes" dialog —
+  answer from `references/crash-troubleshooting.md`: collect the evidence first, decode
+  the exit code, then check memory, the pack's integrity, and the graphics stack.
 
 ## When Not to Use
 
@@ -113,10 +119,10 @@ pack's own shipped config rather than from generic advice.
   chapter list here is ATM10's; say so and fall back to general advice.
 - The user wants exact quest requirements, item ids, or recipes recited — this skill must
   not invent them (see Research Grounding below); point at the quest book and JEI.
-- The user wants game-installation troubleshooting beyond the setup notes in
-  `references/getting-started.md`, or hardware-level help (drivers, OS settings, GPU
-  choices) — `references/lag-fix-guide.md` covers what the *pack* ships and deliberately
-  stops at the machine.
+- The user wants hardware-level help **beyond a first triage** — a failing GPU, a Windows
+  reinstall, driver debugging, overclocking. `references/crash-troubleshooting.md` covers
+  the launch-and-exit-code triage, the pack's own memory numbers and the mod-set check,
+  and deliberately stops at the driver.
 
 ## Research Grounding (read before advising)
 
@@ -138,6 +144,14 @@ those fields or pretend the skill knows every requirement:
 - **Uncertain details are flagged in the docs as approximate** (ore levels, tier names,
   mod availability, version-sensitive mechanics). When repeating such a detail, keep the
   hedge: "guides say roughly X — verify in-game".
+- **The crash page dates itself too.** `references/crash-troubleshooting.md` was written
+  from the same pack 8.2 snapshot (`e5e3d1d83e`, 2026-09-22):
+  `config/memorysettings.json`, `config/crash_assistant/config.toml`,
+  `config/crash_assistant/modlist.json`, the 8.0→8.1 and 8.1→8.2 changelogs, and
+  `MOD_ISSUES.md` — plus **one** ATM10 8.0 field report (2026-10-19) whose log had no
+  stack trace. Its field-report quotes describe that single launch, never the user's
+  install; its exit codes are Windows NTSTATUS values, not pack content; and it names no
+  mod as a culprit, because that log could not name one.
 - ATM10 updates often; the chapter list here matches pack 8.x. If the user's book shows
   chapters this skill does not know, trust his book and note the mismatch — then refresh
   the list with the pack-update workflow below.
@@ -840,7 +854,6 @@ This repository is public; the user's playthrough data is not part of it.
   usernames, server addresses, or anything else identifying.
 
 ## Completion Checklist
-- references/logistics-guide.md (`references/logistics-guide.md`) updated in this batch; keep its hedges and pending list.
 
 Before saying the companion is up to date, confirm:
 
@@ -929,6 +942,15 @@ Before saying the companion is up to date, confirm:
   `references/lag-fix-guide.md` verifies from the pack config, kept its
   approximate/judgement hedges, promised no frame-rate number, and told the user his own
   `config/` folder and the in-game quest book win over the guide's 8.2 snapshot.
+- Any crash answer followed `references/crash-troubleshooting.md`: the evidence came
+  before the suspect (a log with no stack trace named no culprit), the exit code was
+  decoded against its table, memory was quoted from `config/memorysettings.json` rather
+  than a remembered launcher default, `hs_err_pid*.log` was distinguished from
+  `crash-reports/`, and offline mode's support limits were stated without calling offline
+  mode the cause.
+- Transport answers came from `references/logistics-guide.md`, quoted its logistics
+  ranking as quest text rather than as a measurement, kept its "what it does not cover"
+  list, and invented no throughput figure.
 - Reward answers used `references/best-reward-quests.md` for verified titles/ids and
   fixed payoffs, kept judgement/uncertainty labels, and deferred to the current book.
 - `data/progress.json` is still untracked by git.
