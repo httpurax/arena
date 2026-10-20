@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -41,6 +41,33 @@ jobs:
 
       - name: Build
         run: ./gradlew build --stacktrace
+
+      - name: Inspect jar
+        run: |
+          set -euo pipefail
+          jar_file=$(ls build/libs/*.jar | head -1)
+          echo "== jar: $jar_file ($(stat -c%s "$jar_file") bytes)"
+          unzip -l "$jar_file"
+          echo "== neoforge.mods.toml"
+          unzip -p "$jar_file" META-INF/neoforge.mods.toml
+          for entry in \
+            META-INF/neoforge.mods.toml \
+            certusore.png \
+            assets/certusore/lang/en_us.json \
+            assets/certusore/blockstates/certus_quartz_ore.json \
+            assets/certusore/textures/block/certus_quartz_ore_0.png \
+            data/certusore/loot_table/blocks/certus_quartz_ore.json \
+            data/certusore/worldgen/placed_feature/certus_quartz_ore.json \
+            data/certusore/neoforge/biome_modifier/add_certus_quartz_ore.json \
+            data/c/tags/item/ores/certus_quartz.json \
+            com/httpurax/certusore/CertusQuartzOre.class; do
+            unzip -l "$jar_file" "$entry" > /dev/null || { echo "MISSING $entry"; exit 1; }
+          done
+          echo "== all expected entries present"
+          if unzip -p "$jar_file" META-INF/neoforge.mods.toml | grep -q '\${'; then
+            echo "unexpanded properties in neoforge.mods.toml"; exit 1
+          fi
+          echo "== mods.toml fully expanded"
 
       - name: Upload jar
         uses: actions/upload-artifact@v4
