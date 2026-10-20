@@ -1,0 +1,16 @@
+# Gradle / ModDev
+.gradle/
+build/
+run/
+run-data/
+logs/
+*.log
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+bin/
