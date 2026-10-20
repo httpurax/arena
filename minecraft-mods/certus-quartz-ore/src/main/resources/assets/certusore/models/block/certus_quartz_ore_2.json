@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "certusore:block/certus_quartz_ore_2"
+  }
+}

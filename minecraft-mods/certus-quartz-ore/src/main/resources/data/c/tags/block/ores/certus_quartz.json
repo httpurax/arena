@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "certusore:certus_quartz_ore",
+    "certusore:deepslate_certus_quartz_ore",
+    "certusore:charged_certus_quartz_ore",
+    "certusore:deepslate_charged_certus_quartz_ore"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "certusore:block/deepslate_certus_quartz_ore_0"
+      },
+      {
+        "model": "certusore:block/deepslate_certus_quartz_ore_1"
+      },
+      {
+        "model": "certusore:block/deepslate_certus_quartz_ore_2"
+      },
+      {
+        "model": "certusore:block/deepslate_certus_quartz_ore_3"
+      }
+    ]
+  }
+}
