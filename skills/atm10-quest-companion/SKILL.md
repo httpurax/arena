@@ -828,6 +828,58 @@ The shipped list is reproducible: rebuilding from pack 8.2 (main `e5e3d1d83e`)
 regenerates `examples/progress.example.json` chapter-for-chapter, and the skill's tests
 prove the pipeline against a small SNBT fixture rather than the full pack clone.
 
+## Jinx Link — the PC-side in-game chat service
+
+`scripts/jinx_link.py` is the PC half of the in-game Jinx Talk companion. It reads the
+live save files (FTB Quests progress through the `ai_service.py` helpers that ship beside
+it on the PC — that module is **not** part of this repository), answers `!jinx` questions
+from `kubejs/ai/outbox.jsonl` with the local LLM, writes each reply to
+`kubejs/ai/inbox.json`, speaks it through Windows TTS, and runs the quest sync so the
+chapter-complete toasts come from this one process. It stays read-only on game files.
+
+```bash
+python3 scripts/jinx_link.py --world "<world dir>" \
+    --chapters "<config/ftbquests/quests/chapters>" --instance "<instance dir>" \
+    [--lang en_us.snbt] [--llm-url http://localhost:8080/v1] [--no-voice] [--http-port 8712]
+```
+
+### HTTP API
+
+Next to that file flow the service listens on **`127.0.0.1:8712`** by default
+(`--http-host`, `--http-port`, and `--no-http` to switch it off). It binds loopback only —
+a non-loopback `--http-host` is refused rather than bound — and serves on a background
+daemon thread, so a dead socket or a malformed request is logged on stderr and never
+stops the file-based main loop.
+
+| Endpoint | Body | Answer |
+|---|---|---|
+| `GET /health` | — | `{"ok": true}` |
+| `POST /chat` | `{"player", "message", "pos": [x, y, z], "dim", "ts"}` | `{"reply": "<text>"}` |
+| `POST /event` | `{"type": "quest_completed", "quest": "<title>", "player"}` | `{"announce": "Chapter complete: <quest>! Nice work."}`, spoken when voice is on; `{}` for any other type |
+| `GET /cues` | — | `{"cues": [...]}` — **drained**: each cue is handed out exactly once, so the next call returns `[]` until the sync queues more |
+
+Two rules matter whenever this path changes:
+
+- **An HTTP reply goes straight back to the mod and is never written to
+  `kubejs/ai/inbox.json`.** The mod prints the response body itself, so writing it to the
+  inbox as well would double-post every answer in game chat. Only the file flow (outbox →
+  inbox) writes the inbox.
+- `/chat` builds its answer exactly like the file flow — same persona, same live CONTEXT
+  block from the save files, same short chat history, same cleaning, same quest-aware
+  fallback when the LLM is unreachable — but gives the LLM only **20 seconds**, because
+  the mod stops reading after ~25s and a fallback reply beats a timeout (the file flow
+  keeps its 90s).
+
+The quest sync queues one cue per newly completed chapter —
+`{"kind": "chat", "text": "Chapter complete: <chapter>. Suggested next: <quest>"}`, or
+`check the quest book` when no next quest is known — the same line it speaks; its
+file-inbox toasts are unchanged. Malformed JSON answers `400 {"error": "..."}`, an unknown
+path a JSON `404`.
+
+`tests/test_jinx_link.py` proves all of it offline: the server binds an ephemeral loopback
+port inside the test process, `ask_llm` and `speak` are monkeypatched, and a small
+stand-in supplies `ai_service`, so no Minecraft install, no LLM and no network are needed.
+
 ## Privacy
 
 This repository is public; the user's playthrough data is not part of it.
