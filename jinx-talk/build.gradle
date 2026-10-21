@@ -44,12 +44,27 @@ tasks.withType(JavaCompile).configureEach {
     options.release = 21
 }
 
-// No extra testing libraries: this executable suite uses the JDK's local HTTP server.
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // ModDevGradle's main Minecraft libraries are not inherited by the plain test source set.
+    // Match Minecraft 1.21.1's Gson; this is test-only, never bundled into the mod jar.
+    testImplementation 'com.google.code.gson:gson:2.10.1'
+}
+
+// No test framework needed: this executable suite uses the JDK's local HTTP server.
 tasks.register('coreTest', JavaExec) {
     dependsOn testClasses
     classpath = sourceSets.test.runtimeClasspath
     mainClass = 'dev.jinxtalk.ChatCoreTest'
     enableAssertions = true
+}
+
+// The suite has a main method, not JUnit methods; coreTest replaces framework discovery.
+tasks.named('test') {
+    enabled = false
 }
 
 tasks.named('check') {
