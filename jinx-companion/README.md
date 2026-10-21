@@ -18,7 +18,8 @@ Jinx Companion is a standalone local web application that:
 
 1. **Double-click `start.bat`** - This is the easiest way to start the app
    - It starts the Python server
-   - Automatically opens your browser to http://127.0.0.1:8720
+   - The server opens exactly one browser tab to http://127.0.0.1:8720
+     (`start.bat` itself does not open a browser, so you never get two tabs)
    - The server runs on port 8720 on localhost only
 
 2. **Manual start** (if preferred):
@@ -70,9 +71,21 @@ Jinx Companion reads the following files from your Minecraft instance:
 
 ### Configuration Files (Read-Only)
 - `<instance>/config/ftbquests/quests/chapters/*.snbt` - Chapter definitions
-  - Contains chapter names and quest lists
+  - Contains chapter names, quests, their tasks and rewards
 - `<instance>/config/ftbquests/quests/lang/en_us.snbt` - Quest display names
-  - Contains human-readable names for quests and chapters
+  - Contains human-readable names for quests, chapters and tasks
+  - Both the single `lang/en_us.snbt` file and the split
+    `lang/en_us/{chapter.snbt,chapters/*.snbt}` layout are supported
+
+### Player Data (Read-Only)
+- `<instance>/saves/<world>/playerdata/*.dat` - Player save
+  - Gives the experience level and the current dimension
+  - Gzipped NBT, decoded with Python's standard library only
+- `<instance>/saves/<world>/level.dat` - Used as a fallback when no
+  `playerdata` file is readable
+
+If the player data cannot be read, these details are skipped silently and the
+rest of the game state is still shown.
 
 **Note**: The app only reads these files. It never modifies your Minecraft saves or configuration.
 
@@ -81,10 +94,27 @@ Jinx Companion reads the following files from your Minecraft instance:
 Jinx uses the following information from your save files:
 
 - **World Name**: Your current world
+- **Player**: Your experience level and current dimension (when readable)
 - **Chapters Progress**: How many chapters you've completed
 - **Quests Progress**: Total quests completed vs total available
-- **Completed Quests**: Names of up to 10 recently completed quests
-- **Next Quests**: Names of up to 10 quests you haven't completed yet
+- **Completed Quests**: Names of up to 10 completed quests
+- **Next Quests**: Names of up to 10 quests you haven't completed yet,
+  in quest-book order
+- **Up next (details)**: Up to 5 incomplete quests with their task
+  requirements and reward names, e.g.
+
+  ```
+  Up next (details):
+  1. Stockpile Stone (Getting Started)
+     Tasks: Obtain 64x minecraft:stone
+     Rewards: 100 XP
+  2. Into the Nether (Getting Started) [locked]
+     Tasks: Visit The Nether
+  ```
+
+  Quests whose dependencies are already completed come first, followed by
+  still-locked quests (marked `[locked]`) and optional quests (marked
+  `[optional]`). Hidden quests are never listed.
 
 A chapter is considered "completed" when all of its quests are completed.
 
@@ -148,11 +178,16 @@ python -m pytest tests/ -v
 ```
 
 Tests verify:
-- SNBT file parsing
+- SNBT file parsing (including comma-less FTB Quests files and URLs in strings)
 - Completed quests extraction
-- Chapter definitions loading
+- Chapter definitions and quest details (tasks and rewards) loading
 - Quest name loading
-- Game state building
+- Game state building, including the `Up next (details)` section
+- Graceful behaviour when chapter, task, reward or language fields are missing
+- Best effort player basics (experience level and dimension)
+- Shipped `config.json` defaults and that exactly one browser tab opens
+
+Tests are offline: they use local fixtures and temporary directories only.
 
 ## Troubleshooting
 

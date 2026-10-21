@@ -3,6 +3,6 @@
   "api_key": "",
   "model": "auto",
   "fallback_base_url": "http://127.0.0.1:8080/v1",
-  "minecraft_instance_path": "",
-  "world_name": ""
+  "minecraft_instance_path": "C:\\Users\\naddeer\\AppData\\Roaming\\.minecraft\\versions\\All the Mods 10 - ATM10 All the Mods 10-5.2",
+  "world_name": "naders last"
 }

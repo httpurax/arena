@@ -1,0 +1,94 @@
+{
+	default_hide_dependency_lines: false
+	filename: "alpha"
+	group: ""
+	icon: {
+		id: "minecraft:oak_sapling"
+	}
+	id: "AAAA000000000001"
+	order_index: 0
+	progression_mode: "flexible"
+	quest_links: [ ]
+	title: "Alpha &6Chapter"
+	quests: [
+		{
+			id: "AAAA00000000000A"
+			rewards: [{
+				id: "AAAA0000000000A3"
+				type: "xp_levels"
+				xp_levels: 2
+			}]
+			size: 1.5d
+			tasks: [
+				{
+					id: "AAAA0000000000A1"
+					item: { count: 1, id: "minecraft:oak_log" }
+					type: "item"
+				}
+				{
+					id: "AAAA0000000000A2"
+					type: "checkmark"
+				}
+			]
+			x: 0.0d
+			y: 0.0d
+		}
+		{
+			id: "AAAA00000000000B"
+			dependencies: ["AAAA00000000000A"]
+			tasks: [{
+				entity: "minecraft:zombie"
+				id: "AAAA0000000000B1"
+				type: "kill"
+				value: 5L
+			}]
+			rewards: [{
+				id: "AAAA0000000000B2"
+				type: "item"
+				item: { count: 16, id: "minecraft:bread" }
+			}]
+			x: 1.5d
+			y: 0.0d
+		}
+		{
+			id: "AAAA00000000000C"
+			optional: true
+			tasks: [{
+				count: 64L
+				id: "AAAA0000000000C1"
+				item: { count: 4, id: "minecraft:stone" }
+				type: "item"
+			}]
+			rewards: [ ]
+			x: 3.0d
+			y: 0.0d
+		}
+		{
+			id: "AAAA00000000000D"
+			invisible: true
+			optional: true
+			tasks: [{
+				id: "AAAA0000000000D1"
+				type: "checkmark"
+			}]
+			x: 4.5d
+			y: 0.0d
+		}
+		{
+			id: "AAAA00000000000E"
+			dependencies: ["AAAA00000000000C"]
+			tasks: [{
+				dimension: "minecraft:the_nether"
+				id: "AAAA0000000000E1"
+				type: "dimension"
+			}]
+			rewards: [{
+				id: "AAAA0000000000E2"
+				type: "xp"
+				xp: 50
+			}]
+			x: 6.0d
+			y: 0.0d
+		}
+	]
+}

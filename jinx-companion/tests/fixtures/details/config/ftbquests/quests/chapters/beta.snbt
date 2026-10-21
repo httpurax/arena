@@ -1,0 +1,43 @@
+{
+	// A minimal chapter: no title, no order_index, some quests omit fields.
+	filename: "beta"
+	id: "BBBB000000000001"
+	quests: [
+		{
+			id: "BBBB00000000000A"
+		}
+		{
+			id: "BBBB00000000000B"
+			tasks: [ ]
+			rewards: [ ]
+		}
+		{
+			id: "BBBB00000000000C"
+			tasks: [{
+				id: "BBBB0000000000C1"
+				item: { id: "minecraft:iron_ingot" }
+				type: "item"
+			}]
+			rewards: [{
+				id: "BBBB0000000000C2"
+				type: "xp"
+				xp: 500
+			}]
+		}
+		{
+			id: "BBBB00000000000D"
+			tasks: [{
+				advancement: "minecraft:story/mine_stone"
+				id: "BBBB0000000000D1"
+				type: "advancement"
+			}]
+		}
+		{
+			title: "Quest without an id"
+			tasks: [{
+				id: "BBBB0000000000E1"
+				type: "checkmark"
+			}]
+		}
+	]
+}
