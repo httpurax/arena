@@ -6,7 +6,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import dev.jinxtalk.ftbquests.FtbQuestsIntegration;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.ChatFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
