@@ -29,7 +29,7 @@ jobs:
           java-version: '21'
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-      - name: Build and test
+      - name: Build, test, and verify dedicated-server isolation
         shell: bash
         run: |
           set +e
@@ -37,19 +37,16 @@ jobs:
           status=$?
           cat build-output.log
           if [ "$status" -ne 0 ]; then
-            # Keep the failure visible in the check annotations as well as the log.
             python3 - <<'PY'
           from pathlib import Path
           tail = '\n'.join(Path('build-output.log').read_text(errors='replace').splitlines()[-100:])
           escaped = tail.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
           print(f'::error title=Gradle build failed::{escaped}')
           PY
+            exit "$status"
           fi
-          exit "$status"
-      - name: Verify packaged jar and dedicated-server class isolation
-        shell: bash
-        run: |
-          python3 - <<'PY'
+
+          python3 - <<'PY' > verify-output.log 2>&1
           import json, struct, zipfile
 
           jar_path = 'build/libs/jinxtalk-1.0.0.jar'
@@ -70,7 +67,7 @@ jobs:
               while idx < count:
                   tag = data[offset]
                   offset += 1
-                  if tag == 1:  # CONSTANT_Utf8
+                  if tag == 1:
                       length = struct.unpack_from('>H', data, offset)[0]
                       offset += 2
                       out.append(data[offset:offset + length].decode('utf-8', errors='replace'))
@@ -90,7 +87,9 @@ jobs:
               return out
 
           with zipfile.ZipFile(jar_path) as zf:
-              names = set(zf.namelist())
+              names = sorted(zf.namelist())
+              name_set = set(names)
+              print('JAR entries:', names)
               for required in (
                   'META-INF/neoforge.mods.toml',
                   'assets/jinxtalk/lang/en_us.json',
@@ -102,7 +101,7 @@ jobs:
                   'dev/jinxtalk/client/JinxClient.class',
                   'dev/jinxtalk/client/JinxChatScreen.class',
               ):
-                  assert required in names, f'Missing expected jar entry: {required}'
+                  assert required in name_set, f'Missing expected jar entry: {required}'
 
               toml_text = zf.read('META-INF/neoforge.mods.toml').decode('utf-8')
               assert 'modId="jinxtalk"' in toml_text
@@ -111,19 +110,36 @@ jobs:
               lang = json.loads(zf.read('assets/jinxtalk/lang/en_us.json').decode('utf-8'))
               assert 'key.jinxtalk.open_chat' in lang
 
-              for entry in sorted(names):
+              audited = []
+              for entry in names:
                   if entry.startswith('dev/jinxtalk/') and entry.endswith('.class') and not entry.startswith('dev/jinxtalk/client/'):
                       utf8_strings = read_utf8_pool(zf.read(entry))
                       for s in utf8_strings:
                           for bad in forbidden_in_common:
                               assert bad not in s, f'Dedicated-server leak in {entry}: {s}'
+                      audited.append(entry)
 
               client_pool = read_utf8_pool(zf.read('dev/jinxtalk/client/JinxClient.class'))
-              assert 'CLIENT' in client_pool, 'Expected Dist.CLIENT annotation on JinxClient'
-              assert 'Jinx Talk' in client_pool, 'Expected Jinx Talk key category in JinxClient'
-
-          print('Verified jar layout and dedicated-server class isolation.')
+              assert 'CLIENT' in client_pool, f'Expected Dist.CLIENT in JinxClient pool: {client_pool}'
+              assert 'Jinx Talk' in client_pool, f'Expected Jinx Talk in JinxClient pool: {client_pool}'
+              print('Audited server-safe classes:', audited)
+              print('Verified jar layout and dedicated-server class isolation.')
           PY
+          vstatus=$?
+          cat verify-output.log
+          python3 - "$vstatus" <<'PY'
+          import sys
+          from pathlib import Path
+          vstatus = int(sys.argv[1])
+          build_lines = Path('build-output.log').read_text(errors='replace').splitlines()[-30:]
+          verify_lines = Path('verify-output.log').read_text(errors='replace').splitlines()[-40:]
+          combined = '\n'.join(build_lines + ['---'] + verify_lines)
+          escaped = combined.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+          level = 'error' if vstatus != 0 else 'notice'
+          title = 'JAR verification failed' if vstatus != 0 else 'Build, tests, and server-isolation audit passed'
+          print(f'::{level} title={title}::{escaped}')
+          PY
+          exit "$vstatus"
       - name: Upload mod jar
         uses: actions/upload-artifact@v4
         with:
