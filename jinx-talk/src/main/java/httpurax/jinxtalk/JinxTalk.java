@@ -7,7 +7,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,7 +29,7 @@ public class JinxTalk {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public JinxTalk(IEventBus modEventBus, ModContainer container) {
-        modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(FMLCommonSetupEvent.class, this::commonSetup);
         NeoForge.EVENT_BUS.register(this);
 
         Config.register(container);

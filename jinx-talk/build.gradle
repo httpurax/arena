@@ -1,67 +1,80 @@
 // NeoForge 1.21.1 build for the jinx-talk mod (mod id: jinxtalk).
 //
-// This is a declarative NeoForge MDK-style build script. The NeoForge Gradle
-// wrapper is not part of this repository: generate it with `gradle wrapper`
-// (or copy it from a NeoForge MDK) before building. Building also requires
-// network access to Maven (maven.neoforged.com, maven.saps.dev for FTB Quests,
-// mavenCentral), which is intentionally unavailable in this sandbox; the Java
-// sources below are written against the verified NeoForge 1.21.1 and FTB
-// Quests 2101.1.6 APIs instead.
+// Uses the official NeoGradle userdev plugin (MDK-1.21.1-NeoGradle template).
+// Building requires network access to Maven (maven.neoforged.net, maven.saps.dev
+// for FTB Quests, mavenCentral), which the sandbox does not provide; the Java
+// sources are written against the verified NeoForge 1.21.1 and FTB Quests
+// 2101.1.6 APIs instead.
 
 plugins {
+    id 'java-library'
     id 'maven-publish'
-    id 'net.neoforge.gradle' version '6.0.24' apply false
+    id 'net.neoforged.gradle.userdev' version '7.1.38'
 }
 
-version = rootProject.properties['mod_version'] ?: '1.0.0'
-group = rootProject.properties['maven_group'] ?: 'com.github.httpurax'
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+// Mojang ships Java 21 to end users in 1.21.1, so mods target Java 21.
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 repositories {
-    maven {
-        name = 'neoforge'
-        url = 'https://maven.neoforged.com/releases'
-    }
-    maven {
-        name = 'neoforge-snapshots'
-        url = 'https://maven.neoforged.com/snapshots'
-    }
     // FTB Quests (dev.ftb.mods) publishes here.
     maven {
         name = 'saps'
         url = 'https://maven.saps.dev/releases'
     }
-    mavenCentral()
 }
 
 dependencies {
     // NeoForge 1.21.1
-    minecraft "net.neoforged:neoforge:${rootProject.properties['minecraft_version']}-${rootProject.properties['neoforge_version']}:universal"
+    implementation "net.neoforged:neoforge:${neo_version}"
 
     // FTB Quests is a SOFT dependency: compileOnly so it is never bundled into
     // our jar, and mandatory=false ordering=AFTER in neoforge.mods.toml so the
     // mod loads and works whether or not FTB Quests is installed.
-    compileOnly "dev.ftb.mods:ftbquests:${rootProject.properties['ftbquests_version'] ?: '2101.1.6'}"
+    compileOnly "dev.ftb.mods:ftbquests:${ftbquests_version ?: '2101.1.6'}"
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
+// This block of code expands all declared replace properties in the specified
+// resource targets (e.g. META-INF/neoforge.mods.toml). A missing property will
+// result in an error. Properties are expanded using ${} Groovy notation.
+tasks.withType(ProcessResources).configureEach {
+    def replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+    ]
+    inputs.properties replaceProperties
 
-processResources {
-    duplicatesStrategy = DuplicatesStrategy.WARN
-    filtering = true
-}
-
-jar {
-    manifest {
-        attributes([
-                'Specification-Title': 'jinx-talk',
-                'Specification-Version': version,
-                'Implementation-Title': project.name,
-                'Implementation-Version': version,
-                'Implementation-Vendor': group,
-                'Implementation-Timestamp': new Date().iso8601Basic
-        ])
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
     }
+}
+
+// Example configuration to allow publishing using the maven-publish plugin
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
