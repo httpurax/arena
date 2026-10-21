@@ -1,0 +1,6 @@
+{
+    id: 0x00000002,
+    title: "Early Game",
+    icon: minecraft:iron_ingot,
+    quests: [0x00020001, 0x00020002, 0x00020003, 0x00020004]
+}

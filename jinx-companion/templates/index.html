@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jinx Companion</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .header .subtitle {
+            color: #b8b8b8;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+        
+        .message.user {
+            background: #0f3460;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+        
+        .message.assistant {
+            background: #2a2a3e;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+        }
+        
+        .message .sender {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        
+        .message .content {
+            white-space: pre-wrap;
+        }
+        
+        .input-area {
+            padding: 20px;
+            background: #1a1a2e;
+            border-top: 1px solid #2a2a3e;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-box {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #3a3a5a;
+            border-radius: 8px;
+            background: #2a2a3e;
+            color: #e0e0e0;
+            font-size: 1em;
+            resize: none;
+            font-family: inherit;
+            min-height: 50px;
+            max-height: 150px;
+        }
+        
+        .input-box:focus {
+            outline: none;
+            border-color: #5d5d99;
+        }
+        
+        .send-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .settings-panel {
+            width: 300px;
+            background: #1a1a2e;
+            border-left: 1px solid #2a2a3e;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .settings-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #3a3a5a;
+        }
+        
+        .settings-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .form-group label {
+            font-size: 0.85em;
+            color: #b8b8b8;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select {
+            padding: 8px 12px;
+            border: 2px solid #3a3a5a;
+            border-radius: 6px;
+            background: #2a2a3e;
+            color: #e0e0e0;
+            font-size: 0.9em;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #5d5d99;
+        }
+        
+        .save-button {
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 5px;
+        }
+        
+        .save-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        
+        .status {
+            font-size: 0.8em;
+            color: #4CAF50;
+            text-align: center;
+            min-height: 18px;
+        }
+        
+        .status.error {
+            color: #f44336;
+        }
+        
+        .toggle-settings {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            z-index: 100;
+        }
+        
+        .toggle-settings:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .settings-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #2a2a3e;
+                display: none;
+            }
+            
+            .settings-panel.open {
+                display: flex;
+            }
+            
+            .toggle-settings {
+                display: none;
+            }
+            
+            .messages {
+                max-height: 50vh;
+            }
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #16213e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a3e;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a3a5a;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Jinx Companion</h1>
+        <p class="subtitle">Your Minecraft: ATM10 Assistant</p>
+    </div>
+    
+    <div class="container">
+        <div class="chat-container">
+            <div class="messages" id="messages">
+                <div class="message assistant">
+                    <div class="sender">Jinx</div>
+                    <div class="content">Hello! I'm Jinx, your companion for Minecraft: All the Mods 10. I can help you with quests, progression, and general advice. Ask me anything!</div>
+                </div>
+            </div>
+            
+            <div class="input-area">
+                <textarea class="input-box" id="message-input" placeholder="Type your message here..." rows="1"></textarea>
+                <button class="send-button" id="send-button" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        
+        <div class="settings-panel" id="settings-panel">
+            <div class="settings-header">Settings</div>
+            <form class="settings-form" id="settings-form">
+                <div class="form-group">
+                    <label for="llm-base-url">LLM Base URL</label>
+                    <input type="text" id="llm-base-url" name="llm_base_url" placeholder="http://127.0.0.1:31415/v1">
+                </div>
+                <div class="form-group">
+                    <label for="api-key">API Key</label>
+                    <input type="password" id="api-key" name="api_key" placeholder="Your API key">
+                </div>
+                <div class="form-group">
+                    <label for="model">Model</label>
+                    <input type="text" id="model" name="model" placeholder="auto">
+                </div>
+                <div class="form-group">
+                    <label for="fallback-base-url">Fallback Base URL</label>
+                    <input type="text" id="fallback-base-url" name="fallback_base_url" placeholder="http://127.0.0.1:8080/v1">
+                </div>
+                <div class="form-group">
+                    <label for="minecraft-instance-path">Minecraft Instance Path</label>
+                    <input type="text" id="minecraft-instance-path" name="minecraft_instance_path" placeholder="C:\\Users\\...\\ATM10">
+                </div>
+                <div class="form-group">
+                    <label for="world-name">World Name</label>
+                    <input type="text" id="world-name" name="world_name" placeholder="New World">
+                </div>
+                <button type="button" class="save-button" onclick="saveSettings()">Save Settings</button>
+                <div class="status" id="settings-status"></div>
+            </form>
+        </div>
+    </div>
+    
+    <button class="toggle-settings" onclick="toggleSettings()">Settings</button>
+    
+    <script>
+        // Current configuration
+        let config = {{CONFIG}};
+        let messageHistory = [];
+        
+        // DOM elements
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const settingsPanel = document.getElementById('settings-panel');
+        const settingsStatus = document.getElementById('settings-status');
+        
+        // Initialize from config
+        function initSettings() {
+            document.getElementById('llm-base-url').value = config.llm_base_url || '';
+            document.getElementById('api-key').value = config.api_key || '';
+            document.getElementById('model').value = config.model || '';
+            document.getElementById('fallback-base-url').value = config.fallback_base_url || '';
+            document.getElementById('minecraft-instance-path').value = config.minecraft_instance_path || '';
+            document.getElementById('world-name').value = config.world_name || '';
+        }
+        
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+        
+        // Send message on Enter (Shift+Enter for new line)
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // Toggle settings panel (mobile)
+        function toggleSettings() {
+            settingsPanel.classList.toggle('open');
+        }
+        
+        // Save settings
+        async function saveSettings() {
+            const form = document.getElementById('settings-form');
+            const formData = new FormData(form);
+            
+            const newConfig = {};
+            for (const [key, value] of formData.entries()) {
+                newConfig[key] = value;
+            }
+            
+            try {
+                settingsStatus.textContent = 'Saving...';
+                settingsStatus.className = 'status';
+                
+                const response = await fetch('/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newConfig)
+                });
+                
+                if (response.ok) {
+                    config = await response.json();
+                    config = config.config || config;
+                    settingsStatus.textContent = 'Saved!';
+                    settingsStatus.className = 'status';
+                    
+                    // Update in-memory config
+                    for (const key in newConfig) {
+                        config[key] = newConfig[key];
+                    }
+                    
+                    setTimeout(() => {
+                        settingsStatus.textContent = '';
+                    }, 2000);
+                } else {
+                    const error = await response.json();
+                    settingsStatus.textContent = 'Error: ' + (error.error || 'Unknown error');
+                    settingsStatus.className = 'status error';
+                }
+            } catch (error) {
+                settingsStatus.textContent = 'Error: ' + error.message;
+                settingsStatus.className = 'status error';
+            }
+        }
+        
+        // Add a message to the chat
+        function addMessage(sender, content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'assistant'}`;
+            
+            const senderDiv = document.createElement('div');
+            senderDiv.className = 'sender';
+            senderDiv.textContent = sender;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+            contentDiv.textContent = content;
+            
+            messageDiv.appendChild(senderDiv);
+            messageDiv.appendChild(contentDiv);
+            
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            return messageDiv;
+        }
+        
+        // Send a message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // Disable send button while processing
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+            
+            // Add user message
+            addMessage('You', message, true);
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            
+            // Add to history
+            messageHistory.push({role: 'user', content: message});
+            
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.innerHTML = '<div class="sender">Jinx</div><div class="content">Thinking...</div>';
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        history: messageHistory
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Remove typing indicator
+                    messagesContainer.removeChild(typingDiv);
+                    
+                    // Add assistant reply
+                    const reply = data.reply || 'No response';
+                    addMessage('Jinx', reply, false);
+                    
+                    // Add to history
+                    messageHistory.push({role: 'assistant', content: reply});
+                    
+                    // Keep history manageable
+                    if (messageHistory.length > 50) {
+                        messageHistory = messageHistory.slice(-20);
+                    }
+                } else {
+                    const error = await response.json();
+                    typingDiv.innerHTML = '<div class="sender">Jinx</div><div class="content">Error: ' + 
+                        (error.error || 'Unknown error') + '</div>';
+                }
+            } catch (error) {
+                typingDiv.innerHTML = '<div class="sender">Jinx</div><div class="content">Error: ' + 
+                    error.message + '</div>';
+            } finally {
+                sendButton.disabled = false;
+                messageInput.disabled = false;
+                messageInput.focus();
+            }
+        }
+        
+        // Initialize on load
+        window.onload = function() {
+            initSettings();
+            messageInput.focus();
+        };
+    </script>
+</body>
+</html>

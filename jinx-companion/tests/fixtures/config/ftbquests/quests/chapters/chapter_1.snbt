@@ -1,0 +1,6 @@
+{
+    id: 0x00000001,
+    title: "Getting Started",
+    icon: minecraft:dirt,
+    quests: [0x00010001, 0x00010002, 0x00010003]
+}
