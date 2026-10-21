@@ -12,6 +12,14 @@ local Jinx HTTP companion service (`jinx_link.py`, maintained separately):
    `<serviceBaseUrl>/cues` asynchronously every 5 seconds for proactive chat
    lines, HUD titles/subtitles, and sound effects, with completely silent
    failure handling and zero game-thread blocking.
+4. **FTB Quests quest completions (`POST <base>/event`, optional)** — when
+   [FTB Quests](https://www.curseforge.com/minecraft/mc-mods/ftb-quests)
+   (as shipped in All the Mods 10, 2101.1.6 for Minecraft 1.21.1) is installed,
+   each quest completion is forwarded to the Jinx service, and an
+   `"announce"` string in the service's response is shown to the player as a
+   gold chat line with the `minecraft:entity.player.levelup` sound. FTB Quests
+   is a **soft dependency**: Jinx Talk loads and works exactly the same with
+   or without it.
 
 Works in single-player, on a multiplayer client, and on a dedicated server. All
 client-side classes (`dev.jinxtalk.client.*`) are isolated to `Dist.CLIENT` and
@@ -37,15 +45,18 @@ build/libs/jinxtalk-1.0.0.jar
 
 `build` runs the executable core test suite as part of `check`. Run just that
 suite with `./gradlew coreTest`. It exercises prefix parsing, Unicode line
-splitting, URL validation for `/chat` and `/cues`, bounded session history,
-`/chat` POST requests, `/cues` GET polling and cue parsing, timeouts, malformed
+splitting, URL validation for `/chat`, `/cues` and `/event`, bounded session
+history, `/chat` POST requests, `/event` POST requests and `"announce"`
+parsing, `/cues` GET polling and cue parsing, timeouts, malformed
 responses, unreachable endpoints, and worker queue saturation. Development
 launchers are available as `./gradlew runClient` and `./gradlew runServer`
 (accept the Minecraft EULA in the generated server run directory when prompted).
 
 The repository's **Jinx Talk build** GitHub Actions workflow runs `./gradlew build`,
-verifies packaged JAR entries and dedicated-server constant-pool class isolation,
-and publishes a `jinxtalk-1.0.0` jar artifact.
+verifies packaged JAR entries, the optional FTB Quests dependency declaration,
+that no FTB Quests / Architectury classes are bundled into the jar, and
+dedicated-server constant-pool class isolation, and publishes a
+`jinxtalk-1.0.0` jar artifact.
 
 ## Install in All the Mods 10 (ATM10)
 
@@ -66,6 +77,15 @@ and publishes a `jinxtalk-1.0.0` jar artifact.
 Keep the pack's NeoForge installation; do not replace the pack loader with a jar
 from this project's development dependencies. This mod declares compatibility
 with the NeoForge 21.1 series and Minecraft 1.21.1.
+
+**FTB Quests is optional.** ATM10 already ships FTB Quests 2101.1.6, so the
+quest-completion integration (below) is active there with nothing extra to
+install. On an instance or server without FTB Quests, Jinx Talk still loads
+and all chat / keybind / cue features work as before — the FTB Quests classes
+are a compile-time-only, non-bundled dependency (`compileOnly` in
+`build.gradle`, `type="optional"` in `neoforge.mods.toml`), and the single
+class that references them (`dev.jinxtalk.ftbquests.FtbQuestsIntegration`) is
+only loaded after the mod confirms `ftbquests` is present.
 
 ## Use
 
@@ -119,7 +139,41 @@ response, or busy worker pool displays:
 [Jinx] (offline - start jinx_link.py on the PC)
 ```
 
-### 3. Live Cue Channel (`/cues`)
+### 3. FTB Quests Quest Completions (`/event`, only when FTB Quests is installed)
+
+When FTB Quests is present, Jinx Talk subscribes to its quest-completion
+events (the FTB Quests 2101.x `ObjectCompletedEvent.QUEST` progress/completion
+event API). Each time a team completes a quest **server-side**, Jinx Talk
+asynchronously POSTs one event to `<serviceBaseUrl>/event` naming the first
+online member of the completing team:
+
+```json
+{"type": "quest_completed", "quest": "Farming Time", "player": "Alex"}
+```
+
+- **`"quest"`** is the quest's title when one is configured, otherwise the
+  quest's numeric id.
+- **`"player"`** is that player's name.
+- The request uses the **same configured base URL** (`serviceBaseUrl`, default
+  `http://127.0.0.1:8712`), the **same timeouts and worker pool**, and the
+  **same failure rules** as the chat path: the POST happens off the game
+  thread, and a dead, slow, or misbehaving service is silently ignored — it
+  can never delay, break, or spam the game. No message is shown on failure.
+- If the service's `2xx` JSON response contains an **`"announce"` string**,
+  that player is shown the text as a **gold chat line** and hears the
+  **`minecraft:entity.player.levelup`** sound:
+
+  ```json
+  {"announce": "Alex just finished Farming Time — nice work!"}
+  ```
+
+  A response with no `"announce"` string (or a blank one) is a silent no-op.
+- Quest forwarding only runs while a server/world is running, and it honors
+  `enabled = false` (see Configuration). Client-side FTB Quests GUI sync
+  events are ignored; only real server-side completions are forwarded, one
+  POST per completion.
+
+### 4. Live Cue Channel (`/cues`)
 
 While a world is loaded, Jinx Talk asynchronously polls
 `GET <serviceBaseUrl>/cues` every **5 seconds** (100 ticks) when `enabled = true`.
@@ -138,10 +192,11 @@ serviceBaseUrl = "http://127.0.0.1:8712"
 ```
 
 Change the service base URL or set `enabled = false`, then restart the client or
-server. When `enabled = false`, public chat prefixes are left unchanged and
-background `/cues` polling is disabled. The base must be an absolute HTTP(S) URL
+server. When `enabled = false`, public chat prefixes are left unchanged,
+background `/cues` polling is disabled, and FTB Quests completions are not
+forwarded. The base must be an absolute HTTP(S) URL
 without credentials, query, or fragment; an optional path prefix is supported,
-and `/chat` or `/cues` is appended.
+and `/chat`, `/cues` or `/event` is appended.
 
 **Dedicated-server note:** on a dedicated server, `127.0.0.1` refers to the
 server host, whereas client features (`J` chat screen and client cue polling)

@@ -25,6 +25,7 @@ public final class ChatCoreTest {
         urls();
         history();
         http();
+        event();
         cues();
         unreachable();
         saturation();
@@ -64,6 +65,8 @@ public final class ChatCoreTest {
         equal("https://example.test/api/chat", ChatProtocol.chatUri(" https://example.test/api/// ").toString());
         equal("http://127.0.0.1:8712/cues", ChatProtocol.cuesUri("http://127.0.0.1:8712/").toString());
         equal("https://example.test/api/cues", ChatProtocol.cuesUri(" https://example.test/api/// ").toString());
+        equal("http://127.0.0.1:8712/event", ChatProtocol.eventUri("http://127.0.0.1:8712/").toString());
+        equal("https://example.test/api/event", ChatProtocol.eventUri(" https://example.test/api/// ").toString());
         for (String bad : List.of("file:///etc/passwd", "ftp://example.test", "not a URL", "http://x?query",
                 "http://x/#fragment", "http://user:pass@x", "/relative")) {
             try {
@@ -75,6 +78,12 @@ public final class ChatCoreTest {
             try {
                 ChatProtocol.cuesUri(bad);
                 throw new AssertionError("Accepted bad cues URL: " + bad);
+            } catch (IllegalArgumentException expected) {
+                // Expected.
+            }
+            try {
+                ChatProtocol.eventUri(bad);
+                throw new AssertionError("Accepted bad event URL: " + bad);
             } catch (IllegalArgumentException expected) {
                 // Expected.
             }
@@ -160,6 +169,68 @@ public final class ChatCoreTest {
         }
     }
 
+    private static void event() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        AtomicReference<String> response = new AtomicReference<>("{\"announce\":\"Quest complete, Alex!\"}");
+        AtomicReference<JsonObject> received = new AtomicReference<>();
+        AtomicReference<String> method = new AtomicReference<>();
+        AtomicReference<String> contentType = new AtomicReference<>();
+        server.createContext("/event", exchange -> {
+            method.set(exchange.getRequestMethod());
+            contentType.set(exchange.getRequestHeaders().getFirst("Content-Type"));
+            received.set(JsonParser.parseString(new String(exchange.getRequestBody().readAllBytes(),
+                    StandardCharsets.UTF_8)).getAsJsonObject());
+            String body = response.get();
+            try {
+                if (body.equals("DELAY")) {
+                    Thread.sleep(500);
+                    body = "{\"announce\":\"too late\"}";
+                }
+                byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(body.equals("ERROR") ? 503 : 200, bytes.length);
+                exchange.getResponseBody().write(bytes);
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+            } finally {
+                exchange.close();
+            }
+        });
+        server.start();
+        String base = "http://127.0.0.1:" + server.getAddress().getPort();
+        ChatProtocol.QuestCompletedRequest questRequest =
+                ChatProtocol.QuestCompletedRequest.questCompleted("Farming Time", "Alex");
+        try (JinxHttpClient client = new JinxHttpClient(1000, 150)) {
+            equal(java.util.Optional.of("Quest complete, Alex!"),
+                    client.questCompleted(base, questRequest).get(3, TimeUnit.SECONDS));
+            equal("POST", method.get());
+            equal("application/json; charset=utf-8", contentType.get());
+            JsonObject body = received.get();
+            equal(3, body.size());
+            equal("quest_completed", body.get("type").getAsString());
+            equal("Farming Time", body.get("quest").getAsString());
+            equal("Alex", body.get("player").getAsString());
+
+            // No announce string (or a blank one) is a successful, silent no-op.
+            for (String silent : List.of("{}", "{\"extra\":1}", "{\"announce\":\"\"}", "{\"announce\":\"  \"}")) {
+                response.set(silent);
+                equal(java.util.Optional.empty(), client.questCompleted(base, questRequest).get(3, TimeUnit.SECONDS));
+            }
+            for (String invalid : List.of("ERROR", "not json", "[]", "{\"announce\":7}", "{\"announce\":null}",
+                    "{\"announce\":\"a\",\"announce\":\"b\"}", "{\"announce\":\"ok\"} garbage",
+                    "{\"announce\":\"" + "a".repeat(65_536) + "\"}")) {
+                response.set(invalid);
+                fails(client.questCompleted(base, questRequest));
+            }
+            response.set("DELAY");
+            CompletableFuture<java.util.Optional<String>> pending = client.questCompleted(base, questRequest);
+            check(!pending.isDone(), "Event POST ran synchronously");
+            fails(pending);
+            fails(client.questCompleted("file:///invalid", questRequest));
+        } finally {
+            server.stop(0);
+        }
+    }
+
     private static void cues() throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         AtomicReference<String> response = new AtomicReference<>("{\"cues\":[]}");
@@ -237,11 +308,15 @@ public final class ChatCoreTest {
         try {
             fails(client.chat("http://127.0.0.1:" + port, REQUEST));
             fails(client.cues("http://127.0.0.1:" + port));
+            fails(client.questCompleted("http://127.0.0.1:" + port,
+                    ChatProtocol.QuestCompletedRequest.questCompleted("Farming Time", "Alex")));
         } finally {
             client.close();
         }
         fails(client.chat("http://127.0.0.1:" + port, REQUEST));
         fails(client.cues("http://127.0.0.1:" + port));
+        fails(client.questCompleted("http://127.0.0.1:" + port,
+                ChatProtocol.QuestCompletedRequest.questCompleted("Farming Time", "Alex")));
     }
 
     private static void saturation() throws Exception {
@@ -288,10 +363,13 @@ public final class ChatCoreTest {
                 "dev/jinxtalk/ChatProtocol$Cue$Chat.class",
                 "dev/jinxtalk/ChatProtocol$Cue$Title.class",
                 "dev/jinxtalk/ChatProtocol$Cue$Sound.class",
+                "dev/jinxtalk/ChatProtocol$QuestCompletedRequest.class",
                 "dev/jinxtalk/JinxConfig.class",
                 "dev/jinxtalk/JinxHistory.class",
                 "dev/jinxtalk/JinxHttpClient.class",
-                "dev/jinxtalk/JinxTalk.class");
+                "dev/jinxtalk/JinxTalk.class",
+                "dev/jinxtalk/QuestCompletionHandler.class",
+                "dev/jinxtalk/ftbquests/FtbQuestsIntegration.class");
         List<String> forbidden = List.of(
                 "net/minecraft/client",
                 "com/mojang/blaze3d",

@@ -21,3 +21,12 @@ type="required"
 versionRange="[1.21.1]"
 ordering="NONE"
 side="BOTH"
+
+# Soft dependency: Jinx Talk loads and works with or without FTB Quests.
+# When it is present, quest completions are also forwarded to the Jinx service.
+[[dependencies.jinxtalk]]
+modId="ftbquests"
+type="optional"
+versionRange="[2101.1.6,)"
+ordering="AFTER"
+side="BOTH"

@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import dev.jinxtalk.ftbquests.FtbQuestsIntegration;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
@@ -14,10 +16,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
@@ -38,6 +42,55 @@ public final class JinxTalk {
     public JinxTalk(ModContainer container) {
         container.registerConfig(ModConfig.Type.COMMON, JinxConfig.SPEC);
         NeoForge.EVENT_BUS.register(this);
+        // FTB Quests is a soft dependency: FtbQuestsIntegration (the only class
+        // referencing FTB Quests API types) is only loaded when it is installed.
+        if (ModList.get().isLoaded("ftbquests")) {
+            FtbQuestsIntegration.register(this::onQuestCompleted);
+        }
+    }
+
+    /**
+     * Forwards an FTB Quests quest completion to {@code POST <base>/event} as
+     * {@code {"type":"quest_completed","quest":...,"player":...}}, asynchronously
+     * with the same base URL, timeouts and never-affect-the-game failure rules as
+     * the chat path. If the response carries an {@code "announce"} string, that
+     * player is shown it as a gold chat line with the level-up sound.
+     */
+    public void onQuestCompleted(String questTitleOrId, ServerPlayer player) {
+        if (!JinxConfig.ENABLED.get()) {
+            return;
+        }
+        JinxHttpClient client = http;
+        MinecraftServer server = player.getServer();
+        if (client == null || server == null) {
+            return;
+        }
+        // Snapshot all game state and config here. Workers never access Minecraft objects.
+        ChatProtocol.QuestCompletedRequest request = ChatProtocol.QuestCompletedRequest.questCompleted(
+                questTitleOrId, player.getName().getString());
+        String base = JinxConfig.SERVICE_BASE_URL.get();
+        client.questCompleted(base, request).whenComplete((announce, failure) -> {
+            if (failure != null || announce == null || announce.isEmpty()) {
+                // A dead or unhelpful service must never affect the game: stay silent.
+                return;
+            }
+            try {
+                server.execute(() -> {
+                    // Do not announce to a new login with the same UUID or another world.
+                    if (http == client && server.getPlayerList().getPlayer(player.getUUID()) == player) {
+                        announceQuestCompletion(player, announce.get());
+                    }
+                });
+            } catch (RejectedExecutionException ignored) {
+                // A server that has already shut down cannot receive announcements.
+            }
+        });
+    }
+
+    private static void announceQuestCompletion(ServerPlayer player, String text) {
+        player.sendSystemMessage(Component.literal(text).withStyle(ChatFormatting.GOLD));
+        // minecraft:entity.player.levelup
+        player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
     @SubscribeEvent

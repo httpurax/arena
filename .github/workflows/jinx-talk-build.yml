@@ -98,6 +98,8 @@ jobs:
                   'dev/jinxtalk/JinxHttpClient.class',
                   'dev/jinxtalk/ChatProtocol.class',
                   'dev/jinxtalk/JinxHistory.class',
+                  'dev/jinxtalk/QuestCompletionHandler.class',
+                  'dev/jinxtalk/ftbquests/FtbQuestsIntegration.class',
                   'dev/jinxtalk/client/JinxClient.class',
                   'dev/jinxtalk/client/JinxChatScreen.class',
               ):
@@ -106,6 +108,22 @@ jobs:
               toml_text = zf.read('META-INF/neoforge.mods.toml').decode('utf-8')
               assert 'modId="jinxtalk"' in toml_text
               assert '${version}' not in toml_text, 'Unexpanded ${version} in neoforge.mods.toml'
+              # FTB Quests must stay a soft (optional) dependency.
+              assert 'modId="ftbquests"' in toml_text, 'Missing ftbquests dependency declaration'
+              assert 'type="optional"' in toml_text, 'ftbquests dependency is not optional'
+              # No FTB Quests / Architectury classes may be bundled into the jar.
+              for bundled in names:
+                  assert not bundled.startswith('dev/ftb/'), f'FTB Quests class bundled: {bundled}'
+                  assert not bundled.startswith('dev/architectury/'), f'Architectury class bundled: {bundled}'
+
+              ftb_pool = read_utf8_pool(zf.read('dev/jinxtalk/ftbquests/FtbQuestsIntegration.class'))
+              assert any('ObjectCompletedEvent' in s for s in ftb_pool), \
+                  f'Expected FTB Quests completion event in FtbQuestsIntegration pool: {ftb_pool}'
+              talk_pool = read_utf8_pool(zf.read('dev/jinxtalk/JinxTalk.class'))
+              assert any('PLAYER_LEVELUP' in s for s in talk_pool), \
+                  f'Expected level-up sound in JinxTalk pool: {talk_pool}'
+              assert any('GOLD' in s for s in talk_pool), \
+                  f'Expected gold announce styling in JinxTalk pool: {talk_pool}'
 
               lang = json.loads(zf.read('assets/jinxtalk/lang/en_us.json').decode('utf-8'))
               assert 'key.jinxtalk.open_chat' in lang

@@ -33,6 +33,10 @@ public final class ChatProtocol {
         return endpointUri(base, "/cues");
     }
 
+    public static URI eventUri(String base) {
+        return endpointUri(base, "/event");
+    }
+
     private static URI endpointUri(String base, String pathSuffix) {
         URI uri = URI.create(base.strip());
         if (!("http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))
@@ -66,6 +70,13 @@ public final class ChatProtocol {
     }
 
     public record Request(String player, String message, List<Double> pos, String dim, long ts) {}
+
+    /** Body of {@code POST <base>/event} for an FTB Quests quest completion. */
+    public record QuestCompletedRequest(String type, String quest, String player) {
+        public static QuestCompletedRequest questCompleted(String quest, String player) {
+            return new QuestCompletedRequest("quest_completed", quest, player);
+        }
+    }
 
     public sealed interface Cue permits Cue.Chat, Cue.Title, Cue.Sound {
         record Chat(String text) implements Cue {}

@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
@@ -63,6 +64,29 @@ public final class JinxHttpClient implements AutoCloseable {
         return result;
     }
 
+    /**
+     * Asynchronously POST a quest-completion event to {@code <base>/event}, using
+     * the same workers, timeouts and failure rules as {@link #chat}: the returned
+     * future completes exceptionally on any failure and nothing runs on the caller
+     * (game) thread. On success it holds the response's {@code "announce"} string,
+     * or empty when the response carries no usable announce string.
+     */
+    public CompletableFuture<Optional<String>> questCompleted(String base, ChatProtocol.QuestCompletedRequest request) {
+        CompletableFuture<Optional<String>> result = new CompletableFuture<>();
+        try {
+            workers.execute(() -> {
+                try {
+                    result.complete(postEvent(base, request));
+                } catch (Exception exception) {
+                    result.completeExceptionally(exception);
+                }
+            });
+        } catch (RejectedExecutionException exception) {
+            result.completeExceptionally(exception);
+        }
+        return result;
+    }
+
     public CompletableFuture<List<ChatProtocol.Cue>> cues(String base) {
         CompletableFuture<List<ChatProtocol.Cue>> result = new CompletableFuture<>();
         try {
@@ -97,6 +121,52 @@ public final class JinxHttpClient implements AutoCloseable {
             return parseReply(readBody(connection));
         } finally {
             connection.disconnect();
+        }
+    }
+
+    private Optional<String> postEvent(String base, ChatProtocol.QuestCompletedRequest request) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) ChatProtocol.eventUri(base).toURL().openConnection();
+        try {
+            connection.setConnectTimeout(connectTimeoutMillis);
+            connection.setReadTimeout(readTimeoutMillis);
+            connection.setInstanceFollowRedirects(false);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+            byte[] body = GSON.toJson(request).getBytes(StandardCharsets.UTF_8);
+            connection.setFixedLengthStreamingMode(body.length);
+            try (var output = connection.getOutputStream()) {
+                output.write(body);
+            }
+            return parseAnnounce(readBody(connection));
+        } finally {
+            connection.disconnect();
+        }
+    }
+
+    static Optional<String> parseAnnounce(String json) throws IOException {
+        // Same strict streaming style as parseReply: a single JSON object whose
+        // "announce", when present, must be a string.
+        try (JsonReader reader = new JsonReader(new StringReader(json))) {
+            reader.setLenient(false);
+            reader.beginObject();
+            String announce = null;
+            while (reader.hasNext()) {
+                if (reader.nextName().equals("announce")) {
+                    if (announce != null || reader.peek() != JsonToken.STRING) {
+                        throw new IOException("Expected a single string announce");
+                    }
+                    announce = reader.nextString();
+                } else {
+                    reader.skipValue();
+                }
+            }
+            reader.endObject();
+            if (reader.peek() != JsonToken.END_DOCUMENT) {
+                throw new IOException("Trailing content after announce response");
+            }
+            return announce == null || announce.isBlank() ? Optional.empty() : Optional.of(announce);
         }
     }
 
