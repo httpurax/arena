@@ -59,7 +59,7 @@ jobs:
           )
 
           def read_utf8_pool(data: bytes) -> list[str]:
-              magic, minor, major, count = struct.unpack_from('>IHHI', data, 0)
+              magic, minor, major, count = struct.unpack_from('>IHHH', data, 0)
               assert magic == 0xCAFEBABE, f'Bad class magic: {hex(magic)}'
               offset = 10
               out = []

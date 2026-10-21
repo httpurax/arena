@@ -28,6 +28,7 @@ public final class ChatCoreTest {
         cues();
         unreachable();
         saturation();
+        bytecodeIsolation();
         System.out.println("Jinx Talk core tests passed.");
     }
 
@@ -277,6 +278,73 @@ public final class ChatCoreTest {
             server.stop(0);
             handlers.shutdownNow();
         }
+    }
+
+    private static void bytecodeIsolation() throws Exception {
+        List<String> serverSafeClasses = List.of(
+                "dev/jinxtalk/ChatProtocol.class",
+                "dev/jinxtalk/ChatProtocol$Request.class",
+                "dev/jinxtalk/ChatProtocol$Cue.class",
+                "dev/jinxtalk/ChatProtocol$Cue$Chat.class",
+                "dev/jinxtalk/ChatProtocol$Cue$Title.class",
+                "dev/jinxtalk/ChatProtocol$Cue$Sound.class",
+                "dev/jinxtalk/JinxConfig.class",
+                "dev/jinxtalk/JinxHistory.class",
+                "dev/jinxtalk/JinxHttpClient.class",
+                "dev/jinxtalk/JinxTalk.class");
+        List<String> forbidden = List.of(
+                "net/minecraft/client",
+                "com/mojang/blaze3d",
+                "org/lwjgl",
+                "net/neoforged/neoforge/client",
+                "dev/jinxtalk/client");
+        ClassLoader loader = ChatCoreTest.class.getClassLoader();
+        for (String resource : serverSafeClasses) {
+            try (var stream = loader.getResourceAsStream(resource)) {
+                check(stream != null, "Missing class resource " + resource);
+                List<String> pool = utf8ConstantPool(stream.readAllBytes());
+                for (String entry : pool) {
+                    for (String bad : forbidden) {
+                        check(!entry.contains(bad), "Dedicated-server leak in " + resource + ": " + entry);
+                    }
+                }
+            }
+        }
+        try (var stream = loader.getResourceAsStream("dev/jinxtalk/client/JinxClient.class")) {
+            check(stream != null, "Missing JinxClient.class");
+            List<String> clientPool = utf8ConstantPool(stream.readAllBytes());
+            check(clientPool.contains("CLIENT"), "Missing Dist.CLIENT annotation on JinxClient");
+            check(clientPool.contains("Jinx Talk"), "Missing Jinx Talk key category");
+            check(clientPool.contains("key.jinxtalk.open_chat"), "Missing key translation key");
+        }
+    }
+
+    private static List<String> utf8ConstantPool(byte[] classBytes) {
+        var buf = java.nio.ByteBuffer.wrap(classBytes);
+        equal(0xCAFEBABE, buf.getInt());
+        buf.getShort(); // minor
+        buf.getShort(); // major
+        int count = Short.toUnsignedInt(buf.getShort());
+        var strings = new java.util.ArrayList<String>();
+        for (int i = 1; i < count; i++) {
+            int tag = Byte.toUnsignedInt(buf.get());
+            switch (tag) {
+                case 1 -> {
+                    byte[] raw = new byte[Short.toUnsignedInt(buf.getShort())];
+                    buf.get(raw);
+                    strings.add(new String(raw, StandardCharsets.UTF_8));
+                }
+                case 7, 8, 16, 19, 20 -> buf.position(buf.position() + 2);
+                case 15 -> buf.position(buf.position() + 3);
+                case 3, 4, 9, 10, 11, 12, 17, 18 -> buf.position(buf.position() + 4);
+                case 5, 6 -> {
+                    buf.position(buf.position() + 8);
+                    i++;
+                }
+                default -> throw new AssertionError("Unknown constant pool tag " + tag);
+            }
+        }
+        return strings;
     }
 
     private static void fails(CompletableFuture<?> result) throws Exception {
