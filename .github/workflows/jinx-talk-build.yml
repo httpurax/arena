@@ -30,7 +30,22 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
       - name: Build and test
-        run: ./gradlew build
+        shell: bash
+        run: |
+          set +e
+          ./gradlew build > build-output.log 2>&1
+          status=$?
+          cat build-output.log
+          if [ "$status" -ne 0 ]; then
+            # Keep the failure visible in the check annotations as well as the log.
+            python3 - <<'PY'
+          from pathlib import Path
+          tail = '\n'.join(Path('build-output.log').read_text(errors='replace').splitlines()[-100:])
+          escaped = tail.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+          print(f'::error title=Gradle build failed::{escaped}')
+          PY
+          fi
+          exit "$status"
       - name: Upload mod jar
         uses: actions/upload-artifact@v4
         with:
