@@ -134,7 +134,7 @@ public final class HttpService {
     private static void announce(ServerPlayer player, String text) {
         try {
             player.sendSystemMessage(Component.literal(text).withStyle(ChatFormatting.GOLD));
-            player.playNotifySound(SoundSource.PLAYER, SoundEvents.PLAYER_LEVELUP, 1.0F, 1.0F);
+            player.playNotifySound(SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYER, 1.0F, 1.0F);
         } catch (Exception e) {
             LOGGER.warn("Jinx Talk: failed to deliver announce to {}", player.getName().getString(), e);
         }

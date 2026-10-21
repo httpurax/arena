@@ -24,17 +24,9 @@ public final class Config {
 
     static {
         Builder builder = new Builder();
-        builder.push("general");
-        var baseUrlValue = builder.comment("Base URL of the Jinx Talk event service. " +
-                "Chat messages and quest completions are POSTed as JSON to <base>/event.")
-                .define("baseUrl", DEFAULT_BASE_URL);
-        var timeoutValue = builder.comment("HTTP request timeout in seconds. " +
-                "A dead or slow event service is logged and never blocks the game.")
-                .define("timeoutSeconds", DEFAULT_TIMEOUT_SECONDS);
-        var enabledValue = builder.comment("Whether to send chat and quest events to the event service at all.")
-                .define("enabled", DEFAULT_ENABLED);
-        builder.pop();
-
+        var baseUrlValue = builder.define("general.baseUrl", DEFAULT_BASE_URL);
+        var timeoutValue = builder.define("general.timeoutSeconds", DEFAULT_TIMEOUT_SECONDS);
+        var enabledValue = builder.define("general.enabled", DEFAULT_ENABLED);
         spec = builder.build();
         baseUrl = baseUrlValue::get;
         timeoutSeconds = timeoutValue::get;
