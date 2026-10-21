@@ -46,6 +46,84 @@ jobs:
           PY
           fi
           exit "$status"
+      - name: Verify packaged jar and dedicated-server class isolation
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, struct, zipfile
+
+          jar_path = 'build/libs/jinxtalk-1.0.0.jar'
+          forbidden_in_common = (
+              'net/minecraft/client',
+              'com/mojang/blaze3d',
+              'org/lwjgl',
+              'net/neoforged/neoforge/client',
+              'dev/jinxtalk/client',
+          )
+
+          def read_utf8_pool(data: bytes) -> list[str]:
+              magic, minor, major, count = struct.unpack_from('>IHHI', data, 0)
+              assert magic == 0xCAFEBABE, f'Bad class magic: {hex(magic)}'
+              offset = 10
+              out = []
+              idx = 1
+              while idx < count:
+                  tag = data[offset]
+                  offset += 1
+                  if tag == 1:  # CONSTANT_Utf8
+                      length = struct.unpack_from('>H', data, offset)[0]
+                      offset += 2
+                      out.append(data[offset:offset + length].decode('utf-8', errors='replace'))
+                      offset += length
+                  elif tag in (7, 8, 16, 19, 20):
+                      offset += 2
+                  elif tag == 15:
+                      offset += 3
+                  elif tag in (3, 4, 9, 10, 11, 12, 17, 18):
+                      offset += 4
+                  elif tag in (5, 6):
+                      offset += 8
+                      idx += 1
+                  else:
+                      raise AssertionError(f'Unknown constant pool tag {tag}')
+                  idx += 1
+              return out
+
+          with zipfile.ZipFile(jar_path) as zf:
+              names = set(zf.namelist())
+              for required in (
+                  'META-INF/neoforge.mods.toml',
+                  'assets/jinxtalk/lang/en_us.json',
+                  'dev/jinxtalk/JinxTalk.class',
+                  'dev/jinxtalk/JinxConfig.class',
+                  'dev/jinxtalk/JinxHttpClient.class',
+                  'dev/jinxtalk/ChatProtocol.class',
+                  'dev/jinxtalk/JinxHistory.class',
+                  'dev/jinxtalk/client/JinxClient.class',
+                  'dev/jinxtalk/client/JinxChatScreen.class',
+              ):
+                  assert required in names, f'Missing expected jar entry: {required}'
+
+              toml_text = zf.read('META-INF/neoforge.mods.toml').decode('utf-8')
+              assert 'modId="jinxtalk"' in toml_text
+              assert '${version}' not in toml_text, 'Unexpanded ${version} in neoforge.mods.toml'
+
+              lang = json.loads(zf.read('assets/jinxtalk/lang/en_us.json').decode('utf-8'))
+              assert 'key.jinxtalk.open_chat' in lang
+
+              for entry in sorted(names):
+                  if entry.startswith('dev/jinxtalk/') and entry.endswith('.class') and not entry.startswith('dev/jinxtalk/client/'):
+                      utf8_strings = read_utf8_pool(zf.read(entry))
+                      for s in utf8_strings:
+                          for bad in forbidden_in_common:
+                              assert bad not in s, f'Dedicated-server leak in {entry}: {s}'
+
+              client_pool = read_utf8_pool(zf.read('dev/jinxtalk/client/JinxClient.class'))
+              assert 'CLIENT' in client_pool, 'Expected Dist.CLIENT annotation on JinxClient'
+              assert 'Jinx Talk' in client_pool, 'Expected Jinx Talk key category in JinxClient'
+
+          print('Verified jar layout and dedicated-server class isolation.')
+          PY
       - name: Upload mod jar
         uses: actions/upload-artifact@v4
         with:

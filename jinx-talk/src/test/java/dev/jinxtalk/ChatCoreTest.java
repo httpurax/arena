@@ -23,7 +23,9 @@ public final class ChatCoreTest {
         prefixes();
         lines();
         urls();
+        history();
         http();
+        cues();
         unreachable();
         saturation();
         System.out.println("Jinx Talk core tests passed.");
@@ -59,15 +61,41 @@ public final class ChatCoreTest {
     private static void urls() {
         equal("http://127.0.0.1:8712/chat", ChatProtocol.chatUri("http://127.0.0.1:8712/").toString());
         equal("https://example.test/api/chat", ChatProtocol.chatUri(" https://example.test/api/// ").toString());
+        equal("http://127.0.0.1:8712/cues", ChatProtocol.cuesUri("http://127.0.0.1:8712/").toString());
+        equal("https://example.test/api/cues", ChatProtocol.cuesUri(" https://example.test/api/// ").toString());
         for (String bad : List.of("file:///etc/passwd", "ftp://example.test", "not a URL", "http://x?query",
                 "http://x/#fragment", "http://user:pass@x", "/relative")) {
             try {
                 ChatProtocol.chatUri(bad);
-                throw new AssertionError("Accepted bad URL: " + bad);
+                throw new AssertionError("Accepted bad chat URL: " + bad);
+            } catch (IllegalArgumentException expected) {
+                // Expected.
+            }
+            try {
+                ChatProtocol.cuesUri(bad);
+                throw new AssertionError("Accepted bad cues URL: " + bad);
             } catch (IllegalArgumentException expected) {
                 // Expected.
             }
         }
+    }
+
+    private static void history() {
+        JinxHistory store = new JinxHistory(3);
+        equal(List.of(), store.snapshot());
+        store.append(null);
+        store.append("   ");
+        equal(0, store.size());
+        store.append("first reply");
+        store.append("second\nline");
+        store.append("third 😀");
+        equal(List.of("first reply", "second\nline", "third 😀"), store.snapshot());
+        long revBefore = store.revision();
+        store.append("fourth");
+        check(store.revision() > revBefore, "Revision did not advance");
+        equal(List.of("second\nline", "third 😀", "fourth"), store.snapshot());
+        store.clear();
+        equal(0, store.size());
     }
 
     private static void http() throws Exception {
@@ -131,6 +159,74 @@ public final class ChatCoreTest {
         }
     }
 
+    private static void cues() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        AtomicReference<String> response = new AtomicReference<>("{\"cues\":[]}");
+        AtomicReference<String> method = new AtomicReference<>();
+        AtomicReference<String> accept = new AtomicReference<>();
+        server.createContext("/cues", exchange -> {
+            method.set(exchange.getRequestMethod());
+            accept.set(exchange.getRequestHeaders().getFirst("Accept"));
+            String body = response.get();
+            try {
+                if (body.equals("DELAY")) {
+                    Thread.sleep(500);
+                    body = "{\"cues\":[]}";
+                }
+                byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(body.equals("ERROR") ? 503 : 200, bytes.length);
+                exchange.getResponseBody().write(bytes);
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+            } finally {
+                exchange.close();
+            }
+        });
+        server.start();
+        String base = "http://127.0.0.1:" + server.getAddress().getPort();
+        try (JinxHttpClient client = new JinxHttpClient(1000, 150)) {
+            equal(List.of(), client.cues(base).get(3, TimeUnit.SECONDS));
+            equal("GET", method.get());
+            equal("application/json", accept.get());
+
+            response.set("""
+                    {
+                      "extra": 1,
+                      "cues": [
+                        {"kind": "chat", "text": "[Jinx] Creeper nearby!", "subtitle": null, "sound": null},
+                        {"kind": "title", "text": "Nightfall", "subtitle": "Find shelter"},
+                        {"kind": "title", "text": "Dawn", "subtitle": null},
+                        {"kind": "sound", "sound": "minecraft:entity.experience_orb.pickup"},
+                        {"kind": "unknown", "text": "ignored"},
+                        {"kind": "chat", "text": ""}
+                      ]
+                    }
+                    """);
+            equal(List.of(
+                    new ChatProtocol.Cue.Chat("[Jinx] Creeper nearby!"),
+                    new ChatProtocol.Cue.Title("Nightfall", "Find shelter"),
+                    new ChatProtocol.Cue.Title("Dawn", null),
+                    new ChatProtocol.Cue.Sound("minecraft:entity.experience_orb.pickup")),
+                    client.cues(base).get(3, TimeUnit.SECONDS));
+
+            for (String invalid : List.of("ERROR", "not json", "{}", "[]", "{\"cues\":null}",
+                    "{\"cues\":\"bad\"}", "{cues:[]}", "{\"cues\":[],\"cues\":[]}",
+                    "{\"cues\":[123]}", "{\"cues\":[]} trailing",
+                    "{\"cues\":[{\"kind\":\"chat\",\"text\":\"" + "a".repeat(65_536) + "\"}]}")) {
+                response.set(invalid);
+                fails(client.cues(base));
+            }
+
+            response.set("DELAY");
+            CompletableFuture<List<ChatProtocol.Cue>> pending = client.cues(base);
+            check(!pending.isDone(), "Cue GET ran synchronously");
+            fails(pending);
+            fails(client.cues("file:///invalid"));
+        } finally {
+            server.stop(0);
+        }
+    }
+
     private static void unreachable() throws Exception {
         int port;
         try (ServerSocket socket = new ServerSocket(0)) {
@@ -139,10 +235,12 @@ public final class ChatCoreTest {
         JinxHttpClient client = new JinxHttpClient(100, 100);
         try {
             fails(client.chat("http://127.0.0.1:" + port, REQUEST));
+            fails(client.cues("http://127.0.0.1:" + port));
         } finally {
             client.close();
         }
         fails(client.chat("http://127.0.0.1:" + port, REQUEST));
+        fails(client.cues("http://127.0.0.1:" + port));
     }
 
     private static void saturation() throws Exception {

@@ -6,16 +6,16 @@ import java.util.List;
 import java.util.Optional;
 
 /** Pure protocol helpers; deliberately independent of Minecraft and its threads. */
-final class ChatProtocol {
-    static final String PREFIX = "[Jinx] ";
-    static final String HELP = PREFIX + "Ask me anything: !jinx what should I do next?";
-    static final String OFFLINE = PREFIX + "(offline - start jinx_link.py on the PC)";
-    static final int MAX_LINE_LENGTH = 240;
+public final class ChatProtocol {
+    public static final String PREFIX = "[Jinx] ";
+    public static final String HELP = PREFIX + "Ask me anything: !jinx what should I do next?";
+    public static final String OFFLINE = PREFIX + "(offline - start jinx_link.py on the PC)";
+    public static final int MAX_LINE_LENGTH = 240;
 
     private ChatProtocol() {}
 
     // Empty Optional means ordinary public chat; Optional.of("") means local help.
-    static Optional<String> prompt(String raw) {
+    public static Optional<String> prompt(String raw) {
         for (String prefix : List.of("!jinx", "!ai", "!j")) {
             if (raw.startsWith(prefix) && (raw.length() == prefix.length()
                     || Character.isWhitespace(raw.charAt(prefix.length())))) {
@@ -25,17 +25,25 @@ final class ChatProtocol {
         return Optional.empty();
     }
 
-    static URI chatUri(String base) {
+    public static URI chatUri(String base) {
+        return endpointUri(base, "/chat");
+    }
+
+    public static URI cuesUri(String base) {
+        return endpointUri(base, "/cues");
+    }
+
+    private static URI endpointUri(String base, String pathSuffix) {
         URI uri = URI.create(base.strip());
         if (!("http".equalsIgnoreCase(uri.getScheme()) || "https".equalsIgnoreCase(uri.getScheme()))
                 || uri.getHost() == null || uri.getUserInfo() != null
                 || uri.getQuery() != null || uri.getFragment() != null) {
             throw new IllegalArgumentException("Expected an HTTP(S) base URL without credentials, query or fragment");
         }
-        return URI.create(uri.toString().replaceAll("/+$", "") + "/chat");
+        return URI.create(uri.toString().replaceAll("/+$", "") + pathSuffix);
     }
 
-    static List<String> replyLines(String reply) {
+    public static List<String> replyLines(String reply) {
         List<String> result = new ArrayList<>();
         int capacity = MAX_LINE_LENGTH - PREFIX.length();
         for (String line : reply.split("\\R", -1)) {
@@ -57,5 +65,13 @@ final class ChatProtocol {
         return result;
     }
 
-    record Request(String player, String message, List<Double> pos, String dim, long ts) {}
+    public record Request(String player, String message, List<Double> pos, String dim, long ts) {}
+
+    public sealed interface Cue permits Cue.Chat, Cue.Title, Cue.Sound {
+        record Chat(String text) implements Cue {}
+
+        record Title(String text, String subtitle) implements Cue {}
+
+        record Sound(String sound) implements Cue {}
+    }
 }

@@ -6,7 +6,7 @@ license="MIT"
 modId="jinxtalk"
 version="${version}"
 displayName="Jinx Talk"
-description='''Private, server-side chat with a local Jinx companion service.'''
+description='''Private chat, client chat overlay, and live cue channel for a local Jinx companion service.'''
 
 [[dependencies.jinxtalk]]
 modId="neoforge"
